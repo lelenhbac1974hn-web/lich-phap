@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Lịch Pháp — Âm dương lịch Việt Nam</title>
+<meta name="description" content="Lịch pháp Việt Nam: âm dương lịch, can chi, tiết khí, giờ hoàng đạo, trực, nhị thập bát tú, sao Ngọc Hạp." />
+<meta name="theme-color" content="#B3261E" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Lịch Pháp" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+<link rel="icon" href="./icon-192.png" />
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header class="dau-trang">
+  <a class="thuong-hieu" href="#" id="nut-hom-nay-logo" aria-label="Về hôm nay">
+    <span class="trien" aria-hidden="true">曆</span>
+    <span class="ten">
+      <b>Lịch Pháp</b>
+      <small>Âm dương lịch Việt Nam</small>
+    </span>
+  </a>
+  <div class="cong-cu">
+    <label class="chon-ngay">
+      <span>Xem ngày</span>
+      <input type="date" id="o-ngay" min="1900-01-01" max="2199-12-31" />
+    </label>
+    <a class="nut nut-nhac" href="#nhac">Nhắc ngày <b id="dem-nhac" hidden></b></a>
+    <button class="nut nut-chinh" id="nut-hom-nay" type="button">Hôm nay</button>
+  </div>
+</header>
+
+<nav class="dai-viec" id="dai-viec" aria-label="Chọn loại việc cần xem"></nav>
+
+<div class="bao-nhac" id="bao-nhac" aria-live="polite"></div>
+
+<main class="khung">
+  <section class="cot-to-lich" id="to-lich" aria-live="polite"></section>
+
+  <section class="cot-phai">
+    <div class="hang-doi">
+      <div class="the the-phan-dinh" id="phan-dinh"></div>
+      <div class="the the-gio" id="mat-gio"></div>
+    </div>
+    <div class="bo-ba" id="bo-ba"></div>
+  </section>
+
+  <div class="hang-duoi">
+    <section class="the the-thang" id="lich-thang"></section>
+    <section class="the the-sao" id="ngoc-hap"></section>
+  </div>
+
+  <section class="the the-nhac" id="nhac">
+    <div class="the-tieu-de">
+      <h3>Nhắc ngày lặp lại</h3>
+      <span>Ngày giỗ theo âm lịch · sinh nhật, sự kiện theo dương lịch · tự lặp lại hằng năm</span>
+    </div>
+    <div class="nhac-khung">
+      <form id="f-nhac" class="nhac-form" autocomplete="off" novalidate>
+        <label class="truong rong-2"><span>Tên</span>
+          <input id="n-ten" maxlength="80" placeholder="Ví dụ: Giỗ ông nội" /></label>
+        <label class="truong rong-2"><span>Loại</span>
+          <select id="n-loai">
+            <option value="gio">Ngày giỗ — âm lịch</option>
+            <option value="sinhnhat">Sinh nhật — dương lịch</option>
+            <option value="sukien">Sự kiện — dương lịch</option>
+            <option value="sukienam">Sự kiện — âm lịch</option>
+          </select></label>
+        <label class="truong"><span id="n-nhan-ngay">Ngày âm</span>
+          <input id="n-ngay" type="number" min="1" max="31" inputmode="numeric" /></label>
+        <label class="truong"><span id="n-nhan-thang">Tháng âm</span>
+          <input id="n-thang" type="number" min="1" max="12" inputmode="numeric" /></label>
+        <label class="truong"><span id="n-nhan-nam">Năm mất <em>(tuỳ chọn)</em></span>
+          <input id="n-nam" type="number" min="1800" max="2199" inputmode="numeric" placeholder="để đếm số năm" /></label>
+        <label class="truong"><span>Nhắc trước</span>
+          <select id="n-truoc">
+            <option value="0">Đúng ngày</option>
+            <option value="1">1 ngày</option>
+            <option value="3" selected>3 ngày</option>
+            <option value="7">7 ngày</option>
+            <option value="15">15 ngày</option>
+          </select></label>
+        <label class="truong rong-4"><span>Ghi chú</span>
+          <input id="n-ghi" maxlength="160" placeholder="Ví dụ: cúng tại nhà bác cả" /></label>
+        <p class="nhac-loi rong-4" id="n-loi" role="alert"></p>
+        <div class="nhac-nut rong-4">
+          <button type="button" class="nut" id="n-lay">Lấy ngày đang xem</button>
+          <button type="button" class="nut" id="n-huy" hidden>Huỷ sửa</button>
+          <button type="submit" class="nut nut-chinh" id="n-luu">Thêm nhắc</button>
+        </div>
+      </form>
+      <div class="nhac-phai">
+        <div id="ds-nhac"></div>
+        <div class="nhac-tep">
+          <button type="button" class="nut nho" id="n-xuat">Xuất ra tệp</button>
+          <button type="button" class="nut nho" id="n-nhap">Nhập từ tệp</button>
+          <input type="file" id="n-tep" accept="application/json,.json" hidden />
+          <span>Dữ liệu lưu trên trình duyệt của máy này. Xuất ra tệp để sao lưu hoặc chuyển máy.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="chan-trang">
+  Lõi lịch pháp: thuật toán âm lịch Hồ Ngọc Đức · múi giờ GMT+7. Phím ← → để lật ngày.
+</footer>
+
+<script src="./lich-phap.js"></script>
+<script src="./ui.js"></script>
+<script>
+/* Chạy không cần mạng sau lần mở đầu tiên (chỉ có hiệu lực trên https hoặc localhost) */
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", function () { navigator.serviceWorker.register("./sw.js").catch(function () {}); });
+}
+</script>
+</body>
+</html>
