@@ -302,15 +302,59 @@
     $("khung").scrollTop = 0;
   }
   /* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */
-  /* Đo chiều cao khung bố cục (không đổi khi phóng to hay khi bàn phím bật), chỉ dùng để co mặt đồng hồ */
+  /* Chiều cao màn hình chuẩn.
+     – Khi cài ra màn hình chính (chạy toàn màn hình): lấy kích thước màn hình thật của máy (screen.width/height),
+       không phụ thuộc phóng to, bàn phím hay cách Safari tính vùng nhìn.
+     – Khi mở trong trình duyệt: lấy chiều cao khung bố cục. */
+  const chayRieng = () => window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+  function chieuCaoChuan() {
+    if (chayRieng() && window.screen && screen.width && screen.height) {
+      const doc = window.matchMedia("(orientation: portrait)").matches;
+      return doc ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+    }
+    return document.documentElement.clientHeight || window.innerHeight;
+  }
   function datChieuCao() {
-    const h = document.documentElement.clientHeight || window.innerHeight;
+    const h = Math.round(chieuCaoChuan());
     document.documentElement.style.setProperty("--cao", `${h}px`);
+    document.documentElement.classList.toggle("chay-rieng", chayRieng());
+    if (!$("chan-doan").hidden) veChanDoan();
+  }
+  /* Bảng thông số màn hình: nhấn giữ con dấu 曆 ở góc trên khoảng 1 giây để bật/tắt */
+  function veChanDoan() {
+    const cs = getComputedStyle(document.documentElement);
+    const tam = document.createElement("div");
+    tam.style.cssText = "position:fixed;top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom);left:0;width:0;visibility:hidden";
+    document.body.appendChild(tam);
+    const r = tam.getBoundingClientRect();
+    const tren = Math.round(r.top), duoi = Math.round(window.innerHeight - r.bottom);
+    tam.remove();
+    const vv = window.visualViewport;
+    const tab = $("thanh-tab").getBoundingClientRect();
+    $("chan-doan").innerHTML = [
+      ["Chạy toàn màn hình", chayRieng() ? "có" : "không"],
+      ["screen", `${screen.width} × ${screen.height} @${window.devicePixelRatio}x`],
+      ["innerHeight", window.innerHeight],
+      ["clientHeight", document.documentElement.clientHeight],
+      ["visualViewport", vv ? `${Math.round(vv.height)} · zoom ${vv.scale.toFixed(2)}` : "—"],
+      ["Vùng an toàn trên / dưới", `${tren} / ${duoi}`],
+      ["Chiều cao đang dùng", cs.getPropertyValue("--cao").trim()],
+      ["Menu đáy cách mép dưới", Math.round(chieuCaoChuan() - tab.bottom)]
+    ].map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join("") + `<small>Nhấn giữ con dấu 曆 để đóng</small>`;
   }
   function ganChieuCao() {
     datChieuCao();
     window.addEventListener("resize", datChieuCao);
-    window.addEventListener("orientationchange", () => setTimeout(datChieuCao, 250));
+    window.addEventListener("orientationchange", () => setTimeout(datChieuCao, 300));
+    window.addEventListener("pageshow", datChieuCao);
+    let henGiu = 0;
+    const logo = $("nut-hom-nay-logo");
+    logo.addEventListener("touchstart", () => {
+      henGiu = setTimeout(() => { henGiu = -1; const cd = $("chan-doan"); cd.hidden = !cd.hidden; if (!cd.hidden) veChanDoan(); }, 900);
+    }, { passive: true });
+    logo.addEventListener("touchend", e => { if (henGiu === -1) e.preventDefault(); clearTimeout(henGiu); henGiu = 0; });
+    logo.addEventListener("touchmove", () => { clearTimeout(henGiu); henGiu = 0; }, { passive: true });
+    logo.addEventListener("contextmenu", e => e.preventDefault());
     /* Chặn phóng to bằng hai ngón và chạm đúp trên iPhone, để giao diện luôn giữ nguyên tỉ lệ */
     ["gesturestart", "gesturechange", "gestureend"].forEach(ev =>
       document.addEventListener(ev, e => e.preventDefault(), { passive: false }));

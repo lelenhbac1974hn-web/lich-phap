@@ -347,6 +347,13 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
   .cong-cu{flex-wrap:wrap}
 }
 
+.chan-doan{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 64px);z-index:90;background:rgba(33,26,21,.92);color:#FBEFD8;
+  border-radius:14px;padding:12px 14px;font:500 13px/1.5 var(--chu);box-shadow:0 14px 30px -10px rgba(0,0,0,.5)}
+.chan-doan[hidden]{display:none}
+.chan-doan div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);padding:3px 0}
+.chan-doan span{color:#CDBF9F}
+.chan-doan small{display:block;margin-top:6px;color:#A99B7E;text-align:center}
+.trien{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .chan-trang{max-width:1240px;margin:0 auto;padding:18px 24px 34px;font-size:12px;color:var(--muc-3);text-align:center}
 
 :focus-visible{outline:2px solid var(--son);outline-offset:2px}
@@ -381,6 +388,9 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
      tính dvh dư phần thanh trạng thái, làm thanh menu đáy tụt ra ngoài màn hình. */
   body{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:auto;min-height:0;overflow:hidden;display:flex;flex-direction:column;
     touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  /* Đã cài ra màn hình chính: chiều cao lấy đúng bằng màn hình thật của máy */
+  html.chay-rieng,html.chay-rieng body{height:var(--cao)}
+  html.chay-rieng body{bottom:auto}
   /* Ô nhập cỡ chữ 16px để iPhone không tự phóng to khi chạm vào */
   .chon-ngay input,.truong input,.truong select{font-size:16px}
   /* Dải màu son dưới thanh trạng thái của iPhone (chữ trạng thái màu trắng) */
