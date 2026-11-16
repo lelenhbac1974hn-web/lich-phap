@@ -301,6 +301,22 @@
     document.querySelectorAll("#thanh-tab .tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
     $("khung").scrollTop = 0;
   }
+  /* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */
+  function datChieuCao() {
+    const vv = window.visualViewport;
+    const h = Math.round(vv ? vv.height : window.innerHeight);
+    const dangGo = document.activeElement && document.activeElement.matches("input,select,textarea");
+    const cu = parseInt(document.documentElement.style.getPropertyValue("--cao"), 10) || 0;
+    if (dangGo && h < cu) return; // bàn phím đang mở: giữ nguyên bố cục
+    document.documentElement.style.setProperty("--cao", `${h}px`);
+  }
+  function ganChieuCao() {
+    datChieuCao();
+    window.addEventListener("resize", datChieuCao);
+    window.addEventListener("orientationchange", () => setTimeout(datChieuCao, 250));
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", datChieuCao);
+    document.addEventListener("focusout", () => setTimeout(datChieuCao, 250));
+  }
   function ganTab() {
     $("thanh-tab").addEventListener("pointerdown", e => {
       const b = e.target.closest(".tab");
@@ -722,6 +738,7 @@
 
   ganNhac();
   ganTab();
+  ganChieuCao();
   ve();
   ganNghieng();
   ganVuot();

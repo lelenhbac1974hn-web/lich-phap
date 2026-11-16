@@ -338,7 +338,9 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
   html,body{height:100%}
   /* Ghim thân trang vào đúng vùng nhìn thấy. Không dùng 100dvh: iPhone khi cài ra màn hình chính
      tính dvh dư phần thanh trạng thái, làm thanh menu đáy tụt ra ngoài màn hình. */
-  body{position:fixed;inset:0;width:100%;height:auto;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+  body{position:fixed;top:0;left:0;right:0;width:100%;height:var(--cao,100%);min-height:0;overflow:hidden;display:flex;flex-direction:column}
+  /* Dải màu son dưới thanh trạng thái của iPhone (chữ trạng thái màu trắng) */
+  body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:linear-gradient(#7A1711,#A8231C);z-index:60}
 
   /* Đầu trang một hàng */
   .dau-trang{padding:calc(8px + env(safe-area-inset-top)) 14px 6px;flex-wrap:nowrap;gap:8px;max-width:none;width:100%}
