@@ -330,39 +330,102 @@
   }
 
   /* ── Mặt đồng hồ 12 giờ can chi ── */
+  /* Ý nghĩa 12 thần trực giờ (tóm tắt theo lịch dân gian) */
+  const Y_THAN = {
+    "Thanh Long": "Mọi việc hanh thông, hợp khởi sự việc lớn.",
+    "Minh Đường": "Lợi gặp quý nhân, cầu công danh, giao dịch.",
+    "Thiên Hình": "Kỵ kiện tụng, tranh chấp, động dao kéo.",
+    "Chu Tước": "Kỵ cãi vã, giấy tờ, kiện cáo; giữ lời ăn tiếng nói.",
+    "Kim Quỹ": "Lợi cầu tài, cưới hỏi, nhập kho.",
+    "Bảo Quang": "Lợi việc lớn, xuất hành, khai trương.",
+    "Bạch Hổ": "Kỵ đi xa, an táng; đề phòng tai nạn, thương tích.",
+    "Ngọc Đường": "Lợi học hành, ký kết, nhậm chức.",
+    "Thiên Lao": "Việc dễ trì trệ, vướng víu; kỵ việc quan.",
+    "Nguyên Vũ": "Đề phòng mất mát, lừa gạt; kỵ giao tiền.",
+    "Tư Mệnh": "Tốt cho việc ban ngày, cúng lễ, cầu an.",
+    "Câu Trần": "Kỵ khởi công, dời nhà, đào đất."
+  };
+  /* Hướng xuất hành theo can ngày (bảng phổ biến trong lịch vạn niên Việt Nam) */
+  const HY_THAN = ["Đông Bắc", "Tây Bắc", "Tây Nam", "Chính Nam", "Đông Nam", "Đông Bắc", "Tây Bắc", "Tây Nam", "Chính Nam", "Đông Nam"];
+  const TAI_THAN = ["Đông Nam", "Đông Nam", "Chính Đông", "Chính Đông", "Chính Bắc", "Chính Nam", "Tây Nam", "Tây Nam", "Chính Tây", "Tây Bắc"];
+
+  function gioChiTiet(j) {
+    const canNgay = (j + 9) % 10, chiNgay = (j + 1) % 12, dau = khoiDau(chiNgay);
+    return CHI.map((chi, i) => {
+      const than = THAN[(i - dau + 12) % 12];
+      return { i, chi, khung: KHUNG[i], can: CAN[(canNgay * 2 + i) % 10], than: than.t, hd: than.hd, xung: CHI[(i + 6) % 12] };
+    });
+  }
+  const gioHienTai = () => Math.floor(((new Date().getHours() + 1) % 24) / 2);
+
   function veMatGio(x) {
-    const C = 170, R1 = 160, R0 = 62;
+    const C = 170, R1 = 162, R0 = 58;
     const cuc = (r, doGoc) => {
       const a = (doGoc - 90) * Math.PI / 180;
       return [C + r * Math.cos(a), C + r * Math.sin(a)];
     };
+    const gio = gioChiTiet(x.j);
     const laHomNay = x.j === jdHomNay();
-    const gioNay = Math.floor(((new Date().getHours() + 1) % 24) / 2);
+    const bay = new Date(), gioNay = gioHienTai();
+    if (st.gioChon == null) st.gioChon = laHomNay ? gioNay : gio.find(g => g.hd).i;
+    const chon = gio[st.gioChon];
     let mang = "";
-    x.gio.forEach((g, i) => {
-      const a0 = i * 30 - 15, a1 = i * 30 + 15;
+    gio.forEach(g => {
+      const a0 = g.i * 30 - 15, a1 = g.i * 30 + 15;
       const [x0, y0] = cuc(R1, a0), [x1, y1] = cuc(R1, a1);
       const [x2, y2] = cuc(R0, a1), [x3, y3] = cuc(R0, a0);
       const d = `M${x0.toFixed(1)} ${y0.toFixed(1)} A${R1} ${R1} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)} A${R0} ${R0} 0 0 0 ${x3.toFixed(1)} ${y3.toFixed(1)} Z`;
-      const [tx, ty] = cuc(126, i * 30), [kx, ky] = cuc(92, i * 30);
-      const dang = laHomNay && i === gioNay;
-      mang += `<g class="mui ${g.hd ? "hd" : "hac"}${dang ? " dang" : ""}">
-        <path d="${d}"><title>Giờ ${g.chi} (${g.khung}h) — ${g.hd ? "hoàng đạo" : "hắc đạo"}</title></path>
+      const [tx, ty] = cuc(137, g.i * 30), [nx, ny] = cuc(111, g.i * 30), [kx, ky] = cuc(85, g.i * 30);
+      const lop = ["mui", g.hd ? "hd" : "hac"];
+      if (laHomNay && g.i === gioNay) lop.push("dang");
+      if (g.i === st.gioChon) lop.push("chon");
+      mang += `<g class="${lop.join(" ")}" data-gio="${g.i}" role="button" tabindex="0" aria-label="Giờ ${g.can} ${g.chi}, ${g.khung} giờ, ${g.than}, ${g.hd ? "hoàng đạo" : "hắc đạo"}">
+        <path d="${d}"/>
         <text x="${tx.toFixed(1)}" y="${(ty + 5).toFixed(1)}" class="chi">${g.chi}</text>
-        <text x="${kx.toFixed(1)}" y="${(ky + 3.5).toFixed(1)}" class="khung">${g.khung}</text>
+        <text x="${nx.toFixed(1)}" y="${(ny + 3).toFixed(1)}" class="than">${g.than}</text>
+        <text x="${kx.toFixed(1)}" y="${(ky + 3).toFixed(1)}" class="khung">${g.khung}</text>
       </g>`;
     });
-    const tot = x.gio.filter(g => g.hd);
+    /* Vạch phút quanh mép và kim chỉ giờ hiện tại */
+    let vach = "";
+    for (let k = 0; k < 48; k++) {
+      const [ax, ay] = cuc(R1 + 4, k * 7.5), [bx, by] = cuc(R1 + (k % 4 ? 8 : 12), k * 7.5);
+      vach += `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" class="${k % 4 ? "vach" : "vach dam"}"/>`;
+    }
+    let kim = "";
+    if (laHomNay) {
+      const goc = ((bay.getHours() + bay.getMinutes() / 60) * 15) % 360;
+      const [ex, ey] = cuc(R1 + 2, goc), [sx, sy] = cuc(R0 - 2, goc);
+      kim = `<line x1="${sx.toFixed(1)}" y1="${sy.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" class="kim"/><circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="4.5" class="kim-dau"/>`;
+    }
+    const tot = gio.filter(g => g.hd);
+    const tamTren = laHomNay ? `${hai(bay.getHours())}:${hai(bay.getMinutes())}` : tot.length;
+    const tamDuoi = laHomNay ? `giờ ${gio[gioNay].chi}` : "giờ tốt";
+    const canNgay = (x.j + 9) % 10, chiNgay = (x.j + 1) % 12;
     $("mat-gio").innerHTML = `
-      <div class="the-tieu-de"><h3>Giờ hoàng đạo</h3><span>${laHomNay ? `Đang giờ ${x.gio[gioNay].chi}` : "12 giờ can chi"}</span></div>
-      <svg class="dia" viewBox="0 0 340 340" role="img" aria-label="Sáu giờ hoàng đạo: ${tot.map(g => g.chi).join(", ")}">
-        <circle cx="${C}" cy="${C}" r="${R1 + 6}" class="vanh"/>
+      <div class="the-tieu-de"><h3>Giờ trong ngày</h3><span>Ngày ${x.ccNgay} · ${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
+      <svg class="dia" viewBox="-6 -6 352 352" role="group" aria-label="Mười hai giờ can chi">
+        ${vach}
         ${mang}
-        <circle cx="${C}" cy="${C}" r="${R0 - 8}" class="tam"/>
-        <text x="${C}" y="${C - 6}" class="tam-so">${tot.length}</text>
-        <text x="${C}" y="${C + 14}" class="tam-chu">giờ tốt</text>
+        ${kim}
+        <circle cx="${C}" cy="${C}" r="${R0 - 7}" class="tam"/>
+        <circle cx="${C}" cy="${C}" r="${R0 - 11}" class="tam-vien"/>
+        <text x="${C}" y="${C + (laHomNay ? 3 : 1)}" class="tam-so${laHomNay ? " nho" : ""}">${tamTren}</text>
+        <text x="${C}" y="${C + 19}" class="tam-chu">${tamDuoi}</text>
       </svg>
-      <div class="gio-ds">${tot.map(g => `<span><b>${g.chi}</b>${g.khung}h</span>`).join("")}</div>`;
+      <div class="gio-chi-tiet ${chon.hd ? "hd" : "hac"}">
+        <div class="gct-dau">
+          <div><b>Giờ ${chon.can} ${chon.chi}</b><span>${chon.khung} giờ${laHomNay && chon.i === gioNay ? " · đang diễn ra" : ""}</span></div>
+          <em>${chon.hd ? "Hoàng đạo" : "Hắc đạo"}</em>
+        </div>
+        <p><strong>${chon.than}</strong> — ${Y_THAN[chon.than] || ""}</p>
+        <p class="gct-xung">Giờ xung tuổi <b>${chon.xung}</b></p>
+      </div>
+      <div class="huong">
+        <div><span>Hỷ thần</span><b>${HY_THAN[canNgay]}</b></div>
+        <div><span>Tài thần</span><b>${TAI_THAN[canNgay]}</b></div>
+        <div><span>Ngày xung</span><b>${CHI[(chiNgay + 6) % 12]}</b></div>
+      </div>`;
   }
 
   /* ── Ba thẻ: Trực · Thần · Tú ── */
@@ -701,6 +764,7 @@
   function den(j) {
     const cu = st.jd;
     st.jd = Math.min(JD_MAX, Math.max(JD_MIN, j));
+    if (st.jd !== cu) st.gioChon = null;
     const huong = Math.sign(st.jd - cu);
     const toCu = chupToCu(huong);
     ve();
@@ -716,9 +780,10 @@
 
   /* ── Sự kiện ── */
   document.addEventListener("click", e => {
-    const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec],[data-tab]");
+    const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec],[data-tab],[data-gio]");
     if (!b) return;
-    if (b.dataset.tab) doiTab(b.dataset.tab);
+    if (b.dataset.gio) { st.gioChon = Number(b.dataset.gio); veMatGio(thongTin(st.jd, st.viec)); }
+    else if (b.dataset.tab) doiTab(b.dataset.tab);
     else if (b.dataset.buoc) den(st.jd + Number(b.dataset.buoc));
     else if (b.dataset.jd) { den(Number(b.dataset.jd)); doiTab("ngay"); }
     else if (b.dataset.thang) doiThang(Number(b.dataset.thang));
@@ -740,6 +805,11 @@
   ganTab();
   ganChieuCao();
   ve();
+  /* Kim đồng hồ chạy theo giờ thật khi đang xem hôm nay */
+  setInterval(() => {
+    if (document.hidden || st.jd !== jdHomNay()) return;
+    veMatGio(thongTin(st.jd, st.viec));
+  }, 30000);
   ganNghieng();
   ganVuot();
   requestAnimationFrame(khungHinh);
