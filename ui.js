@@ -276,6 +276,43 @@
       </div>`;
   }
 
+  /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
+  function veTomTat(x) {
+    const cd = x.cd, bac = BAC_UI[cd.bac];
+    const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
+    const el = $("tom-tat");
+    el.className = `tom-tat ${bac.lop}`;
+    el.innerHTML = `
+      <span class="tt-nhan">Phán định · ${esc(viec.ten)}</span>
+      <b class="tt-diem">${cd.diem > 0 ? "+" : ""}${cd.diem}</b>
+      <strong class="tt-bac">${bac.t}</strong>
+      <span class="tt-phu">Trực ${cd.truc.t} · ${cd.than.t} · Sao ${cd.saoTen} <em>›</em></span>
+      <span class="pd-thang">${BAC_UI.map((b, i) => `<i class="${b.lop}${i === cd.bac ? " dang" : ""}"></i>`).join("")}</span>`;
+  }
+
+  /* ── Chuyển mục bằng thanh menu chạm ── */
+  const TAB = ["ngay", "gio", "thang", "luan", "nhac"];
+  function doiTab(t) {
+    const cu = TAB.indexOf(document.body.dataset.tab), moi = TAB.indexOf(t);
+    if (moi < 0 || moi === cu) return;
+    document.body.style.setProperty("--huong", moi > cu ? 1 : -1);
+    document.body.dataset.tab = t;
+    $("thanh-tab").style.setProperty("--i", moi);
+    document.querySelectorAll("#thanh-tab .tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+    $("khung").scrollTop = 0;
+  }
+  function ganTab() {
+    $("thanh-tab").addEventListener("pointerdown", e => {
+      const b = e.target.closest(".tab");
+      if (!b || giamDong.matches) return;
+      const r = b.getBoundingClientRect(), g = document.createElement("span");
+      g.className = "gon";
+      g.style.left = `${e.clientX - r.left}px`; g.style.top = `${e.clientY - r.top}px`;
+      b.appendChild(g);
+      g.addEventListener("animationend", () => g.remove(), { once: true });
+    });
+  }
+
   /* ── Mặt đồng hồ 12 giờ can chi ── */
   function veMatGio(x) {
     const C = 170, R1 = 160, R0 = 62;
@@ -482,6 +519,8 @@
     const ds = sapToi();
     const dem = $("dem-nhac");
     dem.hidden = !nhac.length; dem.textContent = nhac.length;
+    const demTab = $("dem-nhac-tab"), soGan = ds.filter(x => x.j != null && x.con <= x.n.truoc).length;
+    demTab.hidden = !soGan; demTab.textContent = soGan;
     $("ds-nhac").innerHTML = ds.length ? `<ul class="nhac-ds">${ds.map(({ n, j, con }) => {
       const t = j == null ? null : ttNgay(j), dn = j == null ? null : soNam(n, j);
       return `<li class="nhac-muc l-${n.loai}${con <= n.truoc ? " gan" : ""}${dangSua === n.id ? " dang-sua" : ""}">
@@ -515,8 +554,13 @@
     $("n-nhan-nam").innerHTML = `${l.nam}${am ? " âm lịch" : ""} <em>(tuỳ chọn)</em>`;
     $("n-ngay").max = am ? 30 : 31;
   }
+  function moForm(mo) {
+    $("nhac").classList.toggle("mo-form", mo);
+    $("n-mo").textContent = mo ? "Đóng khung nhập" : "＋ Thêm lời nhắc";
+  }
   function xoaForm() {
     dangSua = null;
+    moForm(false);
     $("f-nhac").reset();
     $("n-loi").textContent = "";
     $("n-luu").textContent = "Thêm nhắc";
@@ -525,6 +569,8 @@
   }
   function napForm(n) {
     dangSua = n.id;
+    moForm(true);
+    $("khung").scrollTop = 0;
     $("n-ten").value = n.ten; $("n-loai").value = n.loai;
     $("n-ngay").value = n.ngay; $("n-thang").value = n.thang;
     $("n-nam").value = n.nam == null ? "" : n.nam;
@@ -554,6 +600,7 @@
 
   function ganNhac() {
     $("n-loai").addEventListener("change", datNhanForm);
+    $("n-mo").addEventListener("click", () => moForm(!$("nhac").classList.contains("mo-form")));
     $("n-huy").addEventListener("click", () => { xoaForm(); veNhac(); });
     $("n-lay").addEventListener("click", () => {
       const t = ttNgay(st.jd), am = LOAI[$("n-loai").value].lich === "am";
@@ -623,6 +670,7 @@
     const x = thongTin(st.jd, st.viec);
     veDaiViec();
     veToLich(x);
+    veTomTat(x);
     vePhanDinh(x);
     veMatGio(x);
     veBoBa(x);
@@ -652,10 +700,11 @@
 
   /* ── Sự kiện ── */
   document.addEventListener("click", e => {
-    const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec]");
+    const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec],[data-tab]");
     if (!b) return;
-    if (b.dataset.buoc) den(st.jd + Number(b.dataset.buoc));
-    else if (b.dataset.jd) den(Number(b.dataset.jd));
+    if (b.dataset.tab) doiTab(b.dataset.tab);
+    else if (b.dataset.buoc) den(st.jd + Number(b.dataset.buoc));
+    else if (b.dataset.jd) { den(Number(b.dataset.jd)); doiTab("ngay"); }
     else if (b.dataset.thang) doiThang(Number(b.dataset.thang));
     else if (b.dataset.viec) { st.viec = b.dataset.viec; ve(); }
   });
@@ -672,6 +721,7 @@
   });
 
   ganNhac();
+  ganTab();
   ve();
   ganNghieng();
   ganVuot();
