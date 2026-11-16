@@ -245,6 +245,7 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .nut-nhac{text-decoration:none;color:var(--muc);display:inline-flex;align-items:center;gap:8px}
 .nut-nhac:hover{border-color:var(--vang)}
 .nut-nhac b{background:var(--son);color:#FFF3DC;border-radius:999px;min-width:20px;height:20px;padding:0 6px;font-size:11.5px;display:inline-grid;place-items:center}
+.nut-nhac b[hidden]{display:none}
 .nut.nho{padding:6px 13px;font-size:12.5px}
 .l-gio{--l:#6B4A2B;--l-nhat:#F1E6D6}
 .l-sinhnhat{--l:#B3261E;--l-nhat:#F7E1DC}
