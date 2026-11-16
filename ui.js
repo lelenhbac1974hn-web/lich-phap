@@ -302,20 +302,24 @@
     $("khung").scrollTop = 0;
   }
   /* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */
+  /* Đo chiều cao khung bố cục (không đổi khi phóng to hay khi bàn phím bật), chỉ dùng để co mặt đồng hồ */
   function datChieuCao() {
-    const vv = window.visualViewport;
-    const h = Math.round(vv ? vv.height : window.innerHeight);
-    const dangGo = document.activeElement && document.activeElement.matches("input,select,textarea");
-    const cu = parseInt(document.documentElement.style.getPropertyValue("--cao"), 10) || 0;
-    if (dangGo && h < cu) return; // bàn phím đang mở: giữ nguyên bố cục
+    const h = document.documentElement.clientHeight || window.innerHeight;
     document.documentElement.style.setProperty("--cao", `${h}px`);
   }
   function ganChieuCao() {
     datChieuCao();
     window.addEventListener("resize", datChieuCao);
     window.addEventListener("orientationchange", () => setTimeout(datChieuCao, 250));
-    if (window.visualViewport) window.visualViewport.addEventListener("resize", datChieuCao);
-    document.addEventListener("focusout", () => setTimeout(datChieuCao, 250));
+    /* Chặn phóng to bằng hai ngón và chạm đúp trên iPhone, để giao diện luôn giữ nguyên tỉ lệ */
+    ["gesturestart", "gesturechange", "gestureend"].forEach(ev =>
+      document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+    let lanCham = 0;
+    document.addEventListener("touchend", e => {
+      const bay = Date.now();
+      if (bay - lanCham < 320 && !e.target.closest("input,select,textarea")) e.preventDefault();
+      lanCham = bay;
+    }, { passive: false });
   }
   function ganTab() {
     $("thanh-tab").addEventListener("pointerdown", e => {
@@ -546,7 +550,7 @@
       return Array.isArray(a) ? a.filter(hopLe).map(chuanHoa) : [];
     } catch (e) { return []; }
   }
-  let nhac = docNhac(), dangSua = null, choXoa = null;
+  let nhac = docNhac(), dangSua = null, choXoa = null, nhacChon = null, henXoa = 0;
   function luuNhac() {
     try { localStorage.setItem(KHOA_NHAC, JSON.stringify(nhac)); return true; } catch (e) { return false; }
   }
@@ -602,7 +606,7 @@
     demTab.hidden = !soGan; demTab.textContent = soGan;
     $("ds-nhac").innerHTML = ds.length ? `<ul class="nhac-ds">${ds.map(({ n, j, con }) => {
       const t = j == null ? null : ttNgay(j), dn = j == null ? null : soNam(n, j);
-      return `<li class="nhac-muc l-${n.loai}${con <= n.truoc ? " gan" : ""}${dangSua === n.id ? " dang-sua" : ""}">
+      return `<li class="nhac-muc l-${n.loai}${con <= n.truoc ? " gan" : ""}${nhacChon === n.id ? " duoc-chon" : ""}${dangSua === n.id ? " dang-sua" : ""}" data-chon="${esc(n.id)}" tabindex="0" aria-selected="${nhacChon === n.id}">
         <button type="button" class="nhac-con" ${j == null ? "disabled" : `data-jd="${j}"`} title="Xem ngày này">
           <b>${con === 0 ? "Hôm nay" : con === 1 ? "Mai" : con > 999 ? "—" : con}</b><span>${con > 1 && con <= 999 ? "ngày nữa" : "&nbsp;"}</span>
         </button>
@@ -611,12 +615,17 @@
           <div class="nhac-ngay">Hằng năm ngày <b>${ngayGoc(n)}</b>${t ? ` · lần tới ${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}${LOAI[n.loai].lich === "duong" ? ` (${t.am.day}/${t.am.month} âm)` : ""}` : ""}</div>
           ${dn || n.ghi ? `<div class="nhac-phu">${[dn, n.ghi && esc(n.ghi)].filter(Boolean).join(" · ")}</div>` : ""}
         </div>
-        <div class="nhac-tac">
-          <button type="button" data-sua="${esc(n.id)}">Sửa</button>
-          <button type="button" class="${choXoa === n.id ? "chac" : ""}" data-xoa="${esc(n.id)}">${choXoa === n.id ? "Bấm lần nữa để xoá" : "Xoá"}</button>
-        </div>
       </li>`;
-    }).join("")}</ul>` : `<div class="nhac-trong"><b>Chưa có lời nhắc nào</b>Thêm ngày giỗ, sinh nhật hoặc sự kiện ở khung bên trái. Lời nhắc sẽ hiện trên tờ lịch, lịch tháng và dải báo đầu trang khi sắp đến ngày.</div>`;
+    }).join("")}</ul>` : `<div class="nhac-trong"><b>Chưa có lời nhắc nào</b>Bấm "＋ Thêm" để thêm ngày giỗ, sinh nhật hoặc sự kiện. Lời nhắc sẽ hiện trên tờ lịch, lịch tháng và dải báo đầu trang khi sắp đến ngày.</div>`;
+
+    /* Nhóm nút Thêm · Sửa · Xoá: Sửa và Xoá chỉ sáng khi đã chọn một lời nhắc */
+    if (nhacChon && !nhac.some(x => x.id === nhacChon)) nhacChon = null;
+    $("n-sua").disabled = !nhacChon;
+    $("n-xoa").disabled = !nhacChon;
+    const chac = !!nhacChon && choXoa === nhacChon;
+    $("n-xoa").classList.toggle("chac", chac);
+    $("n-xoa").textContent = chac ? "Bấm lần nữa để xoá" : "Xoá";
+    $("n-goi-y").textContent = !nhac.length ? "" : nhacChon ? "" : "Chạm vào một lời nhắc để sửa hoặc xoá.";
 
     const gan = ds.filter(x => x.j != null && x.con <= x.n.truoc);
     $("bao-nhac").innerHTML = gan.map(({ n, j, con }) =>
@@ -635,7 +644,8 @@
   }
   function moForm(mo) {
     $("nhac").classList.toggle("mo-form", mo);
-    $("n-mo").textContent = mo ? "Đóng khung nhập" : "＋ Thêm lời nhắc";
+    $("n-mo").textContent = mo ? "Đóng" : "＋ Thêm";
+    $("n-mo").classList.toggle("dang-mo", mo);
   }
   function xoaForm() {
     dangSua = null;
@@ -679,7 +689,13 @@
 
   function ganNhac() {
     $("n-loai").addEventListener("change", datNhanForm);
-    $("n-mo").addEventListener("click", () => moForm(!$("nhac").classList.contains("mo-form")));
+    $("n-mo").addEventListener("click", () => {
+      if (window.matchMedia("(max-width:760px)").matches) {
+        const mo = !$("nhac").classList.contains("mo-form");
+        if (mo) { xoaForm(); moForm(true); $("n-ten").focus(); } else xoaForm();
+      } else { xoaForm(); $("n-ten").focus(); }
+      veNhac();
+    });
     $("n-huy").addEventListener("click", () => { xoaForm(); veNhac(); });
     $("n-lay").addEventListener("click", () => {
       const t = ttNgay(st.jd), am = LOAI[$("n-loai").value].lich === "am";
@@ -698,18 +714,37 @@
       ve();
       if (!ok) $("n-loi").textContent = "Trình duyệt không cho lưu dữ liệu; lời nhắc sẽ mất khi đóng trang.";
     });
+    /* Chạm một lời nhắc để chọn (chạm lại để bỏ chọn); ô đếm ngày vẫn mở ngày đó */
+    const chonNhac = li => {
+      nhacChon = nhacChon === li.dataset.chon ? null : li.dataset.chon;
+      choXoa = null;
+      veNhac();
+    };
     $("ds-nhac").addEventListener("click", e => {
-      const b = e.target.closest("[data-sua],[data-xoa]");
-      if (!b) return;
-      if (b.dataset.sua) {
-        const n = nhac.find(x => x.id === b.dataset.sua);
-        choXoa = null;
-        if (n) { napForm(n); veNhac(); }
-      } else if (choXoa === b.dataset.xoa) {
-        nhac = nhac.filter(x => x.id !== choXoa);
-        if (dangSua === choXoa) xoaForm();
-        choXoa = null; luuNhac(); ve();
-      } else { choXoa = b.dataset.xoa; veNhac(); }
+      if (e.target.closest("[data-jd]")) return;
+      const li = e.target.closest("[data-chon]");
+      if (li) chonNhac(li);
+    });
+    $("ds-nhac").addEventListener("keydown", e => {
+      const li = e.target.closest("[data-chon]");
+      if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); chonNhac(li); }
+    });
+    $("n-sua").addEventListener("click", () => {
+      const n = nhac.find(x => x.id === nhacChon);
+      choXoa = null;
+      if (n) { napForm(n); veNhac(); }
+    });
+    $("n-xoa").addEventListener("click", () => {
+      if (!nhacChon) return;
+      clearTimeout(henXoa);
+      if (choXoa === nhacChon) {
+        nhac = nhac.filter(x => x.id !== nhacChon);
+        if (dangSua === nhacChon) xoaForm();
+        choXoa = null; nhacChon = null; luuNhac(); ve();
+      } else {
+        choXoa = nhacChon; veNhac();
+        henXoa = setTimeout(() => { choXoa = null; veNhac(); }, 4000);
+      }
     });
     $("n-xuat").addEventListener("click", () => {
       const a = document.createElement("a");

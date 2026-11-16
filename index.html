@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Lịch Pháp — Âm dương lịch Việt Nam</title>
 <meta name="description" content="Lịch pháp Việt Nam: âm dương lịch, can chi, tiết khí, giờ hoàng đạo, trực, nhị thập bát tú, sao Ngọc Hạp." />
 <meta name="theme-color" content="#B3261E" />
@@ -61,7 +61,12 @@
       <span>Ngày giỗ theo âm lịch · sinh nhật, sự kiện theo dương lịch · tự lặp lại hằng năm</span>
     </div>
     <div class="nhac-khung">
-      <button type="button" class="nut nut-chinh nhac-mo" id="n-mo">＋ Thêm lời nhắc</button>
+      <div class="nhac-nhom" role="toolbar" aria-label="Thao tác lời nhắc">
+        <button type="button" class="nhom-nut them" id="n-mo">＋ Thêm</button>
+        <button type="button" class="nhom-nut" id="n-sua" disabled>Sửa</button>
+        <button type="button" class="nhom-nut xoa" id="n-xoa" disabled>Xoá</button>
+      </div>
+      <p class="nhac-goi-y" id="n-goi-y"></p>
       <form id="f-nhac" class="nhac-form" autocomplete="off" novalidate>
         <label class="truong rong-2"><span>Tên</span>
           <input id="n-ten" maxlength="80" placeholder="Ví dụ: Giỗ ông nội" /></label>
