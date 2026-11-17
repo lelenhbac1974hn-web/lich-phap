@@ -160,6 +160,8 @@ h3,h4,p{margin:0}
 .tl-thu{font-size:19px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;margin-top:4px;padding-left:.3em}
 .nghi .tl-thu{color:var(--son)}
 .tl-nhan{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.an-cau .tl-cau{display:none}
+.le-them{background:var(--the);border-color:var(--vien);color:var(--muc-2);cursor:pointer}
 .le,.kieng{font-size:12px;font-weight:600;border-radius:999px;padding:4px 11px;border:1px solid}
 .le{background:var(--vang-nhat);border-color:#E3CB8B;color:#6E4F0E}
 .le-nghi,.le-am{background:var(--son-nhat);border-color:#EBB9B1;color:var(--son-dam)}
@@ -778,7 +780,8 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
   .tl-dau{padding:8px 12px 0;flex:none}
   .lat{width:34px;height:34px;font-size:20px}
   .tl-thang b{font-size:26px}
-  .tl-than{flex:1 1 0;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:0 16px 8px;overflow:hidden;container-type:size}
+  .tl-than{flex:1 1 0;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;padding:6px 16px 8px;overflow:hidden;container-type:size}
+  .tl-than>.tl-thu{margin-bottom:auto}.tl-than>.tl-cau,.an-cau>.tl-nhan{margin-bottom:auto}
   .tl-so{font-size:clamp(84px,50cqh,210px);margin-top:0;line-height:.9}
   .tl-thu{font-size:16px;margin-top:2px}
   .tl-nhan{margin-top:8px;gap:5px}

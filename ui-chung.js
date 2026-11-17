@@ -76,6 +76,7 @@ function doiTab(t) {
   $("thanh-tab").style.setProperty("--i", moi);
   document.querySelectorAll("#thanh-tab .tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
   $("khung").scrollTop = 0;
+  if (t === "ngay") requestAnimationFrame(xepNhan);
 }
 /* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */
 /* Chiều cao màn hình chuẩn.

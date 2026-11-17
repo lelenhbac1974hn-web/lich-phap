@@ -62,7 +62,33 @@ function veToLich(x) {
       <button class="goc" data-buoc="1" type="button" aria-label="Xé tờ lịch, sang ngày sau" title="Xé tờ lịch"></button>
     </article>`;
   mua = MUA[Math.floor(((TIET_KHI.indexOf(x.tiet) + 3) % 24) / 6)];
+  xepNhan();
 }
+
+/* Ngày có nhiều nhắc / lễ: tờ lịch giữ nguyên cỡ, nhãn không được đè lên ca dao.
+   Không đủ chỗ thì ẩn câu ca dao; vẫn chưa đủ thì giữ các nhãn đầu, phần còn lại gộp thành nút "+N" sang mục Nhắc. */
+function xepNhan() {
+  const than = document.querySelector("#to-lich .tl-than"), nhan = than && than.querySelector(".tl-nhan");
+  if (!nhan) return;
+  than.classList.remove("an-cau");
+  const tran = () => than.scrollHeight > than.clientHeight + 1;
+  if (!than.clientHeight || !tran()) return;
+  than.classList.add("an-cau");
+  const ds = [...nhan.children];
+  let an = 0;
+  while (tran() && an < ds.length - 1) {
+    an++;
+    ds[ds.length - an].hidden = true;
+    let them = nhan.querySelector(".le-them");
+    if (!them) {
+      them = document.createElement("button");
+      them.type = "button"; them.className = "le le-them"; them.dataset.tab = "nhac";
+      nhan.append(them);
+    }
+    them.textContent = `+${an} mục khác`;
+  }
+}
+window.addEventListener("resize", () => requestAnimationFrame(xepNhan));
 const laNgayThanhMinh = j => tietKhi(j) === "Thanh minh" && tietKhi(j - 1) !== "Thanh minh";
 
 /* Nhấn giữ một ngày lễ để mở thiệp mô tả */
