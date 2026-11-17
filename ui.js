@@ -721,6 +721,41 @@
     if (e.target.closest("[data-tra-sao]")) moTraSao("");
   });
 
+  /* ── Biểu tượng tự chọn theo nội dung việc / sự kiện ── */
+  const BIEU = [
+    [/giỗ|gio |kỵ|ky nhat|húy|huý|tang|mộ\b|mo phan/, "🕯️"],
+    [/sinh nhật|sinh nhat|thôi nôi|đầy tháng/, "🎂"],
+    [/mừng thọ|mung tho|thượng thọ/, "🍑"],
+    [/cưới|cuoi|ăn hỏi|dạm ngõ|đính hôn/, "💍"],
+    [/thành lập|thanh lap|công ty|cong ty/, "🏢"],
+    [/kỷ niệm|kỉ niệm|ky niem/, "🎉"],
+    [/trung thu/, "🏮"], [/tết|tet /, "🧧"], [/ông táo|ong tao/, "🐟"], [/vu lan|rằm|ram |mồng một|mùng 1|chùa|chua |lễ phật|thắp hương|thap huong|cúng|cung /, "🙏"],
+    [/họp|hop |giao ban|hội nghị|hoi nghi|gặp|gap /, "👥"],
+    [/gọi|goi |điện thoại|dien thoai/, "📞"],
+    [/email|thư |mail|zalo|nhắn/, "✉️"],
+    [/hợp đồng|hop dong|ký |ky |chữ ký/, "✍️"],
+    [/nộp|nop |hồ sơ|ho so|báo cáo|bao cao|văn bản|giấy tờ|tờ trình/, "📄"],
+    [/nghiệm thu|nghiem thu|công trường|cong truong|bê tông|be tong|cọc|coc |cầu |thi công|thi cong|móng|dầm/, "🏗️"],
+    [/thanh toán|thanh toan|công nợ|cong no|chuyển khoản|tiền|tien |lương|luong|thuế|thue|hoá đơn|hóa đơn/, "💰"],
+    [/ngân hàng|ngan hang|vay|tiết kiệm/, "🏦"],
+    [/mua|chợ|cho |siêu thị|sieu thi/, "🛒"],
+    [/máy bay|may bay|sân bay|chuyến bay/, "✈️"],
+    [/xe|đăng kiểm|dang kiem|bảo dưỡng|thay dầu/, "🚗"],
+    [/đi |xuất hành|công tác|cong tac|về quê|ve que/, "🧳"],
+    [/khám|kham|bác sĩ|bac si|bệnh viện|benh vien|thuốc|thuoc|tiêm/, "💊"],
+    [/học|hoc |thi |lớp|lop |trường|truong/, "📚"],
+    [/sửa|sua |thợ|điện nước|dien nuoc/, "🔧"],
+    [/dọn|don |nhà cửa|giặt/, "🏠"],
+    [/ăn|cơm|com |nhậu|tiệc|tiec/, "🍜"],
+    [/cà phê|cafe|ca phe/, "☕"],
+    [/tập|chạy bộ|thể dục|gym|bóng/, "🏃"]
+  ];
+  function chonBieu(ten, loai) {
+    const s = " " + String(ten || "").toLowerCase() + " ";
+    for (const [re, e] of BIEU) if (re.test(s)) return e;
+    return { gio: "🕯️", sinhnhat: "🎂", sukien: "📌", sukienam: "🌙" }[loai] || "📝";
+  }
+
   /* ═════════ NHẮC NGÀY LẶP LẠI ═════════ */
   const KHOA_NHAC = "lichphap:nhac";
   const LOAI = {
@@ -806,19 +841,26 @@
     dem.hidden = !nhac.length; dem.textContent = nhac.length;
     const soGan = ds.filter(x => x.j != null && x.con <= x.n.truoc).length;
     $("dem-lap").hidden = !soGan; $("dem-lap").textContent = soGan;
-    $("ds-nhac").innerHTML = ds.length ? `<ul class="nhac-ds">${ds.map(({ n, j, con }) => {
-      const t = j == null ? null : ttNgay(j), dn = j == null ? null : soNam(n, j);
-      return `<li class="nhac-muc l-${n.loai}${con <= n.truoc ? " gan" : ""}${nhacChon === n.id ? " duoc-chon" : ""}${dangSua === n.id ? " dang-sua" : ""}" data-chon="${esc(n.id)}" tabindex="0" aria-selected="${nhacChon === n.id}">
-        <button type="button" class="nhac-con" ${j == null ? "disabled" : `data-jd="${j}"`} title="Xem ngày này">
-          <b>${con === 0 ? "Hôm nay" : con === 1 ? "Mai" : con > 999 ? "—" : con}</b><span>${con > 1 && con <= 999 ? "ngày nữa" : "&nbsp;"}</span>
-        </button>
-        <div class="nhac-nd">
-          <div class="nhac-ten">${esc(n.ten)} <em>${LOAI[n.loai].ten}</em></div>
-          <div class="nhac-ngay">Hằng năm ngày <b>${ngayGoc(n)}</b>${t ? ` · lần tới ${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}${LOAI[n.loai].lich === "duong" ? ` (${t.am.day}/${t.am.month} âm)` : ""}` : ""}</div>
-          ${dn || n.ghi ? `<div class="nhac-phu">${[dn, n.ghi && esc(n.ghi)].filter(Boolean).join(" · ")}</div>` : ""}
+    /* Dòng rút gọn: biểu tượng · tên · lần tới · đếm ngày. Chạm để chọn và mở chi tiết (ghi chú). Gần nhất lên đầu. */
+    $("ds-nhac").innerHTML = ds.length ? `<ul class="nhac-ds ds-gon">${ds.map(({ n, j, con }) => {
+      const t = j == null ? null : ttNgay(j), dn = j == null ? null : soNam(n, j), mo = nhacChon === n.id;
+      const lanToiTxt = t ? `${THU_NGAN[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}${t.yy !== ttNgay(jdHomNay()).yy ? "/" + t.yy : ""}` : "—";
+      const dem = con === 0 ? "Hôm nay" : con === 1 ? "Mai" : con > 999 ? "—" : `${con} ngày`;
+      return `<li class="nhac-muc dong-gon l-${n.loai}${con <= n.truoc ? " gan" : ""}${mo ? " duoc-chon mo" : ""}${dangSua === n.id ? " dang-sua" : ""}" data-chon="${esc(n.id)}" tabindex="0" aria-selected="${mo}" aria-expanded="${mo}">
+        <span class="bieu" aria-hidden="true">${chonBieu(n.ten, n.loai)}</span>
+        <div class="gon-nd">
+          <div class="gon-ten">${esc(n.ten)}</div>
+          <div class="gon-phu">${lanToiTxt}${LOAI[n.loai].lich === "am" ? ` · ${n.ngay}/${n.thang} âm` : ""}${dn ? ` · ${dn}` : ""}</div>
         </div>
+        <span class="gon-dem${con <= n.truoc ? " gap" : ""}">${dem}</span>
+        ${mo ? `<div class="gon-chi-tiet">
+          <p><b>${LOAI[n.loai].ten}</b> · hằng năm ngày ${ngayGoc(n)}</p>
+          ${t ? `<p>Lần tới: ${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}${LOAI[n.loai].lich === "duong" ? ` (${t.am.day}/${t.am.month} âm)` : ""} · nhắc trước ${n.truoc} ngày</p>` : ""}
+          ${n.ghi ? `<p class="gon-ghi">📝 ${esc(n.ghi)}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
+          ${j != null ? `<button type="button" class="nut nho" data-jd="${j}">Xem tờ lịch ngày này</button>` : ""}
+        </div>` : ""}
       </li>`;
-    }).join("")}</ul>` : `<div class="nhac-trong"><b>Chưa có lời nhắc nào</b>Bấm "＋ Thêm" để thêm ngày giỗ, sinh nhật hoặc sự kiện. Lời nhắc sẽ hiện trên tờ lịch, lịch tháng và dải báo đầu trang khi sắp đến ngày.</div>`;
+    }).join("")}</ul>` : `<div class="nhac-trong"><b>Chưa có lời nhắc nào</b>Bấm "＋ Thêm" rồi gõ một câu, ví dụ “Giỗ bố 20/10 âm”. Lời nhắc sẽ hiện trên tờ lịch, lịch tháng và dải báo đầu trang khi sắp đến ngày.</div>`;
 
     /* Nhóm nút Thêm · Sửa · Xoá: Sửa và Xoá chỉ sáng khi đã chọn một lời nhắc */
     if (nhacChon && !nhac.some(x => x.id === nhacChon)) nhacChon = null;
@@ -1093,7 +1135,7 @@
     try { const a = JSON.parse(docKhoa(KHOA_VIEC, "[]")); return Array.isArray(a) ? a.filter(v => v && v.ten).map(chuanViec) : []; }
     catch (e) { return []; }
   })();
-  let locViec = "homnay", viecChon = null, viecSua = null, choXoaViec = null, henXoaViec = 0;
+  let locViec = "homnay", viecChon = null, viecSua = null, choXoaViec = null, henXoaViec = 0, choXongViec = null, henXongViec = 0;
   const luuViec = () => ghiKhoa(KHOA_VIEC, JSON.stringify(viec));
 
   /* ── Hiểu câu tiếng Việt: ngày, giờ, lặp, ưu tiên ── */
@@ -1304,13 +1346,20 @@
     const ghi = v.ghi ? `<span class="vm-ghi">${esc(v.ghi.split("\n")[0])}</span>` : "";
     const chon = viecChon === v.id;
     const uu = v.uuTien ? `<span class="vm-uu p${v.uuTien}">⚑ ${UU[v.uuTien]}</span>` : "";
-    return `<li class="viec-muc p${v.uuTien}${v.xong ? " da-xong" : ""}${chon ? " duoc-chon" : ""}${viecSua === v.id ? " dang-sua" : ""}${qh ? " qua-han" : ""}"
-        data-viec-id="${esc(v.id)}" tabindex="0" role="option" aria-selected="${chon}">
-      <span class="vm-cham" aria-hidden="true">${v.xong ? "✓" : ""}</span>
-      <div class="vm-nd">
-        <div class="vm-ten">${esc(v.ten)}</div>
-        ${ngay || lap || uu || ghi ? `<div class="vm-phu">${ngay}${lap}${uu}${ghi}</div>` : ""}
+    const conNgay = v.jd == null ? null : v.jd - hom;
+    const dem = v.xong ? "✓ Xong" : conNgay == null ? "" : qh ? "Quá hạn" : conNgay === 0 ? (v.gio || "Hôm nay") : conNgay === 1 ? "Mai" : `${conNgay} ngày`;
+    return `<li class="viec-muc dong-gon p${v.uuTien}${v.xong ? " da-xong" : ""}${chon ? " duoc-chon mo" : ""}${viecSua === v.id ? " dang-sua" : ""}${qh ? " qua-han" : ""}"
+        data-viec-id="${esc(v.id)}" tabindex="0" role="option" aria-selected="${chon}" aria-expanded="${chon}">
+      <span class="bieu" aria-hidden="true">${chonBieu(v.ten, "viec")}${v.uuTien ? `<i class="bieu-uu p${v.uuTien}"></i>` : ""}</span>
+      <div class="gon-nd">
+        <div class="gon-ten">${esc(v.ten)}</div>
+        ${ngay || lap ? `<div class="gon-phu">${ngay}${lap}</div>` : ""}
       </div>
+      <span class="gon-dem${qh ? " gap" : conNgay === 0 && !v.xong ? " nay" : ""}">${dem}</span>
+      ${chon ? `<div class="gon-chi-tiet">
+        ${v.ghi ? `<p class="gon-ghi">📝 ${esc(v.ghi).replace(/\n/g, "<br>")}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
+        <p>${uu || "Ưu tiên: không"}${v.lap !== "khong" ? ` · ↻ ${LAP[v.lap]}` : ""}${v.xong && v.xongLuc ? ` · xong lúc ${new Date(v.xongLuc).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}` : ""}</p>
+      </div>` : ""}
     </li>`;
   }
 
@@ -1357,12 +1406,16 @@
     const vc = viec.find(v => v.id === viecChon);
     if (!vc) viecChon = null;
     $("v-xong").disabled = $("v-sua").disabled = $("v-xoa").disabled = !vc;
-    $("v-xong").textContent = vc && vc.xong ? "↺ Chưa xong" : "✓ Xong";
+    const hoiXong = !!vc && choXongViec === vc.id;
+    $("v-xong").textContent = vc && vc.xong ? "↺ Chưa xong" : hoiXong ? "Chưa tới hẹn · bấm lại" : "✓ Xong";
+    $("v-xong").classList.toggle("chac", hoiXong);
     const chac = !!vc && choXoaViec === vc.id;
     $("v-xoa").classList.toggle("chac", chac);
     $("v-xoa").textContent = chac ? "Bấm lần nữa" : "Xoá";
     const coViec = locViec === "xong" ? nhom.xong.length : nhom[locViec].length;
-    $("v-goi-y").textContent = coViec && !vc ? "Chạm vào một việc để chọn, rồi bấm Xong, Sửa hoặc Xoá." : "";
+    $("v-goi-y").textContent = hoiXong ? `Việc này hẹn ${nhanNgayViec(vc.jd)}${vc.gio ? " " + vc.gio : ""}, chưa tới. Đã làm xong thật thì bấm “Xong” lần nữa.`
+      : coViec && !vc ? "Chạm vào một việc để xem chi tiết, rồi bấm Xong, Sửa hoặc Xoá." : "";
+    $("v-goi-y").classList.toggle("canh-bao", hoiXong);
 
     const can = soViecCan();
     $("dem-viec").hidden = !can; $("dem-viec").textContent = can;
@@ -1521,6 +1574,15 @@
       if (!viecChon) return;
       const id = viecChon, v = viec.find(x => x.id === id);
       if (!v) return;
+      /* Việc chưa tới hẹn: bấm Xong lần đầu chỉ hỏi lại, tránh bấm nhầm */
+      const chuaToi = !v.xong && v.jd != null && hanCua(v) > bayGio() && (v.jd > jdHomNay() || v.gio);
+      if (chuaToi && choXongViec !== id) {
+        clearTimeout(henXongViec);
+        choXongViec = id; veViec();
+        henXongViec = setTimeout(() => { choXongViec = null; veViec(); }, 5000);
+        return;
+      }
+      clearTimeout(henXongViec); choXongViec = null;
       if (!v.xong && v.lap === "khong") viecChon = null; // việc xong rời khỏi danh sách đang xem
       tichViec(id);
     });
@@ -1560,9 +1622,9 @@
         return;
       }
       if (!id) return;
-      /* Chạm một việc để chọn (sáng lên); chạm lại để bỏ chọn */
+      /* Chạm một việc để chọn và mở chi tiết; chạm lại để thu gọn */
       viecChon = viecChon === id ? null : id;
-      choXoaViec = null;
+      choXoaViec = null; choXongViec = null;
       veViec();
     });
     ds.addEventListener("keydown", e => {

@@ -434,6 +434,36 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .viec-form textarea{width:100%;border:1px solid var(--vien);background:var(--the);border-radius:10px;padding:8px 11px;font:500 16px var(--chu);color:var(--muc);resize:vertical;outline:0}
 .viec-form .go-hieu{margin-top:-4px}
 
+/* ── Dòng rút gọn có biểu tượng (dùng chung cho Ngày lặp lại và Nhắc việc) ── */
+.ds-gon,.ds-viec{gap:6px}
+.nhac-muc.dong-gon,.viec-muc.dong-gon{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:0 10px;align-items:center;
+  padding:8px 10px 8px 8px;border:1px solid var(--vien);border-left-width:1px;border-radius:14px;background:var(--the)}
+.nhac-muc.dong-gon.gan{background:var(--l-nhat)}
+.dong-gon .bieu{position:relative;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:22px;line-height:1;
+  background:var(--l-nhat,#F3ECDD);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--l,#B5862A) 22%,transparent)}
+.viec-muc.dong-gon .bieu{background:color-mix(in srgb,var(--p) 12%,#FFF8EC);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--p) 28%,transparent)}
+.bieu-uu{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;border:2px solid var(--the);background:var(--p)}
+.gon-nd{min-width:0}
+.gon-ten{font-size:15px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gon-phu{display:flex;gap:4px 8px;flex-wrap:nowrap;margin-top:2px;font-size:12px;color:var(--muc-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gon-phu .vm-ngay,.gon-phu .vm-lap{flex:none}
+.gon-dem{font-size:12px;font-weight:700;color:var(--muc-2);background:#F3ECDD;border-radius:999px;padding:4px 9px;white-space:nowrap}
+.gon-dem.gap{background:var(--son);color:#FFF3DC}
+.gon-dem.nay{background:var(--ngoc);color:#fff}
+.da-xong .gon-dem{background:var(--ngoc-nhat);color:var(--ngoc)}
+.da-xong .gon-ten{text-decoration:line-through;text-decoration-color:var(--muc-3);color:var(--muc-3)}
+.dong-gon.mo{align-items:start}
+.dong-gon.mo .gon-ten{white-space:normal}
+.gon-chi-tiet{grid-column:1/-1;margin-top:10px;padding-top:10px;border-top:1px dashed var(--vien);display:grid;gap:6px;animation:nuoc-vao2 .3s ease}
+.gon-chi-tiet p{margin:0;font-size:13px;line-height:1.5;color:var(--muc-2)}
+.gon-ghi{background:#FBF4E4;border-radius:10px;padding:8px 10px;color:var(--muc)!important}
+.gon-ghi.rong{background:none;padding:0;color:var(--muc-3)!important;font-style:italic}
+.gon-chi-tiet .nut{justify-self:start}
+.nhac-goi-y.canh-bao{color:var(--son-dam);font-weight:600}
+.nhom-nut.xong.chac{background:#D2691E;color:#fff;font-size:12px}
+/* Danh sách cuộn khoảng 5 dòng trên máy tính */
+#ds-viec,#ds-nhac .nhac-ds{max-height:390px;overflow-y:auto;overscroll-behavior:contain;padding:3px 3px 4px;margin:-3px -3px 0;scrollbar-width:thin}
+
 /* ── Bộ lọc thông minh (kiểu Apple Reminders) ── */
 .loc-viec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px}
 .loc{--m:#2F6FA8;border:1px solid var(--vien);background:var(--the);border-radius:14px;padding:8px 6px 7px;text-align:left;display:flex;flex-direction:column;gap:1px;
@@ -709,7 +739,22 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
   body[data-tab="thang"] #lich-thang{display:block}
   body[data-tab="luan"] #phan-dinh,body[data-tab="luan"] #ngoc-hap{display:block}
   body[data-tab="luan"] #bo-ba{display:grid}
-  body[data-tab="nhac"] #nhac{display:block}
+  /* Mục Nhắc gói trong một màn hình: phần đầu cố định, chỉ danh sách cuộn (gần nhất ở trên) */
+  body[data-tab="nhac"] #nhac{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:hidden}
+  #nhac .nhac-dau,#nhac .nhac-tep{flex:none}
+  #nhac .nhac-tep{margin-top:10px;padding-top:8px;gap:6px}
+  #nhac .nhac-tep span{display:none}
+  #nhac[data-trang="viec"] .trang-viec,#nhac[data-trang="lap"] .trang-lap{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
+  .trang-viec>*,.trang-lap>*{flex:none}
+  .trang-lap .nhac-khung{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
+  .trang-lap .nhac-khung>*{flex:none}
+  .trang-lap .nhac-phai{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+  #ds-nhac{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
+  #ds-viec,#ds-nhac .nhac-ds{flex:1 1 0;min-height:0;max-height:none}
+  .trang-lap .nhac-mo-ta{display:none}
+  /* Khi đang mở khung nhập: cả trang cuộn, danh sách trả về chiều cao tự nhiên */
+  #nhac.mo-viec .trang-viec,#nhac.mo-form .trang-lap{overflow-y:auto;overscroll-behavior:contain}
+  #nhac.mo-viec #ds-viec,#nhac.mo-form #ds-nhac,#nhac.mo-form #ds-nhac .nhac-ds,#nhac.mo-form .trang-lap .nhac-phai,#nhac.mo-form .trang-lap .nhac-khung{flex:none;overflow:visible}
 
   /* Nội dung tràn vào mềm như nước */
   #to-lich,#tom-tat,#phan-dinh,#mat-gio,#bo-ba,#lich-thang,#ngoc-hap,#nhac{animation:nuoc-vao .5s cubic-bezier(.22,1,.36,1) both}
