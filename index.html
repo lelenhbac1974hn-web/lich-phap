@@ -38,6 +38,11 @@
 
 <div class="bao-nhac" id="bao-nhac" aria-live="polite"></div>
 <div class="chan-doan" id="chan-doan" hidden></div>
+<div class="xoay-doc" aria-hidden="true">
+  <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="8" width="24" height="44" rx="5"/><path d="M28 46h8"/><path d="M50 22a18 18 0 0 1 0 20" class="mui-ten"/><path d="M50 42l-4-1m4 1l1-4" class="mui-ten"/></svg>
+  <b>Xoay điện thoại về chiều dọc</b>
+  <span>Lịch Pháp chỉ dùng ở chiều dọc để giữ đúng bố cục.</span>
+</div>
 
 <main class="khung" id="khung">
   <section class="cot-to-lich" id="to-lich" aria-live="polite"></section>
@@ -56,11 +61,32 @@
     <section class="the the-sao" id="ngoc-hap"></section>
   </div>
 
-  <section class="the the-nhac" id="nhac">
-    <div class="the-tieu-de">
-      <h3>Nhắc ngày lặp lại</h3>
-      <span>Ngày giỗ theo âm lịch · sinh nhật, sự kiện theo dương lịch · tự lặp lại hằng năm</span>
+  <section class="the the-nhac" id="nhac" data-trang="viec">
+    <div class="nhac-dau">
+      <div class="phan-doan" role="tablist" aria-label="Chọn loại nhắc">
+        <button type="button" role="tab" data-nhac-trang="viec" aria-selected="true">Nhắc việc <i id="dem-viec" hidden></i></button>
+        <button type="button" role="tab" data-nhac-trang="lap" aria-selected="false">Ngày lặp lại <i id="dem-lap" hidden></i></button>
+      </div>
     </div>
+
+    <!-- ═══ NHẮC VIỆC ═══ -->
+    <div class="trang-viec">
+      <form class="go-nhanh" id="f-viec" autocomplete="off">
+        <div class="go-o">
+          <input id="v-go" maxlength="140" enterkeyhint="done"
+            placeholder="Thêm việc… vd: Họp giao ban 8h sáng mai" aria-label="Thêm việc mới" />
+          <button type="submit" class="go-them" aria-label="Thêm việc">＋</button>
+        </div>
+        <div class="go-hieu" id="v-hieu" aria-live="polite"></div>
+      </form>
+      <div class="loc-viec" id="loc-viec" role="tablist" aria-label="Danh sách việc"></div>
+      <div class="xin-bao" id="xin-bao" hidden></div>
+      <div id="ds-viec"></div>
+    </div>
+
+    <!-- ═══ NGÀY LẶP LẠI ═══ -->
+    <div class="trang-lap">
+    <p class="nhac-mo-ta">Ngày giỗ theo âm lịch · sinh nhật, sự kiện theo dương lịch · tự lặp lại hằng năm</p>
     <div class="nhac-khung">
       <div class="nhac-nhom" role="toolbar" aria-label="Thao tác lời nhắc">
         <button type="button" class="nhom-nut them" id="n-mo">＋ Thêm</button>
@@ -103,15 +129,19 @@
       </form>
       <div class="nhac-phai">
         <div id="ds-nhac"></div>
-        <div class="nhac-tep">
-          <button type="button" class="nut nho" id="n-xuat">Xuất ra tệp</button>
-          <button type="button" class="nut nho" id="n-nhap">Nhập từ tệp</button>
-          <input type="file" id="n-tep" accept="application/json,.json" hidden />
-          <span>Dữ liệu lưu trên trình duyệt của máy này. Xuất ra tệp để sao lưu hoặc chuyển máy.</span>
-        </div>
       </div>
     </div>
+    </div>
+
+    <div class="nhac-tep">
+      <button type="button" class="nut nho" id="n-xuat">Xuất ra tệp</button>
+      <button type="button" class="nut nho" id="n-nhap">Nhập từ tệp</button>
+      <input type="file" id="n-tep" accept="application/json,.json" hidden />
+      <span>Việc và ngày lặp lại lưu trên máy này. Xuất ra tệp để sao lưu hoặc chuyển máy.</span>
+    </div>
   </section>
+
+  <div class="bao-tam" id="bao-tam" role="status" aria-live="polite"></div>
 </main>
 
 <footer class="chan-trang">
