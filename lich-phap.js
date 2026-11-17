@@ -272,10 +272,101 @@ const laTamNuong = am => TAM_NUONG.includes(am.day);
 const laNguyetKy = am => NGUYET_KY.includes(am.day);
 const laDuongCong = am => !am.leap && (DUONG_CONG[am.month] || []).includes(am.day);
 
-/* ══ SAO TỐT – SAO XẤU · NGỌC HẠP THÔNG THƯ ══
-   Mỗi sao có 12 ô theo tháng âm. Ô khớp khi trùng Can, trùng Chi, hoặc trùng cả cặp Can Chi. */
-const SAO_TOT = [["Thiên đức", "Tốt mọi việc", ["Đinh", "Thân", "Nhâm", "Tân", "Hợi", "Giáp", "Quý", "Dần", "Bính", "Ất", "Tỵ", "Canh"]], ["Thiên đức hợp", "Tốt mọi việc", ["Nhâm", "Tỵ", "Đinh", "Bính", "Dần", "Kỷ", "Mậu", "Hợi", "Tân", "Canh", "Thân", "Ất"]], ["Nguyệt đức", "Tốt mọi việc", ["Bính", "Giáp", "Nhâm", "Canh", "Bính", "Giáp", "Nhâm", "Canh", "Bính", "Giáp", "Nhâm", "Canh"]], ["Nguyệt đức hợp", "Tốt mọi việc, kỵ tố tụng", ["Tân", "Kỷ", "Đinh", "Ất", "Tân", "Kỷ", "Đinh", "Ất", "Tân", "Kỷ", "Đinh", "Ất"]], ["Thiên hỷ", "Tốt mọi việc, nhất là hôn thú", ["Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu"]], ["Thiên phú", "Tốt xây dựng, khai trương, an táng", ["Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão"]], ["Thiên quý", "Tốt mọi việc", ["Giáp|Ất", "Giáp|Ất", "Giáp|Ất", "Bính|Đinh", "Bính|Đinh", "Bính|Đinh", "Canh|Tân", "Canh|Tân", "Canh|Tân", "Nhâm|Quý", "Nhâm|Quý", "Nhâm|Quý"]], ["Thiên xá", "Tốt tế tự, giải oan, trừ được sao xấu; kỵ động thổ", ["Mậu Dần", "Mậu Dần", "Mậu Dần", "Giáp Ngọ", "Giáp Ngọ", "Giáp Ngọ", "Mậu Thân", "Mậu Thân", "Mậu Thân", "Giáp Tý", "Giáp Tý", "Giáp Tý"]], ["Sinh khí", "Tốt mọi việc, nhất là làm nhà, động thổ, trồng cây", ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"]], ["Thiên phúc", "Tốt mọi việc", ["Kỷ", "Mậu", "", "Tân|Quý", "Canh|Nhâm", "", "Ất", "Giáp", "", "Đinh", "Bính", ""]], ["Thiên thành", "Tốt mọi việc", ["Mùi", "Dậu", "Hợi", "Sửu", "Mão", "Tỵ", "Mùi", "Dậu", "Hợi", "Sửu", "Mão", "Tỵ"]], ["Thiên quan", "Tốt mọi việc", ["Tuất", "Tý", "Dần", "Thìn", "Ngọ", "Thân", "Tuất", "Tý", "Dần", "Thìn", "Ngọ", "Thân"]], ["Thiên mã", "Tốt xuất hành, giao dịch, cầu tài lộc", ["Ngọ", "Thân", "Tuất", "Tý", "Dần", "Thìn", "Ngọ", "Thân", "Tuất", "Tý", "Dần", "Thìn"]], ["Thiên tài", "Tốt cầu tài lộc, khai trương", ["Thìn", "Ngọ", "Thân", "Tuất", "Tý", "Dần", "Thìn", "Ngọ", "Thân", "Tuất", "Tý", "Dần"]], ["Địa tài", "Tốt cầu tài lộc, khai trương", ["Tỵ", "Mùi", "Dậu", "Hợi", "Sửu", "Mão", "Tỵ", "Mùi", "Dậu", "Hợi", "Sửu", "Mão"]], ["Nguyệt tài", "Tốt cầu tài, khai trương, xuất hành, giao dịch", ["Ngọ", "Tỵ", "Tỵ", "Mùi", "Dậu", "Hợi", "Ngọ", "Tỵ", "Tỵ", "Mùi", "Dậu", "Hợi"]], ["Nguyệt ân", "Tốt mọi việc", ["Bính", "Đinh", "Canh", "Kỷ", "Mậu", "Tân", "Nhâm", "Quý", "Canh", "Ất", "Giáp", "Tân"]], ["Nguyệt không", "Tốt làm nhà, làm giường", ["Nhâm", "Canh", "Bính", "Giáp", "Nhâm", "Canh", "Bính", "Giáp", "Nhâm", "Canh", "Bính", "Giáp"]], ["Thánh tâm", "Tốt mọi việc, nhất là cầu phúc, tế tự", ["Hợi", "Tỵ", "Tý", "Ngọ", "Sửu", "Mùi", "Dần", "Thân", "Mão", "Dậu", "Thìn", "Tuất"]], ["Ngũ phú", "Tốt mọi việc", ["Hợi", "Dần", "Tỵ", "Thân", "Hợi", "Dần", "Tỵ", "Thân", "Hợi", "Dần", "Tỵ", "Thân"]], ["Lộc khố", "Tốt cầu tài, khai trương, nhập kho", ["Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão"]], ["Phúc sinh", "Tốt mọi việc", ["Dậu", "Mão", "Tuất", "Thìn", "Hợi", "Tỵ", "Tý", "Ngọ", "Sửu", "Mùi", "Dần", "Thân"]], ["Cát khánh", "Tốt mọi việc", ["Dậu", "Dần", "Hợi", "Thìn", "Sửu", "Ngọ", "Mão", "Thân", "Tỵ", "Tuất", "Mùi", "Tý"]], ["Âm đức", "Tốt mọi việc", ["Dậu", "Mùi", "Tỵ", "Mão", "Sửu", "Hợi", "Dậu", "Mùi", "Tỵ", "Mão", "Sửu", "Hợi"]], ["U vi tinh", "Tốt mọi việc", ["Hợi", "Thìn", "Sửu", "Ngọ", "Mão", "Thân", "Tỵ", "Tuất", "Mùi", "Tý", "Dậu", "Dần"]], ["Mãn đức tinh", "Tốt mọi việc", ["Dần", "Mùi", "Thìn", "Dậu", "Ngọ", "Hợi", "Thân", "Sửu", "Tuất", "Mão", "Tý", "Tỵ"]], ["Kính tâm", "Tốt đối với tang lễ", ["Mùi", "Sửu", "Thân", "Dần", "Dậu", "Mão", "Tuất", "Thìn", "Hợi", "Tỵ", "Tý", "Ngọ"]], ["Tuế hợp", "Tốt mọi việc", ["Sửu", "Tý", "Hợi", "Tuất", "Dậu", "Thân", "Mùi", "Ngọ", "Tỵ", "Thìn", "Mão", "Dần"]], ["Nguyệt giải", "Tốt mọi việc", ["Thân", "Thân", "Dậu", "Dậu", "Tuất", "Tuất", "Hợi", "Hợi", "Ngọ", "Ngọ", "Mùi", "Mùi"]], ["Hoạt điệu", "Tốt, nhưng gặp Thụ tử thì xấu", ["Tỵ", "Tuất", "Mùi", "Tý", "Dậu", "Dần", "Hợi", "Thìn", "Sửu", "Ngọ", "Mão", "Thân"]], ["Giải thần", "Tốt tế tự, giải oan, trừ được sao xấu", ["Thân", "Thân", "Tuất", "Tuất", "Tý", "Tý", "Dần", "Dần", "Thìn", "Thìn", "Ngọ", "Ngọ"]], ["Phổ hộ", "Tốt mọi việc, làm phúc, giá thú, xuất hành", ["Thân", "Dần", "Dậu", "Mão", "Tuất", "Thìn", "Hợi", "Tỵ", "Tý", "Ngọ", "Sửu", "Mùi"]], ["Ích hậu", "Tốt mọi việc, nhất là giá thú", ["Tý", "Ngọ", "Sửu", "Mùi", "Dần", "Thân", "Mão", "Dậu", "Thìn", "Tuất", "Tỵ", "Hợi"]], ["Tục thế", "Tốt mọi việc, nhất là giá thú", ["Sửu", "Mùi", "Dần", "Thân", "Mão", "Dậu", "Thìn", "Tuất", "Tỵ", "Hợi", "Ngọ", "Tý"]], ["Yếu yên", "Tốt mọi việc, nhất là giá thú", ["Dần", "Thân", "Mão", "Dậu", "Thìn", "Tuất", "Tỵ", "Hợi", "Ngọ", "Tý", "Mùi", "Sửu"]], ["Dịch mã", "Tốt mọi việc, nhất là xuất hành", ["Thân", "Tỵ", "Dần", "Hợi", "Thân", "Tỵ", "Dần", "Hợi", "Thân", "Tỵ", "Dần", "Hợi"]], ["Tam hợp", "Tốt mọi việc", ["Ngọ|Tuất", "Mùi|Hợi", "Thân|Tý", "Dậu|Sửu", "Tuất|Dần", "Hợi|Mão", "Tý|Thìn", "Sửu|Tỵ", "Dần|Ngọ", "Mão|Mùi", "Thìn|Thân", "Tỵ|Dậu"]], ["Lục hợp", "Tốt mọi việc", ["Hợi", "Tuất", "Dậu", "Thân", "Mùi", "Ngọ", "Tỵ", "Thìn", "Mão", "Dần", "Sửu", "Tý"]], ["Mẫu thương", "Tốt cầu tài lộc, khai trương, làm kho", ["Hợi|Tý", "Hợi|Tý", "Hợi|Tý", "Dần|Mão", "Dần|Mão", "Dần|Mão", "Thìn|Sửu|Mùi|Tuất", "Thìn|Sửu|Mùi|Tuất", "Thìn|Sửu|Mùi|Tuất", "Thân|Dậu", "Thân|Dậu", "Thân|Dậu"]], ["Phúc hậu", "Tốt cầu tài lộc, khai trương", ["Dần", "Dần", "Dần", "Tỵ", "Tỵ", "Tỵ", "Thân", "Thân", "Thân", "Hợi", "Hợi", "Hợi"]], ["Đại hồng sa", "Tốt mọi việc", ["Tuất|Tý", "Tuất|Tý", "Tuất|Tý", "Thìn|Tỵ", "Thìn|Tỵ", "Thìn|Tỵ", "Ngọ|Mùi", "Ngọ|Mùi", "Ngọ|Mùi", "Thân|Tuất", "Thân|Tuất", "Thân|Tuất"]], ["Dân nhật", "Tốt mọi việc, động thổ, đào đắp, sửa chữa", ["Ngọ", "Ngọ", "Ngọ", "Dậu", "Dậu", "Dậu", "Tý", "Tý", "Tý", "Mão", "Mão", "Mão"]], ["Hoàng ân", "Tốt mọi việc", ["Tuất", "Sửu", "Dần", "Tỵ", "Dậu", "Mão", "Tỵ|Tý", "Ngọ", "Thân|Hợi", "Thìn", "Thân", "Mùi"]]];
-const SAO_XAU = [["Thiên cương", "Xấu mọi việc", ["Tỵ", "Tý", "Mùi", "Dần", "Dậu", "Thìn", "Hợi", "Ngọ", "Sửu", "Thân", "Mão", "Tuất"]], ["Thiên lại", "Xấu mọi việc", ["Dậu", "Ngọ", "Mão", "Tý", "Dậu", "Ngọ", "Mão", "Tý", "Dậu", "Ngọ", "Mão", "Tý"]], ["Thiên ngục · Thiên hoả", "Xấu mọi việc, nhất là lợp nhà", ["Tý", "Mão", "Ngọ", "Dậu", "Tý", "Mão", "Ngọ", "Dậu", "Tý", "Mão", "Ngọ", "Dậu"]], ["Tiểu hồng sa", "Xấu mọi việc", ["Tỵ", "Dậu", "Sửu", "Tỵ", "Dậu", "Sửu", "Tỵ", "Dậu", "Sửu", "Tỵ", "Dậu", "Sửu"]], ["Đại hao", "Xấu mọi việc", ["Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ"]], ["Tiểu hao", "Xấu về kinh doanh, cầu tài", ["Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn"]], ["Nguyệt phá", "Xấu về xây dựng nhà cửa", ["Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi"]], ["Kiếp sát", "Kỵ xuất hành, giá thú, an táng, xây dựng", ["Hợi", "Thân", "Tỵ", "Dần", "Hợi", "Thân", "Tỵ", "Dần", "Hợi", "Thân", "Tỵ", "Dần"]], ["Địa phá", "Kỵ xây dựng", ["Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất"]], ["Thổ phủ", "Kỵ xây dựng, động thổ", ["Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu"]], ["Thổ ôn", "Kỵ xây dựng, đào ao, đào giếng", ["Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão"]], ["Thiên ôn", "Kỵ xây dựng", ["Mùi", "Tuất", "Thìn", "Dần", "Ngọ", "Tý", "Dậu", "Thân", "Tỵ", "Hợi", "Sửu", "Mão"]], ["Thụ tử", "Xấu mọi việc, trừ săn bắn", ["Tuất", "Thìn", "Hợi", "Tỵ", "Tý", "Ngọ", "Sửu", "Mùi", "Dần", "Thân", "Mão", "Dậu"]], ["Hoang vu", "Xấu mọi việc", ["Tỵ|Dậu|Sửu", "Tỵ|Dậu|Sửu", "Tỵ|Dậu|Sửu", "Thân|Tý|Thìn", "Thân|Tý|Thìn", "Thân|Tý|Thìn", "Hợi|Mão|Mùi", "Hợi|Mão|Mùi", "Hợi|Mão|Mùi", "Dần|Ngọ|Tuất", "Dần|Ngọ|Tuất", "Dần|Ngọ|Tuất"]], ["Thiên tặc", "Xấu khởi tạo, động thổ, nhập trạch, khai trương", ["Thìn", "Dậu", "Dần", "Mùi", "Tý", "Tỵ", "Tuất", "Mão", "Thân", "Sửu", "Ngọ", "Hợi"]], ["Địa tặc", "Kỵ khởi tạo, an táng, động thổ, xuất hành", ["Sửu", "Tý", "Hợi", "Tuất", "Dậu", "Thân", "Mùi", "Ngọ", "Tỵ", "Thìn", "Mão", "Dần"]], ["Hoả tai", "Xấu làm nhà, lợp nhà", ["Sửu", "Mùi", "Dần", "Thân", "Mão", "Dậu", "Thìn", "Tuất", "Tỵ", "Hợi", "Tý", "Ngọ"]], ["Nguyệt hoả độc hoả", "Xấu lợp nhà, làm bếp", ["Tỵ", "Thìn", "Mão", "Dần", "Sửu", "Tý", "Hợi", "Tuất", "Dậu", "Thân", "Mùi", "Ngọ"]], ["Nguyệt yếm đại hoạ", "Xấu xuất hành, giá thú", ["Tuất", "Dậu", "Thân", "Mùi", "Ngọ", "Tỵ", "Thìn", "Mão", "Dần", "Sửu", "Tý", "Hợi"]], ["Nguyệt hư", "Xấu giá thú, mở cửa, mở hàng", ["Sửu", "Tuất", "Mùi", "Thìn", "Sửu", "Tuất", "Mùi", "Thìn", "Sửu", "Tuất", "Mùi", "Thìn"]], ["Hoàng sa", "Xấu đối với xuất hành", ["Ngọ", "Dần", "Tý", "Ngọ", "Dần", "Tý", "Ngọ", "Dần", "Tý", "Ngọ", "Dần", "Tý"]], ["Lục bất thành", "Xấu đối với xây dựng", ["Dần", "Ngọ", "Tuất", "Tỵ", "Dậu", "Sửu", "Thân", "Tý", "Thìn", "Hợi", "Mão", "Mùi"]], ["Nhân cách", "Xấu giá thú, khởi tạo", ["Dậu", "Mùi", "Tỵ", "Mão", "Sửu", "Hợi", "Dậu", "Mùi", "Tỵ", "Mão", "Sửu", "Hợi"]], ["Thần cách", "Kỵ tế tự", ["Tỵ", "Mão", "Sửu", "Hợi", "Dậu", "Mùi", "Tỵ", "Mão", "Sửu", "Hợi", "Dậu", "Mùi"]], ["Phi ma sát", "Kỵ giá thú, nhập trạch", ["Tý", "Dậu", "Ngọ", "Mão", "Tý", "Dậu", "Ngọ", "Mão", "Tý", "Dậu", "Ngọ", "Mão"]], ["Ngũ quỹ", "Kỵ xuất hành", ["Ngọ", "Dần", "Thìn", "Dậu", "Mão", "Thân", "Sửu", "Tỵ", "Tý", "Hợi", "Mùi", "Tuất"]], ["Băng tiêu ngoạ hãm", "Xấu mọi việc", ["Tỵ", "Tý", "Sửu", "Thân", "Mão", "Tuất", "Hợi", "Ngọ", "Mùi", "Dần", "Dậu", "Thìn"]], ["Hà khôi cấu giảo", "Kỵ khởi công xây dựng, xấu mọi việc", ["Hợi", "Ngọ", "Sửu", "Thân", "Mão", "Tuất", "Tỵ", "Tý", "Mùi", "Dần", "Dậu", "Thìn"]], ["Vãng vong", "Kỵ xuất hành, giá thú, cầu tài lộc, động thổ", ["Dần", "Tỵ", "Thân", "Hợi", "Mão", "Ngọ", "Dậu", "Tý", "Thìn", "Mùi", "Tuất", "Sửu"]], ["Cửu không", "Kỵ xuất hành, cầu tài, khai trương", ["Thìn", "Sửu", "Tuất", "Mùi", "Mão", "Tý", "Dậu", "Ngọ", "Dần", "Hợi", "Thân", "Tỵ"]], ["Trùng tang", "Kỵ giá thú, an táng, khởi công làm nhà", ["Giáp", "Ất", "Kỷ", "Bính", "Đinh", "Kỷ", "Canh", "Tân", "Kỷ", "Nhâm", "Quý", "Kỷ"]], ["Trùng phục", "Kỵ giá thú, an táng", ["Canh", "Tân", "Kỷ", "Nhâm", "Quý", "Mậu", "Giáp", "Ất", "Kỷ", "Bính", "Đinh", "Kỷ"]], ["Lôi công", "Xấu với xây dựng nhà cửa", ["Dần", "Hợi", "Tỵ", "Thân", "Dần", "Hợi", "Tỵ", "Thân", "Dần", "Hợi", "Tỵ", "Thân"]], ["Cô thần", "Xấu với giá thú", ["Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu"]], ["Quả tú", "Xấu với giá thú", ["Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão"]], ["Sát chủ", "Xấu mọi việc", ["Tỵ", "Tý", "Mùi", "Mão", "Thân", "Tuất", "Sửu", "Hợi", "Ngọ", "Dậu", "Dần", "Thìn"]], ["Nguyệt hình", "Xấu mọi việc", ["Tỵ", "Tý", "Thìn", "Thân", "Ngọ", "Sửu", "Dần", "Dậu", "Mùi", "Hợi", "Mão", "Tuất"]], ["Tội chỉ", "Xấu với tế tự, kiện cáo", ["Ngọ", "Tý", "Mùi", "Sửu", "Thân", "Dần", "Dậu", "Mão", "Tuất", "Thìn", "Hợi", "Tỵ"]], ["Ngũ hư", "Kỵ khởi tạo, giá thú, an táng", ["Tỵ|Dậu|Sửu", "Tỵ|Dậu|Sửu", "Tỵ|Dậu|Sửu", "Thân|Tý|Thìn", "Thân|Tý|Thìn", "Thân|Tý|Thìn", "Hợi|Mão|Mùi", "Hợi|Mão|Mùi", "Hợi|Mão|Mùi", "Dần|Ngọ|Tuất", "Dần|Ngọ|Tuất", "Dần|Ngọ|Tuất"]], ["Không phòng", "Kỵ giá thú", ["Thìn", "Tỵ", "Tý", "Tuất", "Hợi", "Mùi", "Dần", "Mão", "Ngọ", "Thân", "Dậu", "Sửu"]], ["Âm thác", "Kỵ xuất hành, giá thú, an táng", ["Canh Tuất", "Tân Dậu", "Canh Thân", "Đinh Mùi", "Bính Ngọ", "Đinh Tỵ", "Giáp Thìn", "Ất Mão", "Giáp Dần", "Quý Sửu", "Nhâm Tý", "Quý Hợi"]], ["Dương thác", "Kỵ xuất hành, giá thú, an táng", ["Giáp Dần", "Ất Mão", "Giáp Thìn", "Đinh Tỵ", "Bính Ngọ", "Đinh Mùi", "Canh Thân", "Tân Dậu", "Canh Tuất", "Quý Hợi", "Nhâm Tý", "Quý Sửu"]], ["Quỷ khốc", "Xấu với tế tự, mai táng", ["Mùi", "Tuất", "Thìn", "Dần", "Ngọ", "Tý", "Dậu", "Thân", "Tỵ", "Hợi", "Sửu", "Mão"]], ["Thổ cấm", "Kỵ xây dựng, an táng, đào ao, đào móng", ["Hợi", "Hợi", "Hợi", "Dần", "Dần", "Dần", "Tỵ", "Tỵ", "Tỵ", "Thân", "Thân", "Thân"]], ["Tứ thời cô quả", "Kỵ giá thú", ["Sửu", "Sửu", "Sửu", "Thìn", "Thìn", "Thìn", "Mùi", "Mùi", "Mùi", "Tuất", "Tuất", "Tuất"]], ["Tam tang", "Kỵ khởi tạo, giá thú, an táng", ["Thìn", "Thìn", "Thìn", "Mùi", "Mùi", "Mùi", "Tuất", "Tuất", "Tuất", "Sửu", "Sửu", "Sửu"]], ["Lỗ ban sát", "Kỵ khởi tạo, đặt cây nóc", ["Tý", "Tý", "Tý", "Mão", "Mão", "Mão", "Ngọ", "Ngọ", "Ngọ", "Dậu", "Dậu", "Dậu"]], ["Phủ đầu sát", "Kỵ khởi tạo, kiêng động thổ", ["Thìn", "Thìn", "Thìn", "Mùi", "Mùi", "Mùi", "Dậu", "Dậu", "Dậu", "Tý", "Tý", "Tý"]]];
+/* ══ SAO TỐT – SAO XẤU · NGỌC HẠP ══
+   Danh sách sao chương trình dùng để luận ngày: [tên hiển thị, ý nghĩa ngắn, mã sao trong CSDL].
+   Bảng an 12 tháng lấy từ CSDL sao (ngoc-hap.js, window.NGOC_HAP_CSDL) — một nguồn duy nhất, đã đối chiếu sách.
+   Ô khớp khi trùng Can, trùng Chi, hoặc trùng cả cặp Can Chi. */
+const SAO_TOT = [["Thiên đức","Tốt mọi việc","THIEN_DUC"],
+  ["Thiên đức hợp","Tốt mọi việc","THIEN_DUC_HOP"],
+  ["Nguyệt đức","Tốt mọi việc","NGUYET_DUC"],
+  ["Nguyệt đức hợp","Tốt mọi việc, kỵ tố tụng","NGUYET_DUC_HOP"],
+  ["Thiên hỷ","Tốt mọi việc, nhất là hôn thú","THIEN_HY"],
+  ["Thiên phú","Tốt xây dựng, khai trương, an táng","THIEN_PHU"],
+  ["Thiên quý","Tốt mọi việc","THIEN_QUY"],
+  ["Thiên xá","Tốt tế tự, giải oan, trừ được sao xấu; kỵ động thổ","THIEN_XA"],
+  ["Sinh khí","Tốt mọi việc, nhất là làm nhà, động thổ, trồng cây","SINH_KHI"],
+  ["Thiên phúc","Tốt mọi việc","THIEN_PHUC"],
+  ["Thiên thành","Tốt mọi việc","THIEN_THANH"],
+  ["Thiên quan","Tốt mọi việc","THIEN_QUAN"],
+  ["Thiên mã","Tốt xuất hành, giao dịch, cầu tài lộc","THIEN_MA"],
+  ["Thiên tài","Tốt cầu tài lộc, khai trương","THIEN_TAI"],
+  ["Địa tài","Tốt cầu tài lộc, khai trương","DIA_TAI"],
+  ["Nguyệt tài","Tốt cầu tài, khai trương, xuất hành, giao dịch","NGUYET_TAI"],
+  ["Nguyệt ân","Tốt mọi việc","NGUYET_AN"],
+  ["Nguyệt không","Tốt làm nhà, làm giường","NGUYET_KHONG"],
+  ["Thánh tâm","Tốt mọi việc, nhất là cầu phúc, tế tự","THANH_TAM"],
+  ["Ngũ phú","Tốt mọi việc","NGU_PHU"],
+  ["Lộc khố","Tốt cầu tài, khai trương, nhập kho","LOC_KHO"],
+  ["Phúc sinh","Tốt mọi việc","PHUC_SINH"],
+  ["Cát khánh","Tốt mọi việc","CAT_KHANH"],
+  ["Âm đức","Tốt mọi việc","AM_DUC"],
+  ["U vi tinh","Tốt mọi việc","U_VI_TINH"],
+  ["Mãn đức tinh","Tốt mọi việc","MAN_DUC_TINH"],
+  ["Kính tâm","Tốt đối với tang lễ","KINH_TAM"],
+  ["Tuế hợp","Tốt mọi việc","TUE_HOP"],
+  ["Nguyệt giải","Tốt mọi việc","NGUYET_GIAI"],
+  ["Hoạt điệu","Tốt, nhưng gặp Thụ tử thì xấu","HOAT_DIEU"],
+  ["Giải thần","Tốt tế tự, giải oan, trừ được sao xấu","GIAI_THAN"],
+  ["Phổ hộ","Tốt mọi việc, làm phúc, giá thú, xuất hành","PHO_HO"],
+  ["Ích hậu","Tốt mọi việc, nhất là giá thú","ICH_HAU"],
+  ["Tục thế","Tốt mọi việc, nhất là giá thú","TUC_THE"],
+  ["Yếu yên","Tốt mọi việc, nhất là giá thú","YEU_YEN"],
+  ["Dịch mã","Tốt mọi việc, nhất là xuất hành","DICH_MA"],
+  ["Tam hợp","Tốt mọi việc","TAM_HOP"],
+  ["Lục hợp","Tốt mọi việc","LUC_HOP"],
+  ["Mẫu thương","Tốt cầu tài lộc, khai trương, làm kho","MAU_THUONG"],
+  ["Phúc hậu","Tốt cầu tài lộc, khai trương","PHUC_HAU"],
+  ["Đại hồng sa","Tốt mọi việc","DAI_HONG_SA"],
+  ["Dân nhật","Tốt mọi việc, động thổ, đào đắp, sửa chữa","DAN_NHAT"],
+  ["Hoàng ân","Tốt mọi việc","HOANG_AN"]];
+const SAO_XAU = [["Thiên cương","Xấu mọi việc","THIEN_CUONG"],
+  ["Thiên lại","Xấu mọi việc","THIEN_LAI"],
+  ["Thiên ngục · Thiên hoả","Xấu mọi việc, nhất là lợp nhà","THIEN_NGUC"],
+  ["Tiểu hồng sa","Xấu mọi việc","TIEU_HONG_SA"],
+  ["Đại hao","Xấu mọi việc","DAI_HAO"],
+  ["Tiểu hao","Xấu về kinh doanh, cầu tài","TIEU_HAO"],
+  ["Nguyệt phá","Xấu về xây dựng nhà cửa","NGUYET_PHA"],
+  ["Kiếp sát","Kỵ xuất hành, giá thú, an táng, xây dựng","KIEP_SAT"],
+  ["Địa phá","Kỵ xây dựng","DIA_PHA"],
+  ["Thổ phủ","Kỵ xây dựng, động thổ","THO_PHU"],
+  ["Thổ ôn","Kỵ xây dựng, đào ao, đào giếng","THO_ON"],
+  ["Thiên ôn","Kỵ xây dựng","THIEN_ON"],
+  ["Thụ tử","Xấu mọi việc, trừ săn bắn","THU_TU"],
+  ["Hoang vu","Xấu mọi việc","HOANG_VU"],
+  ["Thiên tặc","Xấu khởi tạo, động thổ, nhập trạch, khai trương","THIEN_TAC"],
+  ["Địa tặc","Kỵ khởi tạo, an táng, động thổ, xuất hành","DIA_TAC"],
+  ["Hoả tai","Xấu làm nhà, lợp nhà","HOA_TAI"],
+  ["Nguyệt hoả độc hoả","Xấu lợp nhà, làm bếp","NGUYET_HOA"],
+  ["Nguyệt yếm đại hoạ","Xấu xuất hành, giá thú","NGUYET_YEM"],
+  ["Nguyệt hư","Xấu giá thú, mở cửa, mở hàng","NGUYET_HU"],
+  ["Hoàng sa","Xấu đối với xuất hành","HOANG_SA"],
+  ["Lục bất thành","Xấu đối với xây dựng","LUC_BAT_THANH"],
+  ["Nhân cách","Xấu giá thú, khởi tạo","NHAN_CACH"],
+  ["Thần cách","Kỵ tế tự","THAN_CACH"],
+  ["Phi ma sát","Kỵ giá thú, nhập trạch","PHI_MA_SAT"],
+  ["Ngũ quỹ","Kỵ xuất hành","NGU_QUY"],
+  ["Băng tiêu ngoạ hãm","Xấu mọi việc","BANG_TIEU"],
+  ["Hà khôi cấu giảo","Kỵ khởi công xây dựng, xấu mọi việc","HA_KHOI"],
+  ["Vãng vong","Kỵ xuất hành, giá thú, cầu tài lộc, động thổ","VANG_VONG"],
+  ["Cửu không","Kỵ xuất hành, cầu tài, khai trương","CUU_KHONG"],
+  ["Trùng tang","Kỵ giá thú, an táng, khởi công làm nhà","TRUNG_TANG"],
+  ["Trùng phục","Kỵ giá thú, an táng","TRUNG_PHUC"],
+  ["Lôi công","Xấu với xây dựng nhà cửa","LOI_CONG"],
+  ["Cô thần","Xấu với giá thú","CO_THAN"],
+  ["Quả tú","Xấu với giá thú","QUA_TU"],
+  ["Sát chủ","Xấu mọi việc","SAT_CHU"],
+  ["Nguyệt hình","Xấu mọi việc","NGUYET_HINH"],
+  ["Tội chỉ","Xấu với tế tự, kiện cáo","TOI_CHI"],
+  ["Ngũ hư","Kỵ khởi tạo, giá thú, an táng","NGU_HU"],
+  ["Không phòng","Kỵ giá thú","KHONG_PHONG"],
+  ["Âm thác","Kỵ xuất hành, giá thú, an táng","AM_THAC"],
+  ["Dương thác","Kỵ xuất hành, giá thú, an táng","DUONG_THAC"],
+  ["Quỷ khốc","Xấu với tế tự, mai táng","QUY_KHOC"],
+  ["Thổ cấm","Kỵ xây dựng, an táng, đào ao, đào móng","THO_CAM"],
+  ["Tứ thời cô quả","Kỵ giá thú","TU_THOI_CO_QUA"],
+  ["Tam tang","Kỵ khởi tạo, giá thú, an táng","TAM_TANG"],
+  ["Lỗ ban sát","Kỵ khởi tạo, đặt cây nóc","LO_BAN_SAT"],
+  ["Phủ đầu sát","Kỵ khởi tạo, kiêng động thổ","PHU_DAU_SAT"]];
 function khopSao(o, can, chi) {
   if (!o) return false;
   for (const dk of o.split("|")) {
@@ -290,12 +381,28 @@ function khopSao(o, can, chi) {
   }
   return false;
 }
+/* Ghép tên sao với bảng an 12 tháng trong CSDL (làm một lần) */
+let BANG_SAO = null;
+function bangSao() {
+  if (BANG_SAO) return BANG_SAO;
+  const csdl = typeof window !== "undefined" && window.NGOC_HAP_CSDL;
+  if (!csdl) throw new Error("Chưa nạp CSDL sao Ngọc Hạp (ngoc-hap.js)");
+  const theoMa = new Map(csdl.sao.map(s => [s.id, s]));
+  const ghep = ds => ds.map(([ten, nghia, ma]) => {
+    const s = theoMa.get(ma);
+    if (!s) throw new Error("CSDL thiếu sao " + ma);
+    return [ten, nghia, Array.from({ length: 12 }, (_, i) => (s.an.thang[i + 1] || []).join("|"))];
+  });
+  BANG_SAO = { tot: ghep(SAO_TOT), xau: ghep(SAO_XAU) };
+  return BANG_SAO;
+}
 function saoNgocHap(j, thangAm) {
   const can = CAN[(j + 9) % 10],
-    chi = CHI[(j + 1) % 12];
+    chi = CHI[(j + 1) % 12],
+    b = bangSao();
   return {
-    tot: SAO_TOT.filter(s => khopSao(s[2][thangAm - 1], can, chi)).map(s => [s[0], s[1]]),
-    xau: SAO_XAU.filter(s => khopSao(s[2][thangAm - 1], can, chi)).map(s => [s[0], s[1]])
+    tot: b.tot.filter(s => khopSao(s[2][thangAm - 1], can, chi)).map(s => [s[0], s[1]]),
+    xau: b.xau.filter(s => khopSao(s[2][thangAm - 1], can, chi)).map(s => [s[0], s[1]])
   };
 }
 

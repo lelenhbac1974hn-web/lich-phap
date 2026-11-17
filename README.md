@@ -15,7 +15,7 @@ sau lần mở đầu tiên. Dữ liệu nhắc việc chỉ lưu trong máy ng�
 | **Ngày** | Tờ lịch lật: vuốt trái hoặc lên sang ngày sau, vuốt phải hoặc xuống về ngày trước, mỗi hướng một kiểu lật. Lễ tết hiện trên tờ lịch; nhấn giữ biểu tượng lễ để đọc phong tục, món ăn, ca dao. Câu ca dao, tục ngữ mỗi ngày. |
 | **Giờ** | Mặt đồng hồ 12 canh giờ, giờ hoàng đạo / hắc đạo, hướng Hỷ thần, Tài thần. |
 | **Tháng** | Lịch tháng âm dương, tô màu ngày tốt xấu theo việc đang xem, đánh dấu lễ tết, ngày có nhắc. |
-| **Luận giải** | Chấm điểm ngày theo việc (việc chung, động thổ · khởi công, ký kết hợp đồng, khai trương · bàn giao), trực, sao Ngọc Hạp của ngày, tra cứu 181 sao (nghĩa, nên, kỵ, cách an theo tháng). |
+| **Luận giải** | Chấm điểm ngày theo việc (việc chung, động thổ · khởi công, ký kết hợp đồng, khai trương · bàn giao), trực, sao Ngọc Hạp của ngày, tra cứu 185 sao (nghĩa, nên, kỵ, cách an theo tháng). |
 | **Nhắc** | *Nhắc việc*: gõ câu tự nhiên ("Họp giao ban 8h sáng mai", "Đi lễ chùa rằm tháng tới") — tự hiểu ngày, giờ, lặp lại, ưu tiên; xác nhận trước khi đánh dấu xong việc chưa tới hẹn. *Ngày lặp lại*: giỗ theo âm lịch, sinh nhật, kỷ niệm theo dương lịch ("Giỗ bố 20/10 âm, năm mất 2021"). Mỗi mục có biểu tượng vẽ sẵn (tự chọn theo nội dung hoặc chọn tay), sắp gần nhất lên đầu, chạm để xem ghi chú. |
 
 Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong ứng dụng.
@@ -53,8 +53,8 @@ Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong �
 | Tệp | Vai trò |
 |---|---|
 | `index.html`, `style.css` | Giao diện |
-| `lich-phap.js` | Lõi lịch pháp, bảng sao, lễ tết, ca dao |
-| `ngoc-hap.js` | Cơ sở dữ liệu 181 sao Ngọc Hạp (nghĩa, nên, kỵ, cách an) |
+| `lich-phap.js` | Lõi lịch pháp, danh sách sao dùng để luận ngày, lễ tết, ca dao |
+| `ngoc-hap.js` | Cơ sở dữ liệu 185 sao Ngọc Hạp (nghĩa, nên, kỵ, bảng an 12 tháng) — nguồn duy nhất của bảng an sao |
 | `le-tet.js` | Thiệp lễ tết (phong tục, món ăn, hiệu ứng) |
 | `bieu-tuong.js` | Bộ biểu tượng vẽ nét cho Nhắc việc và Ngày lặp lại |
 | `ui.js` | Điều khiển giao diện, nhắc việc, phân tích câu tự nhiên |
