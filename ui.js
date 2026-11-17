@@ -1044,13 +1044,88 @@
     // Ngày
     const ngayTrongThang = (d, mo, y) => d >= 1 && mo >= 1 && mo <= 12 && d <= jdFromDate(1, mo === 12 ? 1 : mo + 1, mo === 12 ? y + 1 : y) - jdFromDate(1, mo, y);
     const daCo = () => ket.jd != null;
-    if (!daCo()) cat(new RegExp(`\\s(sáng|sang|trưa|trua|chiều|chieu|tối|toi)\\s+(nay|mai|mốt|mot)${B}`), m => {
-      ket.jd = hom + (/mai/.test(m[2]) ? 1 : /m[oố]t/.test(m[2]) ? 2 : 0);
+    /* Âm lịch: tìm ngày dương của ngày âm d/m, lần tới (từ hôm nay) */
+    const amNay = ttNgay(hom).am;
+    const jdAm = (d, mo, y) => { const j = lunar2Jd(d, mo, y, false, TZ); if (j == null) return null; const a = amCuaJd(j); return a.day === d && a.month === mo && !a.leap ? j : null; };
+    const amToi = (d, mo) => { let j = jdAm(d, mo, amNay.year); if (j == null || j < hom) j = jdAm(d, mo, amNay.year + 1); if (j == null && d === 30) return amToi(29, mo); return j; };
+    const duongToi = (d, mo) => { const y = ttNgay(hom).yy; let j = jdFromDate(d, mo, y); if (j < hom) j = jdFromDate(d, mo, y + 1); return j; };
+    const thangSau = (mo, y) => mo === 12 ? [1, y + 1] : [mo + 1, y];
+    const SO = { một: 1, mot: 1, hai: 2, ba: 3, bốn: 4, bon: 4, tư: 4, tu: 4, năm: 5, nam: 5, sáu: 6, bảy: 7, bay: 7, tám: 8, tam: 8, chín: 9, chin: 9, mười: 10, muoi: 10, giêng: 1, gieng: 1, chạp: 12, chap: 12, "mười một": 11, "muoi mot": 11 };
+    const THANG_RE = "(này|nay|tới|toi|sau|giêng|gieng|chạp|chap|mười một|muoi mot|một|mot|hai|ba|tư|tu|năm|nam|sáu|bảy|bay|tám|tam|chín|chin|mười|muoi|\\d{1,2})";
+    const NGAY_RE = "(\\d{1,2}|một|mot|hai|ba|bốn|bon|năm|nam|sáu|bảy|bay|tám|tam|chín|chin|mười|muoi)";
+    /* "rằm tháng này", "mồng một tháng tới", "mùng 5 tháng 5", "rằm tháng giêng" */
+    const ngayAmTheoThang = (d, t) => {
+      if (/^(này|nay)$/.test(t)) { const j = jdAm(d, amNay.month, amNay.year) ?? (d === 30 ? jdAm(29, amNay.month, amNay.year) : null); if (j != null && j < hom) ket.daQua = true; return j; }
+      if (/^(tới|toi|sau)$/.test(t)) { const [mo, y] = thangSau(amNay.month, amNay.year); return jdAm(d, mo, y) ?? (d === 30 ? jdAm(29, mo, y) : null); }
+      const mo = /^\d+$/.test(t) ? +t : SO[t];
+      return mo >= 1 && mo <= 12 ? amToi(d, mo) : null;
+    };
+    if (!daCo()) cat(new RegExp(`\\s(?:ngày\\s+|ngay\\s+)?(rằm|ram|(?:mùng|mồng|mung|mong)\\s*${NGAY_RE})\\s+(?:tháng|thang)\\s+${THANG_RE}(?:\\s+(?:âm lịch|am lich|âm|am))?${B}`), m => {
+      const d = /^r/.test(m[1]) ? 15 : (/^\d+$/.test(m[2]) ? +m[2] : SO[m[2]]);
+      if (!(d >= 1 && d <= 30)) return false;
+      const j = ngayAmTheoThang(d, m[3]);
+      if (j == null) return false;
+      ket.jd = j; ket.am = true;
+    });
+    /* "ngày 5 tháng 5 âm", "10/3 âm lịch" */
+    if (!daCo()) cat(new RegExp(`\\s(?:ngày\\s+|ngay\\s+)?(\\d{1,2})(?:\\s+(?:tháng|thang)\\s+|/)(\\d{1,2})\\s+(?:âm lịch|am lich|âm|am)${B}`), m => {
+      const j = amToi(+m[1], +m[2]); if (j == null) return false; ket.jd = j; ket.am = true;
+    });
+    /* Cuối tuần, cuối tháng, đầu tháng / đầu tuần sau */
+    if (!daCo()) cat(new RegExp(`\\s(?:cuối|cuoi)\\s+(?:tuần|tuan)(\\s+(?:sau|tới|toi))?${B}`), m => {
+      const thu = thuCuaJd(hom); let cach = thu === 0 ? 0 : 6 - thu;
+      if (m[1]) cach += 7;
+      ket.jd = hom + cach;
+    });
+    if (!daCo()) cat(new RegExp(`\\s(?:cuối|cuoi)\\s+(?:tháng|thang)(\\s+(?:sau|tới|toi|này|nay))?${B}`), m => {
+      const t = ttNgay(hom); let [mo, y] = [t.mm, t.yy];
+      if (m[1] && /sau|t[oớ]i/.test(m[1])) [mo, y] = thangSau(mo, y);
+      const [m2, y2] = thangSau(mo, y);
+      ket.jd = jdFromDate(1, m2, y2) - 1;
+    });
+    if (!daCo()) cat(new RegExp(`\\s(?:đầu|dau)\\s+(?:tháng|thang)\\s+(?:sau|tới|toi)${B}`), () => {
+      const t = ttNgay(hom), [mo, y] = thangSau(t.mm, t.yy); ket.jd = jdFromDate(1, mo, y);
+    });
+    if (!daCo()) cat(new RegExp(`\\s(?:đầu|dau)\\s+(?:tuần|tuan)\\s+(?:sau|tới|toi)${B}`), () => { ket.jd = hom + ((8 - thuCuaJd(hom)) % 7 || 7); });
+    /* Tên lễ tết: hiểu ngày nhưng GIỮ chữ trong tên việc ("Mua bánh trung thu") */
+    if (!daCo()) {
+      const thuong = chu.toLowerCase();
+      const LE = [
+        [/giao thừa|giao thua|tất niên|tat nien/, () => { let j = jdAm(1, 1, amNay.year + 1) - 1; if (j < hom) j = jdAm(1, 1, amNay.year + 2) - 1; return j; }, "Giao thừa"],
+        [/nguyên tiêu|nguyen tieu/, () => amToi(15, 1), "Tết Nguyên Tiêu (Rằm tháng Giêng)"],
+        [/khai hạ|khai ha|hạ nêu|ha neu/, () => amToi(7, 1), "Khai hạ"],
+        [/hàn thực|han thuc|bánh trôi|banh troi/, () => amToi(3, 3), "Tết Hàn thực"],
+        [/giỗ tổ|gio to|hùng vương|hung vuong/, () => amToi(10, 3), "Giỗ Tổ Hùng Vương"],
+        [/phật đản|phat dan/, () => amToi(15, 4), "Lễ Phật Đản"],
+        [/đoan ngọ|doan ngo|sâu bọ|sau bo/, () => amToi(5, 5), "Tết Đoan Ngọ"],
+        [/vu lan|xá tội|xa toi/, () => amToi(15, 7), "Lễ Vu Lan"],
+        [/trung thu/, () => amToi(15, 8), "Tết Trung Thu"],
+        [/trùng cửu|trung cuu/, () => amToi(9, 9), "Tết Trùng Cửu"],
+        [/cơm mới|com moi|trùng thập|trung thap/, () => amToi(10, 10), "Tết Cơm mới"],
+        [/hạ nguyên|ha nguyen/, () => amToi(15, 10), "Tết Hạ Nguyên"],
+        [/ông táo|ong tao|ông công|ong cong|táo quân|tao quan/, () => amToi(23, 12), "Ông Công Ông Táo"],
+        [/thanh minh|tảo mộ|tao mo/, () => { for (let k = 0; k < 370; k++) if (laNgayThanhMinh(hom + k)) return hom + k; return null; }, "Tiết Thanh minh"],
+        [/quốc khánh|quoc khanh/, () => duongToi(2, 9), "Quốc khánh"],
+        [/giải phóng miền nam|giai phong mien nam|ngày giải phóng|ngay giai phong|thống nhất đất nước/, () => duongToi(30, 4), "Ngày Giải phóng miền Nam"],
+        [/quốc tế lao động|quoc te lao dong|ngày lao động|ngay lao dong/, () => duongToi(1, 5), "Quốc tế Lao động"],
+        [/văn hoá việt nam|văn hóa việt nam|van hoa viet nam|ngày văn hoá|ngày văn hóa/, () => duongToi(24, 11), "Ngày Văn hóa Việt Nam"],
+        [/nhà giáo|nha giao/, () => duongToi(20, 11), "Ngày Nhà giáo Việt Nam"],
+        [/phụ nữ việt nam|phu nu viet nam|20\/10/, () => duongToi(20, 10), "Ngày Phụ nữ Việt Nam"],
+        [/quốc tế phụ nữ|quoc te phu nu/, () => duongToi(8, 3), "Quốc tế Phụ nữ"],
+        [/giáng sinh|giang sinh|noel/, () => duongToi(24, 12), "Lễ Giáng sinh"],
+        [/valentine|tình nhân|tinh nhan/, () => duongToi(14, 2), "Lễ Tình nhân"],
+        [/tết dương|tet duong|năm mới dương|nam moi duong/, () => duongToi(1, 1), "Tết Dương lịch"],
+        [/(?:^|\s)(?:tết|tet)(?=[\s,.;!?]|$)/, () => amToi(1, 1), "Tết Nguyên Đán"]
+      ];
+      for (const [re, tinh, ten] of LE) if (re.test(thuong)) { const j = tinh(); if (j != null) { ket.jd = j; ket.le = ten; } break; }
+    }
+    if (!daCo()) cat(new RegExp(`\\s(sáng|sang|trưa|trua|chiều|chieu|tối|toi)\\s+(?:ngày\\s+|ngay\\s+)?(nay|mai|mốt|mot|kia)${B}`), m => {
+      ket.jd = hom + (/mai/.test(m[2]) ? 1 : /m[oố]t|kia/.test(m[2]) ? 2 : 0);
       buoiMacDinh = /s[aá]ng/.test(m[1]) ? "08:00" : /tr[uư]a/.test(m[1]) ? "12:00" : /chi[eề]u/.test(m[1]) ? "15:00" : "20:00";
     });
     if (!daCo()) cat(new RegExp(`\\s(hôm nay|hom nay|nay)${B}`), () => { ket.jd = hom; });
     if (!daCo()) cat(new RegExp(`\\s(ngày mai|ngay mai|mai)${B}`), () => { ket.jd = hom + 1; });
-    if (!daCo()) cat(new RegExp(`\\s(ngày kia|ngay kia|ngày mốt|ngay mot|mốt|mot)${B}`), () => { ket.jd = hom + 2; });
+    if (!daCo()) cat(new RegExp(`\\s(ngày kia|ngay kia|ngày mốt|ngay mot|mốt|mot|kia)${B}`), () => { ket.jd = hom + 2; });
     if (!daCo()) cat(new RegExp(`\\s(tuần sau|tuan sau|tuần tới|tuan toi)${B}`), () => { ket.jd = hom + ((8 - thuCuaJd(hom)) % 7 || 7); });
     if (!daCo()) cat(new RegExp(`\\s(?:(?:thứ|thu)\\s*(hai|ba|tư|tu|năm|nam|sáu|sau|bảy|bay|[2-7])|t([2-7])|(chủ nhật|chu nhat|cn))(\\s+(?:tuần sau|tuan sau))?${B}`), m => {
       const ten = { hai: 1, ba: 2, tư: 3, tu: 3, năm: 4, nam: 4, sáu: 5, sau: 5, bảy: 6, bay: 6 };
@@ -1067,12 +1142,19 @@
       if (!m[3] && j < hom) j = jdFromDate(d, mo, y + 1);
       ket.jd = j;
     });
-    if (!daCo()) cat(new RegExp(`\\s(rằm|ram)${B}`), () => {
-      for (let k = 0; k < 60; k++) if (ttNgay(hom + k).am.day === 15) { ket.jd = hom + k; break; }
-    });
-    if (!daCo()) cat(new RegExp(`\\s(?:mùng|mồng|mung|mong)\\s*(\\d{1,2})${B}`), m => {
-      const n = +m[1]; if (n < 1 || n > 10) return false;
-      for (let k = 0; k < 60; k++) if (ttNgay(hom + k).am.day === n) { ket.jd = hom + k; break; }
+    /* "rằm", "mồng một", "mùng 5" chưa nói tháng nào: lấy lần tới gần nhất và gợi ý tháng này / tháng tới */
+    const goiYAm = (d, ten) => {
+      const [mo2, y2] = thangSau(amNay.month, amNay.year);
+      const nay = jdAm(d, amNay.month, amNay.year), toi = jdAm(d, mo2, y2);
+      ket.goiY = [];
+      if (nay != null && nay >= hom) ket.goiY.push({ nhan: `${ten} tháng này`, jd: nay });
+      if (toi != null) ket.goiY.push({ nhan: `${ten} tháng tới`, jd: toi });
+      return ket.goiY.length ? ket.goiY[0].jd : null;
+    };
+    if (!daCo()) cat(new RegExp(`\\s(rằm|ram)${B}`), () => { ket.jd = goiYAm(15, "Rằm"); ket.am = true; });
+    if (!daCo()) cat(new RegExp(`\\s(?:mùng|mồng|mung|mong)\\s*${NGAY_RE}${B}`), m => {
+      const n = /^\d+$/.test(m[1]) ? +m[1] : SO[m[1]]; if (!(n >= 1 && n <= 10)) return false;
+      ket.jd = goiYAm(n, n === 1 ? "Mồng Một" : `Mùng ${n}`); ket.am = true;
     });
     if (!daCo()) cat(new RegExp(`\\s(?:ngày|ngay)\\s+(\\d{1,2})${B}`), m => {
       const t = ttNgay(hom); let d = +m[1], mo = t.mm, y = t.yy;
@@ -1260,6 +1342,19 @@
     if (k.gio) the.push(`<span class="the-gio">⏰ ${k.gio}</span>`);
     if (k.lap !== "khong") the.push(`<span class="the-lap">↻ ${LAP[k.lap]}</span>`);
     if (k.uuTien) the.push(`<span class="the-uu p${k.uuTien}">⚑ Ưu tiên ${UU[k.uuTien].toLowerCase()}</span>`);
+    /* Gợi ý: tên lễ tết nhận ra được, ngày trùng lễ, và các lựa chọn khi câu chưa rõ tháng */
+    const jdHien = chamTay.ngay ? oSangJd($("v-ngay").value) : k.jd;
+    if (chamTay.ngay && jdHien != null && the.length && /the-ngay/.test(the[0])) the[0] = `<span class="the-ngay">📅 ${nhanNgayViec(jdHien)} · ${ttNgay(jdHien).am.day}/${ttNgay(jdHien).am.month} âm</span>`;
+    if (k.le) the.push(`<span class="the-le">🎉 ${esc(k.le)}</span>`);
+    else if (jdHien != null) {
+      const le = leCuaNgay(jdHien).filter(l => l.loai !== "ram").map(l => l.ten);
+      if (le.length) the.push(`<span class="the-le">🎉 Trùng ${esc(le[0])}</span>`);
+    }
+    if (k.daQua) the.push(`<span class="the-uu p3">Ngày này trong tháng đã qua</span>`);
+    if (k.goiY && k.goiY.length > 1) {
+      the.push(`<span class="goi-y-nhan">Chọn:</span>` + k.goiY.map(g =>
+        `<button type="button" class="goi-y${g.jd === jdHien ? " chon" : ""}" data-goi-jd="${g.jd}">${esc(g.nhan)} · ${hai(ttNgay(g.jd).dd)}/${hai(ttNgay(g.jd).mm)}</button>`).join(""));
+    }
     $("v-hieu").innerHTML = the.join("");
     if (!chamTay.ngay && k.jd != null) $("v-ngay").value = jdSangO(k.jd);
     if (!chamTay.gio && k.gio) $("v-gio").value = k.gio;
@@ -1302,7 +1397,12 @@
     });
     /* Khung nhập */
     $("v-go").addEventListener("input", hieuNhap);
-    $("v-ngay").addEventListener("change", () => { chamTay.ngay = 1; });
+    $("v-ngay").addEventListener("change", () => { chamTay.ngay = 1; hieuNhap(); });
+    $("v-hieu").addEventListener("click", e => {
+      const b = e.target.closest("[data-goi-jd]");
+      if (!b) return;
+      $("v-ngay").value = jdSangO(+b.dataset.goiJd); chamTay.ngay = 1; hieuNhap();
+    });
     $("v-gio").addEventListener("change", () => { chamTay.gio = 1; });
     $("v-lap").addEventListener("change", () => { chamTay.lap = 1; });
     $("v-uu").addEventListener("click", e => { const b = e.target.closest("[data-uu]"); if (b) { chamTay.uu = 1; datUu(+b.dataset.uu); } });

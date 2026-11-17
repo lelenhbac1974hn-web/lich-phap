@@ -416,6 +416,11 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 @keyframes the-hien{from{transform:scale(.7);opacity:0}}
 .the-ngay{background:#E3EEF7;color:#1E4F7A}.the-gio{background:var(--vang-nhat);color:#6E4F0E}
 .the-lap{background:var(--ngoc-nhat);color:#155C43}.the-uu{background:var(--son-nhat);color:var(--son-dam)}
+.the-le{background:linear-gradient(120deg,#FBE3B0,#F7C9C1);color:var(--thu-phap-dam)}
+.go-hieu .goi-y-nhan{background:none;padding:3px 2px;color:var(--muc-3)}
+.goi-y{border:1px dashed var(--thu-phap);background:var(--the);color:var(--thu-phap);border-radius:999px;padding:3px 10px;margin-right:6px;
+  font:600 12px var(--chu);animation:the-hien .3s cubic-bezier(.3,1.5,.5,1)}
+.goi-y.chon{background:var(--thu-phap);color:#FFF1DC;border-style:solid}
 
 /* ── Nhóm nút 4 ô và khung nhập việc (cùng khuôn Ngày lặp lại) ── */
 .trang-viec .nhac-nhom{margin-bottom:8px}
