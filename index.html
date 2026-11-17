@@ -7,6 +7,7 @@
 <title>Lịch Pháp — Âm dương lịch Việt Nam</title>
 <meta name="description" content="Lịch pháp Việt Nam: âm dương lịch, can chi, tiết khí, giờ hoàng đạo, trực, nhị thập bát tú, sao Ngọc Hạp." />
 <meta name="theme-color" content="#B3261E" />
+<meta name="color-scheme" content="light dark" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -28,7 +29,8 @@
   <div class="cong-cu">
     <label class="chon-ngay">
       <span>Xem ngày</span>
-      <input type="date" id="o-ngay" min="1900-01-01" max="2199-12-31" />
+      <b class="ngay-viet" id="ngay-viet" aria-hidden="true"></b>
+      <input type="date" id="o-ngay" min="1900-01-01" max="2199-12-31" aria-label="Chọn ngày xem" />
     </label>
     <a class="nut nut-nhac" href="#nhac">Nhắc ngày <b id="dem-nhac" hidden></b></a>
     <button class="nut nut-chinh" id="nut-hom-nay" type="button">Hôm nay</button>

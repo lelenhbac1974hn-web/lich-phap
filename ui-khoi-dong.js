@@ -30,6 +30,7 @@ function ve() {
   veViec();
   capNhatDemTab();
   $("o-ngay").value = `${x.yy}-${hai(x.mm)}-${hai(x.dd)}`;
+  $("ngay-viet").innerHTML = `${hai(x.dd)}/${hai(x.mm)}/${x.yy} <small>${x.am.day}/${x.am.month}${x.am.leap ? "n" : ""} âm</small>`;
   document.title = `${hai(x.dd)}/${hai(x.mm)}/${x.yy} · ${x.am.day}/${x.am.month} âm · Lịch Pháp`;
 }
 
@@ -80,6 +81,8 @@ document.addEventListener("click", e => {
 });
 $("nut-hom-nay").addEventListener("click", () => den(jdLich()));
 $("nut-hom-nay-logo").addEventListener("click", e => { e.preventDefault(); moGioiThieu(); });
+/* Máy tính: bấm vào đâu trên ô cũng mở bảng chọn ngày (điện thoại tự mở khi chạm) */
+$("o-ngay").addEventListener("click", e => { try { e.target.showPicker(); } catch (er) { /* trình duyệt cũ: để mặc định */ } });
 $("o-ngay").addEventListener("change", e => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(e.target.value);
   if (m) den(jdFromDate(+m[3], +m[2], +m[1]));
@@ -109,5 +112,6 @@ setInterval(() => {
 }, 30000);
 ganNghieng();
 ganVuot();
+hienHuongDanLanDau();
 requestAnimationFrame(khungHinh);
 

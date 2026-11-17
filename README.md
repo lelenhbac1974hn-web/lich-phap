@@ -18,7 +18,9 @@ sau lần mở đầu tiên. Dữ liệu nhắc việc chỉ lưu trong máy ng�
 | **Luận giải** | Xét ngày theo việc (việc chung, động thổ · khởi công, ký kết hợp đồng, khai trương · bàn giao, xuất hành) bằng hai kiểu: **Cộng sao** (thang điểm) và **Theo sách** (quy tắc Ngọc Hạp Thông Thư: sáu ngày đại kỵ không sao nào cứu, ngày kiêng theo việc, hoàng đạo, trực, sao tốt xấu hợp việc — mỗi lý do ghi số trang), trực, sao Ngọc Hạp của ngày, tra cứu 155 sao (nghĩa, nên, kỵ, cách an theo tháng). |
 | **Nhắc** | *Nhắc việc*: gõ câu tự nhiên ("Họp giao ban 8h sáng mai", "Đi lễ chùa rằm tháng tới") — tự hiểu ngày, giờ, lặp lại, ưu tiên; xác nhận trước khi đánh dấu xong việc chưa tới hẹn. *Ngày lặp lại*: giỗ theo âm lịch, sinh nhật, kỷ niệm theo dương lịch ("Giỗ bố 20/10 âm, năm mất 2021"). Mỗi mục có biểu tượng vẽ sẵn (tự chọn theo nội dung hoặc chọn tay), sắp gần nhất lên đầu, chạm để xem ghi chú. |
 
-Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong ứng dụng.
+Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong ứng dụng. Lần mở đầu có **hướng dẫn 5 bước**
+(xem lại từ trang Giới thiệu). Giao diện tự theo **chế độ sáng / tối** của máy; ô chọn ngày hiện kiểu
+ngày/tháng/năm kèm ngày âm. Từ 23 giờ (giờ Tý) lịch hiện ngày hôm sau theo can chi.
 
 ## Hai kiểu luận ngày
 

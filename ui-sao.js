@@ -58,7 +58,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.13.3";
+const PHIEN_BAN = "1.14.0";
 function moGioiThieu(muc) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
   const el = moTam(`
@@ -87,7 +87,8 @@ function moGioiThieu(muc) {
         <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
         <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng, chọn kiểu luận ở mục Luận giải, mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
         <li><b>Đọc nghĩa sao:</b> chạm tên sao ở mục Luận giải, hoặc bấm “Tra cứu” để tìm theo tên.</li>
-        <li><b>Thêm việc, ngày giỗ:</b> thẻ Nhắc → “＋ Thêm” → gõ một câu tự nhiên.</li></ol></section>
+        <li><b>Thêm việc, ngày giỗ:</b> thẻ Nhắc → “＋ Thêm” → gõ một câu tự nhiên.</li></ol>
+        <p><button type="button" class="nut nho" data-huong-dan>Xem hướng dẫn từng bước</button></p></section>
       <section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
         <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
       <section><h4>Căn cứ xem sao</h4>
@@ -108,6 +109,44 @@ function moGioiThieu(muc) {
   if (muc) { const m = el.querySelector("#" + muc); if (m) setTimeout(() => m.scrollIntoView({ block: "start" }), 60); }
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-gioi-thieu]"); if (b) { e.preventDefault(); moGioiThieu(b.dataset.gioiThieu); } });
+
+/* ── Hướng dẫn lần mở đầu: 5 bước ngắn, tự hiện một lần; mở lại từ trang Giới thiệu ── */
+const KHOA_HD = "lichphap:da-xem-huong-dan";
+const HUONG_DAN = [
+  ["lich", "Tờ lịch mỗi ngày", "Vuốt trái hoặc vuốt lên để sang ngày sau, vuốt phải hoặc vuốt xuống để về ngày trước. Chạm ô ngày trên cùng để chọn ngày bất kỳ, bấm “Hôm nay” để quay về."],
+  ["co", "Chọn việc định làm", "Hàng nút trên cùng: Việc chung, Động thổ, Ký kết, Khai trương, Xuất hành. Ngày tốt hay xấu được xét theo việc bạn chọn."],
+  ["sao", "Ngày tốt hay xấu", "Dải màu dưới tờ lịch cho biết mức tốt xấu, chạm vào để đọc lý do. Mục Luận giải có hai kiểu: Cộng sao (chấm điểm) và Theo sách (theo Ngọc Hạp Thông Thư, ghi số trang)."],
+  ["dongHo", "Giờ và tháng", "Thẻ Giờ: giờ hoàng đạo màu xanh, hắc đạo màu đỏ, chạm ô giờ để xem. Thẻ Tháng: vạch màu dưới mỗi ngày cho biết tốt xấu, tiện chọn ngày cho việc lớn."],
+  ["nen", "Nhắc việc, ngày giỗ", "Thẻ Nhắc → “+ Thêm”, gõ một câu như “Giỗ bố 20/10 âm” hay “Họp giao ban 8h sáng mai”. Dữ liệu chỉ lưu trong máy của bạn."]
+];
+function moHuongDan() {
+  let i = 0;
+  const el = moTam(`<div class="hd-khung"></div>`, "lop-hd");
+  const ve = () => {
+    const [bieu, tieuDe, noiDung] = HUONG_DAN[i], cuoi = i === HUONG_DAN.length - 1;
+    el.querySelector(".hd-khung").innerHTML = `
+      <div class="hd-bieu">${ic(bieu)}</div>
+      <p class="hd-buoc">Bước ${i + 1}/${HUONG_DAN.length}</p>
+      <h3>${tieuDe}</h3>
+      <p class="hd-nd">${noiDung}</p>
+      <div class="hd-cham" aria-hidden="true">${HUONG_DAN.map((_, k) => `<i${k === i ? ' class="dang"' : ""}></i>`).join("")}</div>
+      <div class="hd-nut">${cuoi ? "" : '<button type="button" class="nut nho" data-hd="bo">Bỏ qua</button>'}
+        <button type="button" class="nut nut-chinh" data-hd="tiep">${cuoi ? "Bắt đầu dùng" : "Tiếp ›"}</button></div>`;
+  };
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-hd]");
+    if (!b) return;
+    if (b.dataset.hd === "tiep" && i < HUONG_DAN.length - 1) { i++; ve(); } else dongTam();
+  });
+  ve();
+  try { localStorage.setItem(KHOA_HD, "1"); } catch (er) { /* trình duyệt chặn lưu: lần sau hiện lại */ }
+}
+document.addEventListener("click", e => { if (e.target.closest("[data-huong-dan]")) { e.preventDefault(); moHuongDan(); } });
+function hienHuongDanLanDau() {
+  let da = true;
+  try { da = localStorage.getItem(KHOA_HD) === "1"; } catch (er) { /* không đọc được: không làm phiền */ }
+  if (!da) setTimeout(moHuongDan, 700);
+}
 
 /* Bỏ ghi chú nghiên cứu (số trang, nhóm xếp trong sách) khỏi lời giải nghĩa, chỉ giữ ý nghĩa */
 function nghiaGon(n) {

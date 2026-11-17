@@ -118,7 +118,7 @@ function veNhac() {
         <p><b>${LOAI[n.loai].ten}</b> · hằng năm ngày ${ngayGoc(n)}</p>
         ${n.nam != null ? `<p>${LOAI[n.loai].nam}: <b>${n.nam}</b>${dn ? ` · lần tới: <b>${dn.charAt(0).toLowerCase() + dn.slice(1)}</b>` : ""}</p>` : ""}
         ${t ? `<p>Lần tới: ${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}${LOAI[n.loai].lich === "duong" ? ` (${t.am.day}/${t.am.month} âm)` : ""} · nhắc trước ${n.truoc} ngày</p>` : ""}
-        ${n.ghi ? `<p class="gon-ghi">📝 ${esc(n.ghi)}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
+        ${n.ghi ? `<p class="gon-ghi">${ic("ghiChu")}${esc(n.ghi)}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
         ${j != null ? `<button type="button" class="nut nho" data-jd="${j}">Xem tờ lịch ngày này</button>` : ""}
       </div>` : ""}
     </li>`;
@@ -210,13 +210,13 @@ function hieuNhapLap() {
   if (!chamLap.thang && k.thang) $("n-thang").value = k.thang;
   if (!chamLap.nam && k.nam) $("n-nam").value = k.nam;
   if (!chamLap.truoc && k.truoc != null) { const o = [...$("n-truoc").options].find(x => +x.value >= k.truoc); $("n-truoc").value = o ? o.value : "15"; }
-  const [bieu, tenLoai] = k.coLoai === "gio" ? ["🕯️", "Ngày giỗ"] : k.coLoai === "sinhnhat" ? ["🎂", "Sinh nhật"] : k.coLoai === "kyniem" ? ["💍", "Kỷ niệm"] : ["📌", "Sự kiện"];
-  the.push(`<span class="the-le">${bieu} ${tenLoai} · ${l.lich === "am" ? "âm lịch" : "dương lịch"}</span>`);
+  const [bieu, tenLoai] = k.coLoai === "gio" ? [ic("nen"), "Ngày giỗ"] : k.coLoai === "sinhnhat" ? [ic("banh"), "Sinh nhật"] : k.coLoai === "kyniem" ? [ic("nhan"), "Kỷ niệm"] : [ic("ghim"), "Sự kiện"];
+  the.push(`<span class="the-le">${bieu}${tenLoai} · ${l.lich === "am" ? "âm lịch" : "dương lịch"}</span>`);
   const loai = $("n-loai").value, ngay = +$("n-ngay").value, thang = +$("n-thang").value, nam = $("n-nam").value ? +$("n-nam").value : null;
   const thu = chuanHoa({ ten: $("n-ten").value || "x", loai, ngay, thang, nam, truoc: 3 });
   if (hopLe(thu)) {
     const j = lanToi(thu, jdHomNay()), t = j != null && ttNgay(j), dn = j != null && soNam(thu, j);
-    the.push(`<span class="the-ngay">📅 Hằng năm ${ngayGoc(thu)}${t ? ` · lần tới ${THU_NGAN[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}` : ""}</span>`);
+    the.push(`<span class="the-ngay">${ic("lich")}Hằng năm ${ngayGoc(thu)}${t ? ` · lần tới ${THU_NGAN[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}` : ""}</span>`);
     if (dn) the.push(`<span class="the-lap">${dn}</span>`);
   } else if (k.ngay || k.thang) the.push(`<span class="the-uu p3">Ngày tháng chưa hợp lệ</span>`);
   else the.push(`<span class="the-uu">Thêm ngày, ví dụ “20/10 âm” hoặc “mùng 3 tháng chạp”</span>`);
@@ -610,7 +610,7 @@ function veMucViec(v) {
   const lap = v.lap !== "khong" ? `<span class="vm-lap" title="${LAP[v.lap]}">↻ ${LAP[v.lap]}</span>` : "";
   const ghi = v.ghi ? `<span class="vm-ghi">${esc(v.ghi.split("\n")[0])}</span>` : "";
   const chon = viecChon === v.id;
-  const uu = v.uuTien ? `<span class="vm-uu p${v.uuTien}">⚑ ${UU[v.uuTien]}</span>` : "";
+  const uu = v.uuTien ? `<span class="vm-uu p${v.uuTien}">${ic("co")}${UU[v.uuTien]}</span>` : "";
   const conNgay = v.jd == null ? null : v.jd - hom;
   const dem = v.xong ? "✓ Xong" : conNgay == null ? "" : qh ? "Quá hạn" : conNgay === 0 ? (v.gio || "Hôm nay") : conNgay === 1 ? "Mai" : `${conNgay} ngày`;
   return `<li class="viec-muc dong-gon p${v.uuTien}${v.xong ? " da-xong" : ""}${chon ? " duoc-chon mo" : ""}${viecSua === v.id ? " dang-sua" : ""}${qh ? " qua-han" : ""}"
@@ -622,7 +622,7 @@ function veMucViec(v) {
     </div>
     <span class="gon-dem${qh ? " gap" : conNgay === 0 && !v.xong ? " nay" : ""}">${dem}</span>
     ${chon ? `<div class="gon-chi-tiet">
-      ${v.ghi ? `<p class="gon-ghi">📝 ${esc(v.ghi).replace(/\n/g, "<br>")}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
+      ${v.ghi ? `<p class="gon-ghi">${ic("ghiChu")}${esc(v.ghi).replace(/\n/g, "<br>")}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
       <p>${uu || "Ưu tiên: không"}${v.lap !== "khong" ? ` · ↻ ${LAP[v.lap]}` : ""}${v.xong && v.xongLuc ? ` · xong lúc ${new Date(v.xongLuc).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}` : ""}</p>
     </div>` : ""}
   </li>`;
@@ -743,17 +743,17 @@ function hieuNhap() {
   const g = $("v-go").value.trim();
   if (!g) { $("v-hieu").innerHTML = ""; return; }
   const k = phanTichViec(g), the = [];
-  if (k.jd != null) the.push(`<span class="the-ngay">📅 ${nhanNgayViec(k.jd)}${k.jd - jdHomNay() > 1 ? ` · ${ttNgay(k.jd).am.day}/${ttNgay(k.jd).am.month} âm` : ""}</span>`);
-  if (k.gio) the.push(`<span class="the-gio">⏰ ${k.gio}</span>`);
+  if (k.jd != null) the.push(`<span class="the-ngay">${ic("lich")}${nhanNgayViec(k.jd)}${k.jd - jdHomNay() > 1 ? ` · ${ttNgay(k.jd).am.day}/${ttNgay(k.jd).am.month} âm` : ""}</span>`);
+  if (k.gio) the.push(`<span class="the-hen">${ic("dongHo")}${k.gio}</span>`);
   if (k.lap !== "khong") the.push(`<span class="the-lap">↻ ${LAP[k.lap]}</span>`);
-  if (k.uuTien) the.push(`<span class="the-uu p${k.uuTien}">⚑ Ưu tiên ${UU[k.uuTien].toLowerCase()}</span>`);
+  if (k.uuTien) the.push(`<span class="the-uu p${k.uuTien}">${ic("co")}Ưu tiên ${UU[k.uuTien].toLowerCase()}</span>`);
   /* Gợi ý: tên lễ tết nhận ra được, ngày trùng lễ, và các lựa chọn khi câu chưa rõ tháng */
   const jdHien = chamTay.ngay ? oSangJd($("v-ngay").value) : k.jd;
-  if (chamTay.ngay && jdHien != null && the.length && /the-ngay/.test(the[0])) the[0] = `<span class="the-ngay">📅 ${nhanNgayViec(jdHien)} · ${ttNgay(jdHien).am.day}/${ttNgay(jdHien).am.month} âm</span>`;
-  if (k.le) the.push(`<span class="the-le">🎉 ${esc(k.le)}</span>`);
+  if (chamTay.ngay && jdHien != null && the.length && /the-ngay/.test(the[0])) the[0] = `<span class="the-ngay">${ic("lich")}${nhanNgayViec(jdHien)} · ${ttNgay(jdHien).am.day}/${ttNgay(jdHien).am.month} âm</span>`;
+  if (k.le) the.push(`<span class="the-le">${ic("sao")}${esc(k.le)}</span>`);
   else if (jdHien != null) {
     const le = leCuaNgay(jdHien).filter(l => l.loai !== "ram").map(l => l.ten);
-    if (le.length) the.push(`<span class="the-le">🎉 Trùng ${esc(le[0])}</span>`);
+    if (le.length) the.push(`<span class="the-le">${ic("sao")}Trùng ${esc(le[0])}</span>`);
   }
   if (k.daQua) the.push(`<span class="the-uu p3">Ngày này trong tháng đã qua</span>`);
   if (k.goiY && k.goiY.length > 1) {
@@ -776,7 +776,7 @@ function soatGio() {
     const han = hanCua(v);
     if (han <= bay && bay - han < 360) {
       v.daBao = true; doi = true;
-      baoTam(`⏰ Đến giờ: “${esc(v.ten)}”${v.ghi ? ` — ${esc(v.ghi.split("\n")[0])}` : ""}`, null, true);
+      baoTam(`${ic("dongHo")}Đến giờ: “${esc(v.ten)}”${v.ghi ? ` — ${esc(v.ghi.split("\n")[0])}` : ""}`, null, true);
       if (navigator.vibrate) navigator.vibrate([180, 80, 180]);
       if ("Notification" in window && Notification.permission === "granted" && navigator.serviceWorker) {
         navigator.serviceWorker.getRegistration().then(r => r && r.showNotification(v.ten, {

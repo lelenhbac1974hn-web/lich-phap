@@ -17,6 +17,8 @@ const BAC_UI = [
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const hai = n => String(n).padStart(2, "0");
+/* Biểu tượng nét nhỏ đi kèm chữ (thay emoji màu) — cùng bộ với biểu tượng Nhắc việc */
+const ic = k => window.BieuTuong ? `<i class="ic">${window.BieuTuong.svg(k)}</i>` : "";
 
 function jdHomNay() {
   const d = new Date();

@@ -76,6 +76,12 @@
     for (const [re, k] of LUAT) if (re.test(s)) return k;
     return { gio: "nen", sinhnhat: "banh", sukien: "ghim", sukienam: "trang" }[loai] || "lich";
   }
-  const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${(BT[k] || BT.lich).ve}</svg>`;
+  /* Biểu tượng nhỏ đi kèm chữ (giờ, ghi chú, lễ) — không có trong bảng chọn biểu tượng */
+  const NET = {
+    dongHo: { ve: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4.3l2.8 1.7M5 4.5 3 6.5M19 4.5l2 2"/>' },
+    ghiChu: { ve: '<path d="M5 3.5h10l4 4V20.5H5z"/><path d="M15 3.5v4h4M8.5 12h7M8.5 15.5h7M8.5 8.5h3"/>' },
+    sao: { ve: '<path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z" class="dac"/><path d="M18.5 16v4M16.5 18h4"/>' }
+  };
+  const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${(BT[k] || NET[k] || BT.lich).ve}</svg>`;
   window.BieuTuong = { BT, chon, svg, ds: Object.keys(BT) };
 })();
