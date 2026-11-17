@@ -1,3 +1,4 @@
+/* Lịch Pháp © 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền. Bản chính thức, miễn phí: https://lelenhbac1974hn-web.github.io/lich-phap/ — cấm đưa lên chợ ứng dụng, bán hay phát hành lại khi chưa được phép (xem LICENSE). */
 /* CSDL SAO NGỌC HẠP — sinh tự động từ nguon-csdl/ngoc-hap/ngoc-hap-csdl.json, đừng sửa tay.
    Ngọc Hạp Thông Thư (bản PDF 164 trang): định nghĩa tr.9–11, bảng 12 tháng tr.12–33, bảng an sao tr.145–162; tên chữ Hán theo Ngọc hạp toản yếu thông dụng (1926).
    © 2026 Lê Lệnh Bắc */

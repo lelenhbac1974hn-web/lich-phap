@@ -61,4 +61,19 @@ Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong �
 
 Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của người dùng.
 
-© 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền — xem tệp LICENSE. Phông chữ theo giấy phép SIL OFL.
+## Bản quyền
+
+© 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền — xem tệp [LICENSE](LICENSE).
+
+Lịch Pháp được tặng **miễn phí** cho mọi người. Bản chính thức duy nhất:
+https://lelenhbac1974hn-web.github.io/lich-phap/ — nếu bạn phải trả tiền cho ứng dụng này, đó là bản sao trái phép.
+
+- **Được:** dùng ứng dụng, cài lên điện thoại, chia sẻ đường dẫn, xem mã nguồn để học hỏi.
+- **Không được** (khi chưa có đồng ý bằng văn bản của tác giả): đưa lên App Store, Google Play hay bất kỳ
+  chợ ứng dụng nào; bán, thu phí, gắn quảng cáo; phát hành lại dưới tên hoặc địa chỉ khác; dùng mã,
+  cơ sở dữ liệu sao, hình ảnh trong sản phẩm khác.
+
+Phông chữ Be Vietnam Pro và Bodoni Moda theo giấy phép SIL OFL 1.1.
+
+*This repository is source-available, not open source. Publishing this app or any derivative on any
+app store, or any commercial use, is prohibited without the author's written permission. See LICENSE.*

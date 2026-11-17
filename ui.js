@@ -1,3 +1,4 @@
+/* Lịch Pháp © 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền. Bản chính thức, miễn phí: https://lelenhbac1974hn-web.github.io/lich-phap/ — cấm đưa lên chợ ứng dụng, bán hay phát hành lại khi chưa được phép (xem LICENSE). */
 /* GIAO DIỆN LỊCH PHÁP — chỉ trình bày. Mọi phép tính lấy từ lich-phap.js. */
 (function () {
   "use strict";
@@ -673,7 +674,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.8.4";
+  const PHIEN_BAN = "1.8.5";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt).length;
     const el = moTam(`
@@ -699,7 +700,10 @@
           <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — tên sao chữ Hán.</li>
           <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
           <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>
-        <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>
+        <section><h4>Bản quyền</h4>
+          <p>Lịch Pháp được tặng <b>miễn phí</b> cho mọi người. Bản chính thức duy nhất ở địa chỉ <b>lelenhbac1974hn-web.github.io/lich-phap</b>. Nếu bạn phải trả tiền, hoặc thấy ứng dụng này trên chợ ứng dụng (App Store, Google Play…), đó là bản sao trái phép.</p>
+          <p>Mọi người được dùng, chia sẻ đường dẫn và xem mã để học hỏi. Không được đưa lên chợ ứng dụng, bán, gắn quảng cáo hay phát hành lại dưới tên khác khi chưa có đồng ý của tác giả.</p></section>
+        <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc · Bảo lưu mọi quyền<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>
       </div>`, "lop-gt");
     if (muc) { const m = el.querySelector("#" + muc); if (m) setTimeout(() => m.scrollIntoView({ block: "start" }), 60); }
   }

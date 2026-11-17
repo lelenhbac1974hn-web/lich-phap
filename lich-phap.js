@@ -1,3 +1,4 @@
+/* Lịch Pháp © 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền. Bản chính thức, miễn phí: https://lelenhbac1974hn-web.github.io/lich-phap/ — cấm đưa lên chợ ứng dụng, bán hay phát hành lại khi chưa được phép (xem LICENSE). */
 /* LICH PHAP - loi lich phap dung chung (trich nguyen van tu lich-van-nien-pwa/app.js, dong 10-543).
    Khong sua thuat toan o day; giao dien nam o ui.js. */
 /* ═════════════ LÕI ÂM LỊCH — THUẬT TOÁN HỒ NGỌC ĐỨC ═════════════ */
