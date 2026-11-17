@@ -1,0 +1,154 @@
+/* Lịch Pháp © 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền. Bản chính thức, miễn phí: https://lelenhbac1974hn-web.github.io/lich-phap/ — cấm đưa lên chợ ứng dụng, bán hay phát hành lại khi chưa được phép (xem LICENSE). */
+/* GIAO DIỆN — PHẦN DÙNG CHUNG: hằng, tiện ích, trạng thái st, thông tin một ngày, chuyển mục, chiều cao màn hình, bảng chẩn đoán.
+   Giao diện chia nhiều tệp, nạp theo thứ tự trong index.html: ui-chung → ui-to-lich → ui-gio-thang → ui-sao → ui-nhac → ui-khoi-dong.
+   Các tệp dùng chung tên khai báo ở mức ngoài cùng (hằng, hàm, trạng thái st); chỉ ui-khoi-dong.js gắn sự kiện chung và vẽ lần đầu. */
+"use strict";
+
+const THANG_AM = ["Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Mười Một", "Chạp"];
+const CON_GIAP = ["Chuột", "Trâu", "Hổ", "Mèo", "Rồng", "Rắn", "Ngựa", "Dê", "Khỉ", "Gà", "Chó", "Lợn"];
+const BAC_UI = [
+  { t: "Rất xấu", lop: "b0" },
+  { t: "Xấu", lop: "b1" },
+  { t: "Bình thường", lop: "b2" },
+  { t: "Tốt", lop: "b3" },
+  { t: "Rất tốt", lop: "b4" }
+];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const hai = n => String(n).padStart(2, "0");
+
+function jdHomNay() {
+  const d = new Date();
+  return jdFromDate(d.getDate(), d.getMonth() + 1, d.getFullYear());
+}
+const thuCuaJd = j => (j + 1) % 7; // 0 = Chủ Nhật
+
+/* kieu: "sao" = cộng sao (thang điểm), "sach" = luận theo sách (luan-sach.js) */
+const st = { jd: jdHomNay(), viec: "chung", kieu: (() => { try { return localStorage.getItem("lichphap:kieu-luan") === "sach" ? "sach" : "sao"; } catch (e) { return "sao"; } })() };
+const bacTheoKieu = (j, am, viec) => st.kieu === "sach" ? luanTheoSach(j, am, viec).bac : chamDiem(j, am, viec).bac;
+
+/* ── Gom toàn bộ thông tin một ngày ── */
+function thongTin(j, viec) {
+  const [dd, mm, yy] = jdToDate(j);
+  const am = amCuaJd(j);
+  const dauThang = j - am.day + 1;
+  const du = amCuaJd(dauThang + 29).day === 30;
+  return {
+    j, dd, mm, yy, am, du,
+    thu: thuCuaJd(j),
+    le: leCuaNgay(j),
+    cd: chamDiem(j, am, viec),
+    ls: luanTheoSach(j, am, viec),
+    gio: gioTrongNgay(j),
+    tiet: tietKhi(j),
+    ccNgay: ccNgay(j),
+    ccThang: ccThang(am.month, am.year),
+    ccNam: ccNam(am.year),
+    conGiap: CON_GIAP[(am.year + 8) % 12]
+  };
+}
+
+/* ── Mặt trăng theo ngày âm ── */
+function svgTrang(ngayAm, co) {
+  const r = co / 2 - 1, c = co / 2;
+  const pha = ((ngayAm - 1) / 29.53) * 2 * Math.PI; // 0 = sóc, π = vọng
+  const k = Math.cos(pha);                            // 1 → tối hẳn, -1 → tròn
+  const rx = Math.abs(k) * r;
+  const tang = ngayAm <= 15;                          // trăng đang lớn dần: sáng bên phải
+  const sweepNgoai = tang ? 1 : 0;
+  const sweepTrong = (k > 0) === tang ? 0 : 1;
+  const d = `M ${c} ${c - r} A ${r} ${r} 0 0 ${sweepNgoai} ${c} ${c + r} A ${rx.toFixed(2)} ${r} 0 0 ${sweepTrong} ${c} ${c - r} Z`;
+  return `<svg class="trang" width="${co}" height="${co}" viewBox="0 0 ${co} ${co}" aria-hidden="true">
+    <circle cx="${c}" cy="${c}" r="${r}" class="trang-toi"/><path d="${d}" class="trang-sang"/></svg>`;
+}
+
+/* ── Chuyển mục bằng thanh menu chạm ── */
+const TAB = ["ngay", "gio", "thang", "luan", "nhac"];
+function doiTab(t) {
+  const cu = TAB.indexOf(document.body.dataset.tab), moi = TAB.indexOf(t);
+  if (moi < 0 || moi === cu) return;
+  document.body.style.setProperty("--huong", moi > cu ? 1 : -1);
+  document.body.dataset.tab = t;
+  $("thanh-tab").style.setProperty("--i", moi);
+  document.querySelectorAll("#thanh-tab .tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  $("khung").scrollTop = 0;
+}
+/* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */
+/* Chiều cao màn hình chuẩn.
+   – Khi cài ra màn hình chính (chạy toàn màn hình): lấy kích thước màn hình thật của máy (screen.width/height),
+     không phụ thuộc phóng to, bàn phím hay cách Safari tính vùng nhìn.
+   – Khi mở trong trình duyệt: lấy chiều cao khung bố cục. */
+const chayRieng = () => window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+function chieuCaoChuan() {
+  if (chayRieng() && window.screen && screen.width && screen.height) {
+    const doc = window.matchMedia("(orientation: portrait)").matches;
+    return doc ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+  }
+  return document.documentElement.clientHeight || window.innerHeight;
+}
+function datChieuCao() {
+  const h = Math.round(chieuCaoChuan());
+  document.documentElement.style.setProperty("--cao", `${h}px`);
+  document.documentElement.classList.toggle("chay-rieng", chayRieng());
+  if (!$("chan-doan").hidden) veChanDoan();
+}
+/* Bảng thông số màn hình: nhấn giữ con dấu 曆 ở góc trên khoảng 1 giây để bật/tắt */
+function veChanDoan() {
+  const cs = getComputedStyle(document.documentElement);
+  const tam = document.createElement("div");
+  tam.style.cssText = "position:fixed;top:env(safe-area-inset-top);bottom:env(safe-area-inset-bottom);left:0;width:0;visibility:hidden";
+  document.body.appendChild(tam);
+  const r = tam.getBoundingClientRect();
+  const tren = Math.round(r.top), duoi = Math.round(window.innerHeight - r.bottom);
+  tam.remove();
+  const vv = window.visualViewport;
+  const tab = $("thanh-tab").getBoundingClientRect();
+  $("chan-doan").innerHTML = [
+    ["Chạy toàn màn hình", chayRieng() ? "có" : "không"],
+    ["screen", `${screen.width} × ${screen.height} @${window.devicePixelRatio}x`],
+    ["innerHeight", window.innerHeight],
+    ["clientHeight", document.documentElement.clientHeight],
+    ["visualViewport", vv ? `${Math.round(vv.height)} · zoom ${vv.scale.toFixed(2)}` : "—"],
+    ["Vùng an toàn trên / dưới", `${tren} / ${duoi}`],
+    ["Chiều cao đang dùng", cs.getPropertyValue("--cao").trim()],
+    ["Menu đáy cách mép dưới", Math.round(chieuCaoChuan() - tab.bottom)]
+  ].map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join("") + `<small>Nhấn giữ con dấu 曆 để đóng</small>`;
+}
+function ganChieuCao() {
+  datChieuCao();
+  /* Khoá chiều dọc khi cài ra màn hình chính (Android hỗ trợ; iPhone không cho khoá nên dùng lớp che "xoay lại") */
+  if (chayRieng() && screen.orientation && screen.orientation.lock) screen.orientation.lock("portrait").catch(() => {});
+  window.addEventListener("resize", datChieuCao);
+  window.addEventListener("orientationchange", () => setTimeout(datChieuCao, 300));
+  window.addEventListener("pageshow", datChieuCao);
+  let henGiu = 0;
+  const logo = $("nut-hom-nay-logo");
+  logo.addEventListener("touchstart", () => {
+    henGiu = setTimeout(() => { henGiu = -1; const cd = $("chan-doan"); cd.hidden = !cd.hidden; if (!cd.hidden) veChanDoan(); }, 900);
+  }, { passive: true });
+  logo.addEventListener("touchend", e => { if (henGiu === -1) e.preventDefault(); clearTimeout(henGiu); henGiu = 0; });
+  logo.addEventListener("touchmove", () => { clearTimeout(henGiu); henGiu = 0; }, { passive: true });
+  logo.addEventListener("contextmenu", e => e.preventDefault());
+  /* Chặn phóng to bằng hai ngón và chạm đúp trên iPhone, để giao diện luôn giữ nguyên tỉ lệ */
+  ["gesturestart", "gesturechange", "gestureend"].forEach(ev =>
+    document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+  let lanCham = 0;
+  document.addEventListener("touchend", e => {
+    const bay = Date.now();
+    if (bay - lanCham < 320 && !e.target.closest("input,select,textarea")) e.preventDefault();
+    lanCham = bay;
+  }, { passive: false });
+}
+function ganTab() {
+  $("thanh-tab").addEventListener("pointerdown", e => {
+    const b = e.target.closest(".tab");
+    if (!b || giamDong.matches) return;
+    const r = b.getBoundingClientRect(), g = document.createElement("span");
+    g.className = "gon";
+    g.style.left = `${e.clientX - r.left}px`; g.style.top = `${e.clientY - r.top}px`;
+    b.appendChild(g);
+    g.addEventListener("animationend", () => g.remove(), { once: true });
+  });
+}
+

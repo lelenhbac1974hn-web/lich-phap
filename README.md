@@ -82,7 +82,12 @@ tuổi người, theo giờ, cưới hỏi, an táng có trong cơ sở tri th�
 | `luan-sach.js` | Bộ máy "Luận theo sách" |
 | `le-tet.js` | Thiệp lễ tết (phong tục, món ăn, hiệu ứng) |
 | `bieu-tuong.js` | Bộ biểu tượng vẽ nét cho Nhắc việc và Ngày lặp lại |
-| `ui.js` | Điều khiển giao diện, nhắc việc, phân tích câu tự nhiên |
+| `ui-chung.js` | Giao diện — phần dùng chung: hằng, tiện ích, trạng thái, chuyển mục, chiều cao màn hình |
+| `ui-to-lich.js` | Tờ lịch, lễ tết, hiệu ứng lật, vuốt, cảnh theo mùa |
+| `ui-gio-thang.js` | Thẻ phán định (Cộng sao / Theo sách), mặt đồng hồ giờ, trực · thần · tú, lịch tháng |
+| `ui-sao.js` | Sao Ngọc Hạp của ngày, thẻ sao, tra cứu, trang Giới thiệu |
+| `ui-nhac.js` | Nhắc việc, Ngày lặp lại, hiểu câu tiếng Việt |
+| `ui-khoi-dong.js` | Vẽ lại, sự kiện chung, khởi động |
 | `sw.js`, `manifest.json` | Chạy ngoại tuyến, cài như ứng dụng |
 
 Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của người dùng.

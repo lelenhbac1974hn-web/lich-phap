@@ -1,7 +1,7 @@
 /* Lịch Pháp — bộ đệm chạy không cần mạng. © 2026 Lê Lệnh Bắc
    Mỗi lần phát hành bản mới: đổi số phiên bản ở dòng dưới. */
-const C = 'lp-v1.11.0';
-const F = ['./', 'index.html', 'style.css', 'lich-phap.js', 'le-tet.js', 'ngoc-hap.js', 'luan-giai.js', 'luan-sach.js', 'bieu-tuong.js', 'ui.js', 'manifest.json',
+const C = 'lp-v1.12.0';
+const F = ['./', 'index.html', 'style.css', 'lich-phap.js', 'le-tet.js', 'ngoc-hap.js', 'luan-giai.js', 'luan-sach.js', 'bieu-tuong.js', 'ui-chung.js', 'ui-to-lich.js', 'ui-gio-thang.js', 'ui-sao.js', 'ui-nhac.js', 'ui-khoi-dong.js', 'manifest.json',
   'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'apple-touch-icon.png',
   'be-vietnam-pro-latin-300-italic.woff2', 'be-vietnam-pro-latin-400-normal.woff2',
   'be-vietnam-pro-latin-500-normal.woff2', 'be-vietnam-pro-latin-600-normal.woff2',
