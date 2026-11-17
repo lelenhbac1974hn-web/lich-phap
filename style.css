@@ -474,7 +474,7 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .gon-chi-tiet .nut{justify-self:start}
 .nhac-goi-y.canh-bao{color:var(--son-dam);font-weight:600}
 .nhom-nut.xong.chac{background:#D2691E;color:#fff;font-size:12px;line-height:1.15;padding:6px 4px}
-.trang-viec .nhom-nut:not(.chac){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nhac-nhom .nhom-nut:not(.chac){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Danh sách cuộn khoảng 5 dòng trên máy tính */
 #ds-viec,#ds-nhac .nhac-ds{max-height:390px;overflow-y:auto;overscroll-behavior:contain;padding:3px 3px 4px;margin:-3px -3px 0;scrollbar-width:thin}
 
@@ -760,7 +760,7 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
   #nhac .nhac-tep span{display:none}
   #nhac[data-trang="viec"] .trang-viec,#nhac[data-trang="lap"] .trang-lap{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
   .trang-viec>*,.trang-lap>*{flex:none}
-  .trang-lap .nhac-khung{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
+  .trang-lap .nhac-khung{display:flex;flex-direction:column;align-items:stretch;flex:1 1 0;min-height:0}
   .trang-lap .nhac-khung>*{flex:none}
   .trang-lap .nhac-phai{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
   #ds-nhac{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
@@ -898,3 +898,4 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .gt-than p,.gt-than li{font-size:14px;line-height:1.6;color:var(--muc-2);margin:0 0 6px}
 .gt-than ul{margin:0;padding-left:18px}
 .gt-cuoi{margin-top:14px!important;font-size:12px!important;color:var(--muc-3)!important;text-align:center}
+.gon-dem:empty{display:none}
