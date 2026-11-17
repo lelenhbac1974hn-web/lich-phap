@@ -217,11 +217,10 @@ h3,h4,p{margin:0}
 .vach{stroke:#D9CCAE;stroke-width:1}
 .vach.dam{stroke:#B9A37A;stroke-width:1.6}
 .mui{cursor:pointer;outline:0}
-.mui path{stroke:var(--the);stroke-width:2.5;transition:fill .25s,transform .35s cubic-bezier(.3,1.5,.5,1);transform-origin:170px 170px}
+.mui path{stroke:var(--the);stroke-width:2.5;transition:fill .25s}
 .mui.hd path{fill:#DDEFE2}
 .mui.hac path{fill:#F7E2DD}
-.mui:hover path{filter:brightness(.97)}
-.mui.chon path{transform:scale(1.04);stroke:#B9A37A;stroke-width:2}
+.mui.chon path{stroke:#8A6A28;stroke-width:2.5}
 .mui.hd.chon path{fill:#C3E5CF}
 .mui.hac.chon path{fill:#F1CBC3}
 .mui text{text-anchor:middle;pointer-events:none;font-family:var(--chu)}
@@ -242,8 +241,8 @@ h3,h4,p{margin:0}
 .chu-gio i{width:12px;height:12px;border-radius:3px;background:#DDEFE2;border:1px solid #8FD3AC}
 .chu-gio .hac i{background:#F7E2DD;border-color:#F0A496}
 .chu-gio .dang i{background:#8FD3AC;border-color:#4F806A}
-.kim{stroke:var(--son-dam);stroke-width:2.2;stroke-linecap:round}
-.kim-dau{fill:var(--son);stroke:#FFF3DC;stroke-width:2}
+.kim{stroke:var(--son-dam);stroke-width:2.2;stroke-linecap:round;pointer-events:none}
+.kim-dau{fill:var(--son);stroke:#FFF3DC;stroke-width:2;pointer-events:none}
 .tam-gio{fill:#8A1B15}
 .tam-vien{fill:none;stroke:rgba(255,235,200,.45);stroke-width:1}
 .tam-so{text-anchor:middle;font:900 30px var(--so);fill:#FBE3B0}
@@ -808,6 +807,8 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
   .tt-bac{font-size:24px;font-weight:700;line-height:1.15;color:var(--m)}
   .tt-phu{grid-column:1/-1;font-size:12.5px;color:var(--muc-2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tt-phu em{font-style:normal;color:var(--muc-3);margin-left:2px}
+  .tt-ky{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .tt-ky .kieng{font-style:normal;padding:2px 9px}
   .tom-tat .pd-thang{grid-column:1/-1;margin:8px 0 0}
   .tom-tat .pd-thang i{height:5px}
   .tom-tat .pd-thang i.dang{height:7px;margin-top:-1px}
@@ -912,3 +913,5 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
 .pd-lien{border:0;background:none;padding:0;font:600 12px var(--chu);color:var(--thu-phap,#9E1D15);cursor:pointer;text-decoration:underline}
 .gt-than ol{margin:0;padding-left:20px}
 .gt-than ol li{font-size:14px;line-height:1.6;color:var(--muc-2);margin:0 0 6px}
+.gct-bay{display:block;width:100%;margin-top:8px;padding:6px 10px;border:1px dashed var(--vien);border-radius:9px;background:#FFF6DC;
+  color:var(--muc-2);font:600 12px var(--chu);text-align:left;cursor:pointer}

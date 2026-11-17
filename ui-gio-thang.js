@@ -41,6 +41,10 @@ function vePhanDinh(x) {
     </div>`;
 }
 
+/* Ngày kỵ lớn (Tam nương, Nguyệt kỵ, Dương công kỵ) hiện ở dải tốt xấu, tách khỏi lễ tết và nhắc lịch trên tờ lịch */
+const kyNgay = cd => [cd.tn && "Tam nương", cd.nk && "Nguyệt kỵ", cd.dc && "Dương công kỵ"]
+  .filter(Boolean).map(t => `<i class="kieng">${t}</i>`).join("");
+
 /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
 function veTomTat(x) {
   const sach = st.kieu === "sach", cd = x.cd, soBac = sach ? x.ls.bac : cd.bac, bac = BAC_UI[soBac];
@@ -53,6 +57,7 @@ function veTomTat(x) {
     <b class="tt-diem">${sach ? "" : (cd.diem > 0 ? "+" : "") + cd.diem}</b>
     <strong class="tt-bac">${bac.t}</strong>
     <span class="tt-phu">${esc(phu)} <em>›</em></span>
+    ${kyNgay(cd) ? `<span class="tt-ky">${kyNgay(cd)}</span>` : ""}
     <span class="pd-thang">${BAC_UI.map((b, i) => `<i class="${b.lop}${i === soBac ? " dang" : ""}"></i>`).join("")}</span>`;
 }
 
@@ -92,7 +97,7 @@ function veMatGio(x) {
     return [C + r * Math.cos(a), C + r * Math.sin(a)];
   };
   const gio = gioChiTiet(x.j);
-  const laHomNay = x.j === jdHomNay();
+  const laHomNay = x.j === jdLich();
   const bay = new Date(), gioNay = gioHienTai();
   if (st.gioChon == null) st.gioChon = laHomNay ? gioNay : gio.find(g => g.hd).i;
   const chon = gio[st.gioChon];
@@ -147,6 +152,7 @@ function veMatGio(x) {
       </div>
       <p><strong>${chon.than}</strong> — ${Y_THAN[chon.than] || ""}</p>
       <p class="gct-xung">Giờ xung tuổi <b>${chon.xung}</b></p>
+      ${laHomNay && chon.i !== gioNay ? `<button type="button" class="gct-bay" data-gio="${gioNay}">Bây giờ ${hai(bay.getHours())}:${hai(bay.getMinutes())} · giờ ${gio[gioNay].can} ${gio[gioNay].chi} · ${gio[gioNay].hd ? "hoàng đạo" : "hắc đạo"} ›</button>` : ""}
     </div>
     <div class="huong">
       <div><span>Hỷ thần</span><b>${HY_THAN[canNgay]}</b></div>
@@ -181,7 +187,7 @@ function veLichThang(x) {
   const dau = jdFromDate(1, x.mm, x.yy);
   const soNgay = jdFromDate(1, x.mm === 12 ? 1 : x.mm + 1, x.mm === 12 ? x.yy + 1 : x.yy) - dau;
   const lech = (thuCuaJd(dau) + 6) % 7; // tuần bắt đầu Thứ Hai
-  const hom = jdHomNay();
+  const hom = jdLich();
   let o = "";
   /* Ngày của tháng trước / tháng sau lấp chỗ trống đầu và cuối lưới, tô nhạt */
   const oNgoai = j => {

@@ -78,7 +78,7 @@ document.addEventListener("click", e => {
   else if (b.dataset.thang) doiThang(Number(b.dataset.thang));
   else if (b.dataset.viec) { st.viec = b.dataset.viec; ve(); }
 });
-$("nut-hom-nay").addEventListener("click", () => den(jdHomNay()));
+$("nut-hom-nay").addEventListener("click", () => den(jdLich()));
 $("nut-hom-nay-logo").addEventListener("click", e => { e.preventDefault(); moGioiThieu(); });
 $("o-ngay").addEventListener("change", e => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(e.target.value);
@@ -99,9 +99,12 @@ ganGiuLe();
 ganTab();
 ganChieuCao();
 ve();
-/* Kim đồng hồ chạy theo giờ thật khi đang xem hôm nay */
+/* Kim đồng hồ chạy theo giờ thật khi đang xem hôm nay; qua 23 giờ (sang giờ Tý) tự lật sang ngày mới */
+let homTruoc = jdLich();
 setInterval(() => {
-  if (document.hidden || st.jd !== jdHomNay()) return;
+  const hom = jdLich();
+  if (hom !== homTruoc) { const dangXemHom = st.jd === homTruoc; homTruoc = hom; if (dangXemHom && !document.hidden) { den(hom); return; } }
+  if (document.hidden || st.jd !== hom) return;
   veMatGio(thongTin(st.jd, st.viec));
 }, 30000);
 ganNghieng();

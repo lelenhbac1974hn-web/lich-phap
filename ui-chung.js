@@ -22,10 +22,13 @@ function jdHomNay() {
   const d = new Date();
   return jdFromDate(d.getDate(), d.getMonth() + 1, d.getFullYear());
 }
+/* Ngày để xem lịch: giờ Tý (23 giờ) đã sang ngày mới theo can chi, nên từ 23 giờ lịch hiện ngày hôm sau.
+   Nhắc việc vẫn dùng jdHomNay (ngày dương lịch theo đồng hồ). */
+const jdLich = () => jdHomNay() + (new Date().getHours() >= 23 ? 1 : 0);
 const thuCuaJd = j => (j + 1) % 7; // 0 = Chủ Nhật
 
 /* kieu: "sao" = cộng sao (thang điểm), "sach" = luận theo sách (luan-sach.js) */
-const st = { jd: jdHomNay(), viec: "chung", kieu: (() => { try { return localStorage.getItem("lichphap:kieu-luan") === "sach" ? "sach" : "sao"; } catch (e) { return "sao"; } })() };
+const st = { jd: jdLich(), viec: "chung", kieu: (() => { try { return localStorage.getItem("lichphap:kieu-luan") === "sach" ? "sach" : "sao"; } catch (e) { return "sao"; } })() };
 const bacTheoKieu = (j, am, viec) => st.kieu === "sach" ? luanTheoSach(j, am, viec).bac : chamDiem(j, am, viec).bac;
 
 /* ── Gom toàn bộ thông tin một ngày ── */

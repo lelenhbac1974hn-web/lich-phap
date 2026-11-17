@@ -17,11 +17,6 @@ function veToLich(x) {
     : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${esc(l.ten)}</span>`).join("");
   const khoaLon = khoaLe.find(k => T && T.laLeLon(k));
   const ruy = khoaLon ? `<button type="button" class="tl-ruy" data-thiep="${khoaLon}" aria-label="Nhấn giữ để xem về ngày lễ">${T.layThiep(khoaLon).bieu}</button>` : "";
-  const kieng = [
-    x.cd.tn && "Tam nương",
-    x.cd.nk && "Nguyệt kỵ",
-    x.cd.dc && "Dương công kỵ nhật"
-  ].filter(Boolean).map(t => `<span class="kieng">${t}</span>`).join("");
   const nhacHom = nhacCuaNgay(x.j).map(n => {
     const dn = soNam(n, x.j);
     return `<span class="le le-nhac l-${n.loai}">${esc(n.ten)}${dn ? ` · ${dn}` : ""}</span>`;
@@ -42,7 +37,7 @@ function veToLich(x) {
         ${ruy}
         <div class="tl-so">${x.dd}</div>
         <div class="tl-thu">${THU[x.thu]}</div>
-        ${chipViec || nhacHom || le || kieng ? `<div class="tl-nhan">${chipViec}${nhacHom}${le}${kieng}</div>` : ""}
+        ${chipViec || nhacHom || le ? `<div class="tl-nhan">${chipViec}${nhacHom}${le}</div>` : ""}
         <blockquote class="tl-cau">
           <p>${esc(cau).replace(/\n/g, "<br>")}</p>
           <cite>${esc(loai)} Việt Nam</cite>
