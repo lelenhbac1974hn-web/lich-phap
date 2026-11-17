@@ -673,7 +673,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.8.1";
+  const PHIEN_BAN = "1.8.2";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt).length;
     const el = moTam(`
@@ -686,7 +686,7 @@
           <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước (mỗi hướng một kiểu lật); lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
           <li><b>Giờ</b> — mặt đồng hồ 12 canh giờ, giờ hoàng đạo, hướng Hỷ thần, Tài thần.</li>
           <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
-          <li><b>Luận giải</b> — chấm điểm ngày theo việc (khởi công, cưới hỏi, ký kết…), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
+          <li><b>Luận giải</b> — chấm điểm ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
           <li><b>Nhắc</b> — Nhắc việc và Ngày lặp lại (giỗ âm lịch, sinh nhật, kỷ niệm). Gõ câu tự nhiên như “Họp giao ban 8h sáng mai”, “Giỗ bố 20/10 âm” — ứng dụng tự hiểu ngày, giờ.</li></ul></section>
         <section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
           <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
