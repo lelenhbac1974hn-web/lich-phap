@@ -673,7 +673,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.8.2";
+  const PHIEN_BAN = "1.8.3";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt).length;
     const el = moTam(`
@@ -873,6 +873,7 @@
         <span class="gon-dem${con <= n.truoc ? " gap" : ""}">${dem}</span>
         ${mo ? `<div class="gon-chi-tiet">
           <p><b>${LOAI[n.loai].ten}</b> · hằng năm ngày ${ngayGoc(n)}</p>
+          ${n.nam != null ? `<p>${LOAI[n.loai].nam}: <b>${n.nam}</b>${dn ? ` · lần tới: <b>${dn.charAt(0).toLowerCase() + dn.slice(1)}</b>` : ""}</p>` : ""}
           ${t ? `<p>Lần tới: ${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}${LOAI[n.loai].lich === "duong" ? ` (${t.am.day}/${t.am.month} âm)` : ""} · nhắc trước ${n.truoc} ngày</p>` : ""}
           ${n.ghi ? `<p class="gon-ghi">📝 ${esc(n.ghi)}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
           ${j != null ? `<button type="button" class="nut nho" data-jd="${j}">Xem tờ lịch ngày này</button>` : ""}
@@ -887,7 +888,7 @@
     const chac = !!nhacChon && choXoa === nhacChon;
     $("n-xoa").classList.toggle("chac", chac);
     $("n-xoa").textContent = chac ? "Bấm lần nữa để xoá" : "Xoá";
-    $("n-goi-y").textContent = !nhac.length ? "" : nhacChon ? "" : "Chạm vào một lời nhắc để sửa hoặc xoá.";
+    $("n-goi-y").textContent = !nhac.length ? "" : nhacChon ? "Đang chọn: bấm Sửa hoặc Xoá ở thanh trên." : "Chạm vào một lời nhắc để xem ghi chú, sửa hoặc xoá.";
 
     const gan = ds.filter(x => x.j != null && x.con <= x.n.truoc);
     $("bao-nhac").innerHTML = gan.map(({ n, j, con }) =>
@@ -1069,6 +1070,8 @@
       nhacChon = nhacChon === li.dataset.chon ? null : li.dataset.chon;
       choXoa = null;
       veNhac();
+      const mo = nhacChon && document.querySelector(`#ds-nhac [data-chon="${nhacChon}"]`);
+      if (mo) setTimeout(() => mo.scrollIntoView({ block: "nearest", behavior: "smooth" }), 30);
     };
     $("ds-nhac").addEventListener("click", e => {
       if (e.target.closest("[data-jd]")) return;
@@ -1433,7 +1436,7 @@
     $("v-xoa").textContent = chac ? "Bấm lần nữa" : "Xoá";
     const coViec = locViec === "xong" ? nhom.xong.length : nhom[locViec].length;
     $("v-goi-y").textContent = hoiXong ? `Việc này hẹn ${nhanNgayViec(vc.jd)}${vc.gio ? " " + vc.gio : ""}, chưa tới. Đã làm xong thật thì bấm “Xong” lần nữa.`
-      : coViec && !vc ? "Chạm vào một việc để xem chi tiết, rồi bấm Xong, Sửa hoặc Xoá." : "";
+      : !coViec ? "" : vc ? "Đang chọn: bấm Xong, Sửa hoặc Xoá ở thanh trên." : "Chạm vào một việc để xem ghi chú, rồi bấm Xong, Sửa hoặc Xoá.";
     $("v-goi-y").classList.toggle("canh-bao", hoiXong);
 
     const can = soViecCan();
