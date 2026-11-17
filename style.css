@@ -807,8 +807,6 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
   .tt-bac{font-size:24px;font-weight:700;line-height:1.15;color:var(--m)}
   .tt-phu{grid-column:1/-1;font-size:12.5px;color:var(--muc-2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tt-phu em{font-style:normal;color:var(--muc-3);margin-left:2px}
-  .tt-ky{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-  .tt-ky .kieng{font-style:normal;padding:2px 9px}
   .tom-tat .pd-thang{grid-column:1/-1;margin:8px 0 0}
   .tom-tat .pd-thang i{height:5px}
   .tom-tat .pd-thang i.dang{height:7px;margin-top:-1px}

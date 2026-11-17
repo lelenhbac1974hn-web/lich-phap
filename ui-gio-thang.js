@@ -41,9 +41,9 @@ function vePhanDinh(x) {
     </div>`;
 }
 
-/* Ngày kỵ lớn (Tam nương, Nguyệt kỵ, Dương công kỵ) hiện ở dải tốt xấu, tách khỏi lễ tết và nhắc lịch trên tờ lịch */
-const kyNgay = cd => [cd.tn && "Tam nương", cd.nk && "Nguyệt kỵ", cd.dc && "Dương công kỵ"]
-  .filter(Boolean).map(t => `<i class="kieng">${t}</i>`).join("");
+/* Ngày kỵ lớn (Tam nương, Nguyệt kỵ, Dương công kỵ) ghi bằng chữ trong dòng phụ của dải tốt xấu — không thêm hàng,
+   để dải luôn cao như nhau và tờ lịch không co giãn giữa các ngày */
+const kyNgay = cd => [cd.tn && "Tam nương", cd.nk && "Nguyệt kỵ", cd.dc && "Dương công kỵ"].filter(Boolean);
 
 /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
 function veTomTat(x) {
@@ -51,13 +51,14 @@ function veTomTat(x) {
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
   const el = $("tom-tat");
   el.className = `tom-tat ${bac.lop}`;
-  const phu = sach ? (x.ls.khongCuu[0] || x.ls.kieng[0] || { t: x.ls.ket }).t : `Trực ${cd.truc.t} · ${cd.than.t} · Sao ${cd.saoTen}`;
+  const ky = kyNgay(cd);
+  const phu = sach ? (x.ls.khongCuu[0] || x.ls.kieng[0] || { t: x.ls.ket }).t
+    : (ky.length ? ky.join(" · ") + " · " : "") + `Trực ${cd.truc.t} · ${cd.than.t} · Sao ${cd.saoTen}`;
   el.innerHTML = `
     <span class="tt-nhan">${sach ? "Theo sách" : "Phán định"} · ${esc(viec.ten)}</span>
     <b class="tt-diem">${sach ? "" : (cd.diem > 0 ? "+" : "") + cd.diem}</b>
     <strong class="tt-bac">${bac.t}</strong>
     <span class="tt-phu">${esc(phu)} <em>›</em></span>
-    ${kyNgay(cd) ? `<span class="tt-ky">${kyNgay(cd)}</span>` : ""}
     <span class="pd-thang">${BAC_UI.map((b, i) => `<i class="${b.lop}${i === soBac ? " dang" : ""}"></i>`).join("")}</span>`;
 }
 
