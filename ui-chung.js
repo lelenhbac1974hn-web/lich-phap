@@ -17,6 +17,22 @@ const BAC_UI = [
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const hai = n => String(n).padStart(2, "0");
+/* Giao diện sáng / tối: "tu-dong" theo cài đặt của máy, hoặc "sang", "toi" do người dùng chọn trong menu */
+const KHOA_GD = "lichphap:giao-dien";
+const mayToi = window.matchMedia("(prefers-color-scheme: dark)");
+function layGiaoDien() { try { return localStorage.getItem(KHOA_GD) || "tu-dong"; } catch (e) { return "tu-dong"; } }
+function apGiaoDien() {
+  const g = layGiaoDien(), toi = g === "toi" || (g !== "sang" && mayToi.matches);
+  document.documentElement.toggleAttribute("data-toi", toi);
+  const m = document.querySelector('meta[name="color-scheme"]');
+  if (m) m.content = toi ? "dark" : "light";
+}
+function datGiaoDien(g) {
+  try { if (g === "tu-dong") localStorage.removeItem(KHOA_GD); else localStorage.setItem(KHOA_GD, g); } catch (e) { /* không lưu được: chỉ đổi trong phiên */ document.documentElement.toggleAttribute("data-toi", g === "toi"); return; }
+  apGiaoDien();
+}
+mayToi.addEventListener("change", apGiaoDien);
+apGiaoDien();
 /* Biểu tượng nét nhỏ đi kèm chữ (thay emoji màu) — cùng bộ với biểu tượng Nhắc việc */
 const ic = k => window.BieuTuong ? `<i class="ic">${window.BieuTuong.svg(k)}</i>` : "";
 

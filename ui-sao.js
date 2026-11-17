@@ -58,17 +58,36 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.14.1";
-function moGioiThieu(muc) {
+const PHIEN_BAN = "1.15.0";
+/* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
+   Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
+const MENU = [
+  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()] },
+  { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
+  { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
+  { id: "can-cu", bieu: "taiLieu", ten: "Căn cứ và tài liệu", phu: () => "Lịch pháp, sao Ngọc Hạp, sách tham khảo" },
+  { id: "ban-quyen", bieu: "hopDong", ten: "Bản quyền", phu: () => "Tặng miễn phí cho mọi người" }
+];
+function trangMenu(id) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
-  const el = moTam(`
-    <header class="gt-dau"><div class="gt-an" aria-hidden="true">曆</div>
-      <h3>Lịch Pháp</h3><p>Lịch âm dương · xem ngày theo Ngọc Hạp · nhắc việc</p></header>
-    <div class="gt-than">
-      <section><h4>Chương trình</h4>
+  const g = layGiaoDien();
+  const chonGD = (k, ten, mo) => `<button type="button" class="mn-chon${g === k ? " dang" : ""}" data-giao-dien="${k}" aria-pressed="${g === k}">
+      <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
+  return {
+    "giao-dien": `<section><h4>Sáng hay tối</h4>
+        ${chonGD("tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại")}
+        ${chonGD("sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày")}
+        ${chonGD("toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối")}</section>`,
+    "huong-dan": `<section><h4>Dùng nhanh</h4><ol>
+        <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
+        <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng, chọn kiểu luận ở mục Luận giải, mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
+        <li><b>Đọc nghĩa sao:</b> chạm tên sao ở mục Luận giải, hoặc bấm “Tra cứu” để tìm theo tên.</li>
+        <li><b>Thêm việc, ngày giỗ:</b> thẻ Nhắc → “＋ Thêm” → gõ một câu tự nhiên.</li></ol>
+        <p><button type="button" class="nut nho" data-huong-dan>Xem hướng dẫn từng bước</button></p></section>`,
+    ve: `<section><h4>Chương trình</h4>
         <p>Lịch Pháp là lịch vạn niên dành cho người Việt: mỗi ngày là một tờ lịch có âm lịch, can chi, tiết khí, trực, nhị thập bát tú, giờ hoàng đạo và các sao tốt xấu theo Ngọc Hạp. Ứng dụng chạy trên trình duyệt, cài được lên màn hình iPhone/Android như một ứng dụng, dùng được khi không có mạng; mọi dữ liệu nhắc việc chỉ lưu trong máy của bạn.</p></section>
       <section><h4>Tính năng chính</h4><ul>
-        <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước (mỗi hướng một kiểu lật); lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
+        <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước; lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
         <li><b>Giờ</b> — mặt đồng hồ 12 canh giờ, giờ hoàng đạo, hướng Hỷ thần, Tài thần.</li>
         <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
         <li><b>Luận giải</b> — xét ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao, xuất hành) bằng hai kiểu: <b>Cộng sao</b> (thang điểm) và <b>Theo sách</b> (theo quy tắc Ngọc Hạp Thông Thư), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
@@ -78,18 +97,12 @@ function moGioiThieu(muc) {
         <p><b>Cộng sao</b> — cách chấm điểm nhanh: cộng điểm cho hoàng đạo, trực tốt, nhị thập bát tú tốt, sao tốt; trừ điểm cho hắc đạo, sao xấu, Tam nương, Nguyệt kỵ, Dương công kỵ. Tổng điểm quy ra 5 mức từ Rất xấu tới Rất tốt.</p>
         <p><b>Theo sách</b> — xét đúng thứ tự Ngọc Hạp Thông Thư dạy, mỗi lý do nói rõ bằng lời:</p>
         <ol>
-          <li><b>Sáu ngày đại kỵ</b>: Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước. Sách dạy sao tốt không cứu được (tr.9) → <b>Rất xấu</b>.</li>
+          <li><b>Sáu ngày đại kỵ</b>: Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước. Sách dạy sao tốt không cứu được → <b>Rất xấu</b>.</li>
           <li><b>Ngày kiêng</b>: ngày sách ghi kiêng mọi việc (Thiên cương, Đại hao, Tiểu hồng sa, Tứ ly, Tứ tuyệt…) và ngày kiêng riêng của việc đang chọn (động thổ thì xét Vãng vong, Thổ cấm, Thiên hoả, Nguyệt phá…) → <b>Xấu</b> hoặc <b>Rất xấu</b>.</li>
-          <li>Không phạm kiêng thì xét <b>điều tốt</b>: ngày hoàng đạo, trực tốt (Kiến, Mãn, Bình, Định, Chấp, Thành — tr.153–154), sao tốt hợp việc, quy tắc tốt theo việc (Tạo ốc, Lộc mã, Thiên thành…). Có Giải thần thì giải được sao xấu; sao xấu nhẹ (tr.11) được nhiều sao tốt gánh đỡ.</li>
+          <li>Không phạm kiêng thì xét <b>điều tốt</b>: ngày hoàng đạo, trực tốt (Kiến, Mãn, Bình, Định, Chấp, Thành), sao tốt hợp việc, quy tắc tốt theo việc (Tạo ốc, Lộc mã, Thiên thành…). Có Giải thần thì giải được sao xấu; sao xấu nhẹ được nhiều sao tốt gánh đỡ.</li>
         </ol>
-        <p>Theo sách thì rất khắt khe: khoảng sáu phần mười số ngày trong năm là ngày kiêng cho việc chung — đúng như lời sách. Riêng ba mức không phạm kiêng (Bình thường, Tốt, Rất tốt) là cách chia của chương trình dựa trên các điều tốt sách nêu. Các quy tắc theo tuổi người, theo giờ, cưới hỏi, an táng đã có trong cơ sở tri thức nhưng chưa đưa vào luận ngày.</p></section>
-      <section><h4>Dùng nhanh</h4><ol>
-        <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
-        <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng, chọn kiểu luận ở mục Luận giải, mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
-        <li><b>Đọc nghĩa sao:</b> chạm tên sao ở mục Luận giải, hoặc bấm “Tra cứu” để tìm theo tên.</li>
-        <li><b>Thêm việc, ngày giỗ:</b> thẻ Nhắc → “＋ Thêm” → gõ một câu tự nhiên.</li></ol>
-        <p><button type="button" class="nut nho" data-huong-dan>Xem hướng dẫn từng bước</button></p></section>
-      <section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
+        <p>Theo sách thì rất khắt khe: khoảng sáu phần mười số ngày trong năm là ngày kiêng cho việc chung — đúng như lời sách. Riêng ba mức không phạm kiêng (Bình thường, Tốt, Rất tốt) là cách chia của chương trình dựa trên các điều tốt sách nêu. Các quy tắc theo tuổi người, theo giờ, cưới hỏi, an táng đã có trong cơ sở tri thức nhưng chưa đưa vào luận ngày.</p></section>`,
+    "can-cu": `<section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
         <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
       <section><h4>Căn cứ xem sao</h4>
         <p>Sao tốt xấu an theo bảng 12 tháng trong sách <b>Ngọc Hạp Thông Thư</b> (bản dịch Việt), không trộn với các hệ khác. Mỗi sao ghi rõ: nghĩa, việc nên làm, việc kiêng, cách an theo tháng. Trong ${CSDL.sao.length} sao, ${soDa} sao <b>đã đối chiếu</b> từ hai sách trở lên (khi các sách khác nhau thì theo đa số), ${soMot} sao chỉ có Thông Thư ghi. Sao không có bảng an hay quy tắc tính trong sách đã được loại khỏi chương trình.</p>
@@ -100,14 +113,48 @@ function moGioiThieu(muc) {
         <li>Ngọc Hạp Chánh Tông — tài liệu đối chiếu bổ sung.</li>
         <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.</li>
         <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
-        <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>
-      <section><h4>Bản quyền</h4>
+        <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>`,
+    "ban-quyen": `<section><h4>Bản quyền</h4>
         <p>Lịch Pháp được tặng <b>miễn phí</b> cho mọi người. Bản chính thức duy nhất ở địa chỉ <b>lelenhbac1974hn-web.github.io/lich-phap</b>. Nếu bạn phải trả tiền, hoặc thấy ứng dụng này trên chợ ứng dụng (App Store, Google Play…), đó là bản sao trái phép.</p>
         <p>Mọi người được dùng, chia sẻ đường dẫn và xem mã để học hỏi. Không được đưa lên chợ ứng dụng, bán, gắn quảng cáo hay phát hành lại dưới tên khác khi chưa có đồng ý của tác giả.</p></section>
-      <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc · Bảo lưu mọi quyền<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>
-    </div>`, "lop-gt");
-  if (muc) { const m = el.querySelector("#" + muc); if (m) setTimeout(() => m.scrollIntoView({ block: "start" }), 60); }
+      <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc · Bảo lưu mọi quyền<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>`
+  }[id] || "";
 }
+/* muc: id trang con ("can-cu", "ve"…) hoặc id một đoạn trong trang con ("gt-luan", "gt-can-cu") — mở thẳng tới đó */
+function moGioiThieu(muc) {
+  const el = moTam(`
+    <header class="gt-dau"><div class="gt-an" aria-hidden="true">曆</div>
+      <h3>Lịch Pháp</h3><p>Lịch âm dương · xem ngày theo Ngọc Hạp · nhắc việc</p></header>
+    <div class="mn-vung"></div>`, "lop-gt");
+  const vung = el.querySelector(".mn-vung");
+  const truot = tu => { if (tu && !itChuyenDong()) vung.animate([{ transform: `translateX(${tu}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 300, easing: "cubic-bezier(.22,1,.36,1)" }); };
+  const veMenu = tu => {
+    vung.innerHTML = `<ul class="mn-ds">${MENU.map(m => `<li><button type="button" class="mn-muc" data-mn="${m.id}">
+        <span class="mn-bieu">${ic(m.bieu)}</span><span class="mn-chu"><b>${m.ten}</b><small>${m.phu()}</small></span><span class="mn-toi" aria-hidden="true">›</span></button></li>`).join("")}</ul>
+      <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc</p>`;
+    truot(tu);
+  };
+  const veTrang = (id, tu) => {
+    const m = MENU.find(x => x.id === id);
+    vung.innerHTML = `<div class="mn-dau"><button type="button" class="mn-lui" data-mn-lui>‹ Menu</button><h4>${m.ten}</h4></div>
+      <div class="gt-than">${trangMenu(id)}</div>`;
+    truot(tu);
+    el.querySelector(".tam").scrollTop = 0;
+  };
+  vung.addEventListener("click", e => {
+    const m = e.target.closest("[data-mn]"), lui = e.target.closest("[data-mn-lui]"), gd = e.target.closest("[data-giao-dien]");
+    if (m) veTrang(m.dataset.mn, 40);
+    else if (lui) veMenu(-40);
+    else if (gd) { datGiaoDien(gd.dataset.giaoDien); veTrang("giao-dien"); }
+  });
+  const trangCua = { "gt-luan": "ve", "gt-can-cu": "can-cu" };
+  if (muc && (MENU.some(x => x.id === muc) || trangCua[muc])) {
+    veTrang(trangCua[muc] || muc);
+    const doan = el.querySelector("#" + muc);
+    if (doan) setTimeout(() => doan.scrollIntoView({ block: "start" }), 60);
+  } else veMenu();
+}
+
 document.addEventListener("click", e => { const b = e.target.closest("[data-gioi-thieu]"); if (b) { e.preventDefault(); moGioiThieu(b.dataset.gioiThieu); } });
 
 /* ── Hướng dẫn lần mở đầu: 5 bước ngắn, tự hiện một lần; mở lại từ trang Giới thiệu ── */
