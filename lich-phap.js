@@ -1,6 +1,6 @@
 /* Lịch Pháp © 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền. Bản chính thức, miễn phí: https://lelenhbac1974hn-web.github.io/lich-phap/ — cấm đưa lên chợ ứng dụng, bán hay phát hành lại khi chưa được phép (xem LICENSE). */
-/* LICH PHAP - loi lich phap dung chung (trich nguyen van tu lich-van-nien-pwa/app.js, dong 10-543).
-   Khong sua thuat toan o day; giao dien nam o ui.js. */
+/* LÕI LỊCH PHÁP — âm lịch, can chi, tiết khí, trực, nhị thập bát tú, thần ngày, lễ tết, ca dao, chấm điểm "Cộng sao".
+   Bảng an sao đọc từ CSDL (ngoc-hap.js); luận theo sách ở luan-sach.js; giao diện ở ui.js.  */
 /* ═════════════ LÕI ÂM LỊCH — THUẬT TOÁN HỒ NGỌC ĐỨC ═════════════ */
 const PI = Math.PI,
   TZ = 7.0,
@@ -511,37 +511,6 @@ function chamDiem(j, am, viecId = "chung") {
     nh
   };
 }
-const BAC = [{
-  t: "Rất xấu",
-  c: "#C0392B",
-  s: "#B22D20",
-  bg: "rgba(200,60,48,.30)",
-  l: "#F7CFC9"
-}, {
-  t: "Xấu",
-  c: "#E07B39",
-  s: "#B35A1E",
-  bg: "rgba(224,123,57,.26)",
-  l: "#FBE0C6"
-}, {
-  t: "Bình thường",
-  c: "#C9A227",
-  s: "#8A6D12",
-  bg: "rgba(201,162,39,.20)",
-  l: "#F6EFCF"
-}, {
-  t: "Tốt",
-  c: "#4CAF50",
-  s: "#2E7D32",
-  bg: "rgba(76,175,80,.26)",
-  l: "#D6EFD8"
-}, {
-  t: "Rất tốt",
-  c: "#00A870",
-  s: "#00704A",
-  bg: "rgba(0,168,112,.34)",
-  l: "#BCEBD8"
-}];
 
 /* ═════════════ CƠ SỞ DỮ LIỆU NGÀY LỄ ═════════════ */
 const LE_DUONG = {

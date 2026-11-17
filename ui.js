@@ -549,7 +549,7 @@
         ${vach}
         ${mang}
         ${kim}
-        <circle cx="${C}" cy="${C}" r="${R0 - 7}" class="tam"/>
+        <circle cx="${C}" cy="${C}" r="${R0 - 7}" class="tam-gio"/>
         <circle cx="${C}" cy="${C}" r="${R0 - 11}" class="tam-vien"/>
         <text x="${C}" y="${C + (laHomNay ? 3 : 1)}" class="tam-so${laHomNay ? " nho" : ""}">${tamTren}</text>
         <text x="${C}" y="${C + 19}" class="tam-chu">${tamDuoi}</text>
@@ -694,7 +694,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.10.1";
+  const PHIEN_BAN = "1.11.0";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
     const el = moTam(`
