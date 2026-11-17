@@ -484,6 +484,56 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .o-viec{position:absolute;left:5px;bottom:4px;min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:#2F6FA8;color:#fff;font:700 9px/14px var(--chu)}
 .o.chon .o-viec{background:#9CC3E8;color:#16354F}
 
+/* ═════════ LỄ TẾT: CHIP, DẢI LỄ, THIỆP NHẤN GIỮ ═════════ */
+.le.co-thiep{position:relative;overflow:hidden;cursor:pointer;font-family:var(--chu);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.le.co-thiep i{font-style:normal;margin-left:5px;font-size:10px;opacity:.75;display:inline-block;animation:lap-lanh 2.4s ease-in-out infinite}
+@keyframes lap-lanh{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+.le.co-thiep::after,.tl-ruy::after{content:"";position:absolute;inset:0;background:currentColor;opacity:.16;transform:scaleX(0);transform-origin:left;pointer-events:none}
+.le.co-thiep.dang-giu::after,.tl-ruy.dang-giu::after{transform:scaleX(1);transition:transform .48s linear}
+.tl-than>.tl-ruy{position:absolute;top:8px;left:12px;z-index:2;width:46px;height:46px;border-radius:50%;border:0;padding:0;overflow:hidden;
+  background:radial-gradient(circle at 35% 30%,#FFF6DF,#F3D98A);box-shadow:0 0 0 3px rgba(255,255,255,.7),0 6px 16px -6px rgba(140,20,15,.6);
+  font-size:25px;line-height:46px;color:#8A1B15;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  animation:ruy-tho 3s ease-in-out infinite}
+@keyframes ruy-tho{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
+.o-bieu{position:absolute;top:2px;right:3px;font-size:11px;line-height:1}
+
+.thiep-lop{position:fixed;inset:0;z-index:150;display:flex;align-items:flex-end;justify-content:center;
+  background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--n1) 70%,transparent),color-mix(in srgb,var(--n2) 92%,black));
+  opacity:0;transition:opacity .35s ease}
+.thiep-lop.hien{opacity:1}
+.thiep-hat{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.thiep{position:relative;width:min(560px,100%);max-height:88%;overflow-y:auto;overscroll-behavior:contain;background:var(--the);color:var(--muc);
+  border-radius:26px 26px 0 0;padding:0 0 calc(22px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.6);
+  transform:translateY(105%);transition:transform .55s cubic-bezier(.2,.95,.25,1.05)}
+.thiep-lop.hien .thiep{transform:none}
+.thiep-lop.dong .thiep{transform:translateY(105%);transition-duration:.35s}
+@media (min-width:761px){.thiep-lop{align-items:center}.thiep{border-radius:26px;max-height:86vh}}
+.thiep-dong{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:15px}
+.thiep-dau{position:relative;overflow:hidden;text-align:center;padding:30px 20px 22px;color:#FFF3DC;
+  background:linear-gradient(160deg,var(--n1),var(--n2));border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.thiep-han{position:absolute;right:-6px;bottom:-26px;font:700 130px/1 "SimSun","Songti SC","Noto Serif CJK SC",serif;opacity:.14;pointer-events:none}
+.thiep-trang{position:absolute;left:50%;top:18px;width:120px;height:120px;margin-left:-60px;border-radius:50%;
+  background:radial-gradient(circle at 40% 38%,#FFF8E1,#F6D98B 60%,#E9B949);box-shadow:0 0 60px 20px rgba(255,220,140,.45);opacity:.9;animation:trang-sang 4s ease-in-out infinite}
+@keyframes trang-sang{50%{box-shadow:0 0 80px 30px rgba(255,220,140,.6)}}
+.thiep-bieu{position:relative;font-size:74px;line-height:1;margin-bottom:10px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35));
+  animation:bieu-vao .9s cubic-bezier(.2,1.5,.4,1) both,bieu-tho 3.2s ease-in-out 1s infinite}
+@keyframes bieu-vao{from{transform:scale(.2) rotate(-25deg);opacity:0}}
+@keyframes bieu-tho{50%{transform:translateY(-6px) scale(1.04)}}
+.thiep-dau h3{position:relative;font-size:24px;font-weight:700;line-height:1.25;margin:0;text-shadow:0 2px 10px rgba(0,0,0,.3);animation:chu-vao .7s .15s ease both}
+.thiep-ngay{position:relative;margin:6px 0 0;font-size:13px;opacity:.9;animation:chu-vao .7s .25s ease both}
+@keyframes chu-vao{from{opacity:0;transform:translateY(10px)}}
+.thiep-nghi{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;background:#FFF3DC;color:var(--n2);border-radius:99px;padding:2px 9px}
+.thiep-than{padding:18px 22px 4px}
+.thiep-tom{font-size:15.5px;line-height:1.6;margin:0 0 6px}
+.thiep-than section{margin-top:14px;animation:chu-vao .6s ease both}
+.thiep-than section:nth-of-type(2){animation-delay:.08s}
+.thiep-than h4{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--n1);margin:0 0 6px;font-weight:700}
+.thiep-than ul{margin:0;padding:0;list-style:none;display:grid;gap:5px}
+.thiep-than li{font-size:14px;padding-left:18px;position:relative;line-height:1.45}
+.thiep-than li::before{content:"✦";position:absolute;left:0;top:1px;font-size:10px;color:var(--n1)}
+.thiep-ca{margin:18px 0 0;padding:12px 16px;border-left:3px solid var(--n1);background:color-mix(in srgb,var(--n1) 7%,transparent);
+  border-radius:0 12px 12px 0;font-style:italic;font-weight:300;font-size:15px;line-height:1.6;color:var(--muc-2)}
+
 /* Khoá chiều dọc: điện thoại xoay ngang thì che giao diện, nhắc xoay lại */
 .xoay-doc{display:none}
 @media (orientation:landscape) and (max-height:520px) and (hover:none){

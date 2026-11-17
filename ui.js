@@ -62,7 +62,15 @@
   function veToLich(x) {
     const nghi = x.thu === 0 || x.le.some(l => l.nghi);
     const [cau, loai] = TUC_NGU[x.j % TUC_NGU.length];
-    const le = x.le.map(l => `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${esc(l.ten)}</span>`).join("");
+    const T = window.ThiepLe;
+    const leDs = x.le.slice();
+    if (laNgayThanhMinh(x.j)) leDs.push({ ten: "Tiết Thanh minh — tảo mộ", loai: "tiet", nghi: false, khoa: "dac:thanhminh" });
+    const khoaLe = leDs.map(l => l.khoa || (T ? T.khoaCuaLe(l, x.am, x.dd, x.mm) : null));
+    const le = leDs.map((l, i) => khoaLe[i]
+      ? `<button type="button" class="le le-${l.loai}${l.nghi ? " le-nghi" : ""} co-thiep" data-thiep="${khoaLe[i]}" title="Nhấn giữ để xem">${esc(l.ten)}<i aria-hidden="true">✦</i></button>`
+      : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${esc(l.ten)}</span>`).join("");
+    const khoaLon = khoaLe.find(k => T && T.laLeLon(k));
+    const ruy = khoaLon ? `<button type="button" class="tl-ruy" data-thiep="${khoaLon}" aria-label="Nhấn giữ để xem về ngày lễ">${T.layThiep(khoaLon).bieu}</button>` : "";
     const kieng = [
       x.cd.tn && "Tam nương",
       x.cd.nk && "Nguyệt kỵ",
@@ -85,6 +93,7 @@
         </header>
         <div class="tl-than">
           <canvas class="canh" aria-hidden="true"></canvas>
+          ${ruy}
           <div class="tl-so">${x.dd}</div>
           <div class="tl-thu">${THU[x.thu]}</div>
           ${chipViec || nhacHom || le || kieng ? `<div class="tl-nhan">${chipViec}${nhacHom}${le}${kieng}</div>` : ""}
@@ -112,6 +121,33 @@
         <button class="goc" data-buoc="1" type="button" aria-label="Xé tờ lịch, sang ngày sau" title="Xé tờ lịch"></button>
       </article>`;
     mua = MUA[Math.floor(((TIET_KHI.indexOf(x.tiet) + 3) % 24) / 6)];
+  }
+  const laNgayThanhMinh = j => tietKhi(j) === "Thanh minh" && tietKhi(j - 1) !== "Thanh minh";
+
+  /* Nhấn giữ một ngày lễ để mở thiệp mô tả */
+  function ganGiuLe() {
+    let hen = 0, el = null, x0 = 0, y0 = 0, daMo = false;
+    const huy = () => { clearTimeout(hen); if (el) el.classList.remove("dang-giu"); el = null; };
+    document.addEventListener("pointerdown", e => {
+      const b = e.target.closest("[data-thiep]");
+      if (!b || !window.ThiepLe) return;
+      huy(); daMo = false; el = b; x0 = e.clientX; y0 = e.clientY;
+      b.classList.add("dang-giu");
+      hen = setTimeout(() => {
+        const t = ttNgay(st.jd);
+        window.ThiepLe.mo(b.dataset.thiep, `${THU[thuCuaJd(st.jd)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy} · ${t.am.day}/${t.am.month}${t.am.leap ? " nhuận" : ""} âm lịch`);
+        daMo = true; huy();
+      }, 480);
+    });
+    document.addEventListener("pointermove", e => { if (el && Math.hypot(e.clientX - x0, e.clientY - y0) > 10) huy(); });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(ev => document.addEventListener(ev, huy));
+    document.addEventListener("contextmenu", e => { if (e.target.closest("[data-thiep]")) e.preventDefault(); });
+    document.addEventListener("click", e => {
+      const b = e.target.closest("[data-thiep]");
+      if (!b) return;
+      if (!daMo) baoTam("Nhấn giữ để xem về ngày này");
+      daMo = false;
+    });
   }
   /* TIET_KHI bắt đầu từ Xuân phân; lùi 3 tiết để Lập xuân mở mùa xuân */
   const MUA = ["xuan", "ha", "thu", "dong"];
@@ -551,7 +587,12 @@
         <span class="o-duong">${n + 1}</span>
         <span class="o-am${am.day === 1 || am.day === 15 ? " moc" : ""}">${amTxt}</span>
         <span class="o-cham"></span>
-        ${le.length ? '<span class="o-le"></span>' : ""}
+        ${(() => {
+          const T = window.ThiepLe;
+          const kl = T && le.map(l => T.khoaCuaLe(l, am, n + 1, x.mm)).find(k => T.laLeLon(k));
+          if (kl) return `<span class="o-bieu" aria-hidden="true">${T.layThiep(kl).bieu}</span>`;
+          return le.length ? '<span class="o-le"></span>' : "";
+        })()}
       </button>`;
     }
     const amDau = amCuaJd(dau), amCuoi = amCuaJd(dau + soNgay - 1);
@@ -1301,6 +1342,7 @@
 
   ganNhac();
   ganViec();
+  ganGiuLe();
   ganTab();
   ganChieuCao();
   ve();
