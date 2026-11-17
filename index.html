@@ -17,7 +17,7 @@
 </head>
 <body data-tab="ngay">
 <header class="dau-trang">
-  <a class="thuong-hieu" href="#" id="nut-hom-nay-logo" aria-label="Về hôm nay">
+  <a class="thuong-hieu" href="#" id="nut-hom-nay-logo" aria-label="Giới thiệu chương trình">
     <span class="trien" aria-hidden="true">曆</span>
     <span class="ten">
       <b>Lịch Pháp</b>
@@ -88,6 +88,7 @@
           <button type="button" class="p0 chon" data-uu="0">Không</button><button type="button" class="p1" data-uu="1">Thấp</button><button type="button" class="p2" data-uu="2">Vừa</button><button type="button" class="p3" data-uu="3">Cao</button></div></div>
         <label class="truong rong-4"><span>Lặp lại</span><select id="v-lap">
           <option value="khong">Không lặp</option><option value="ngay">Hằng ngày</option><option value="tuan">Hằng tuần</option><option value="thang">Hằng tháng</option><option value="nam">Hằng năm</option></select></label>
+        <div class="truong rong-4"><span>Biểu tượng</span><div class="chon-bieu" id="v-bieu" role="group" aria-label="Chọn biểu tượng"></div></div>
         <label class="truong rong-4"><span>Ghi chú</span><textarea id="v-ghi" rows="2" maxlength="500"></textarea></label>
         <p class="nhac-loi rong-4" id="v-loi" role="alert"></p>
         <div class="nhac-nut rong-4">
@@ -137,6 +138,7 @@
             <option value="7">7 ngày</option>
             <option value="15">15 ngày</option>
           </select></label>
+        <div class="truong rong-4"><span>Biểu tượng</span><div class="chon-bieu" id="n-bieu" role="group" aria-label="Chọn biểu tượng"></div></div>
         <label class="truong rong-4"><span>Ghi chú</span>
           <input id="n-ghi" maxlength="160" placeholder="Ví dụ: cúng tại nhà bác cả" /></label>
         <p class="nhac-loi rong-4" id="n-loi" role="alert"></p>
@@ -188,6 +190,7 @@
 <script src="./lich-phap.js"></script>
 <script src="./le-tet.js"></script>
 <script src="./ngoc-hap.js"></script>
+<script src="./bieu-tuong.js"></script>
 <script src="./ui.js"></script>
 <script>
 /* Chạy không cần mạng sau lần mở đầu tiên (chỉ có hiệu lực trên https hoặc localhost) */

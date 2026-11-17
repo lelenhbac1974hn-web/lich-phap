@@ -1,8 +1,64 @@
 # Lịch Pháp
 
-Âm dương lịch Việt Nam: can chi, tiết khí, giờ hoàng đạo, trực, nhị thập bát tú, sao Ngọc Hạp,
-và nhắc ngày lặp lại (giỗ theo âm lịch, sinh nhật và sự kiện theo dương lịch).
+Lịch vạn niên âm dương cho người Việt: mỗi ngày là một tờ lịch có âm lịch, can chi, tiết khí, trực,
+nhị thập bát tú, giờ hoàng đạo và sao tốt xấu theo **Ngọc Hạp Thông Thư**, kèm Nhắc việc và Ngày lặp lại.
 
-Ứng dụng web tĩnh, không cần máy chủ, chạy được khi mất mạng sau lần mở đầu tiên.
+**Mở ứng dụng:** https://lelenhbac1974hn-web.github.io/lich-phap/
 
-© 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền — xem tệp LICENSE.
+Ứng dụng web tĩnh, không cần máy chủ, cài được lên màn hình điện thoại và chạy được khi mất mạng
+sau lần mở đầu tiên. Dữ liệu nhắc việc chỉ lưu trong máy người dùng.
+
+## Tính năng
+
+| Thẻ | Nội dung |
+|---|---|
+| **Ngày** | Tờ lịch lật: vuốt trái hoặc lên sang ngày sau, vuốt phải hoặc xuống về ngày trước, mỗi hướng một kiểu lật. Lễ tết hiện trên tờ lịch; nhấn giữ biểu tượng lễ để đọc phong tục, món ăn, ca dao. Câu ca dao, tục ngữ mỗi ngày. |
+| **Giờ** | Mặt đồng hồ 12 canh giờ, giờ hoàng đạo / hắc đạo, hướng Hỷ thần, Tài thần. |
+| **Tháng** | Lịch tháng âm dương, tô màu ngày tốt xấu theo việc đang xem, đánh dấu lễ tết, ngày có nhắc. |
+| **Luận giải** | Chấm điểm ngày theo việc (việc chung, động thổ, cưới hỏi, ký kết…), trực, sao Ngọc Hạp của ngày, tra cứu 181 sao (nghĩa, nên, kỵ, cách an theo tháng). |
+| **Nhắc** | *Nhắc việc*: gõ câu tự nhiên ("Họp giao ban 8h sáng mai", "Đi lễ chùa rằm tháng tới") — tự hiểu ngày, giờ, lặp lại, ưu tiên; xác nhận trước khi đánh dấu xong việc chưa tới hẹn. *Ngày lặp lại*: giỗ theo âm lịch, sinh nhật, kỷ niệm theo dương lịch ("Giỗ bố 20/10 âm, năm mất 2021"). Mỗi mục có biểu tượng vẽ sẵn (tự chọn theo nội dung hoặc chọn tay), sắp gần nhất lên đầu, chạm để xem ghi chú. |
+
+Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong ứng dụng.
+
+## Căn cứ lịch pháp
+
+- Âm lịch tính theo thuật toán thiên văn của **Hồ Ngọc Đức**, múi giờ Việt Nam (GMT+7): điểm sóc,
+  trung khí, tháng nhuận, tháng đủ / thiếu, can chi năm – tháng – ngày – giờ, 24 tiết khí, trực.
+- Kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) so với các trang lịch phổ biến:
+  âm lịch, can chi, tiết khí, trực khớp 100%.
+
+## Căn cứ xem sao
+
+- Sao tốt xấu an theo bảng 12 tháng trong sách **Ngọc Hạp Thông Thư** (bản dịch Việt); không trộn
+  với hệ xem ngày khác. Mỗi sao trong ứng dụng ghi trạng thái *Đã đối chiếu Ngọc Hạp* hoặc
+  *Đang đối chiếu Ngọc Hạp* (bản in còn thiếu hoặc chưa nhất quán).
+- Tên chữ Hán của sao đối chiếu theo bản Hán Nôm **"Ngọc hạp toản yếu thông dụng"** (1926).
+
+## Tài liệu tham khảo
+
+1. *Ngọc Hạp Thông Thư* — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.
+2. *Ngọc Hạp Chánh Tông* — tài liệu đối chiếu bổ sung.
+3. *Ngọc hạp toản yếu thông dụng* (Hán Nôm, 1926) — tên sao chữ Hán.
+4. Hồ Ngọc Đức, *Thuật toán tính âm lịch* — phần lịch pháp.
+5. Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.
+
+## Cài lên điện thoại
+
+- **iPhone (Safari):** mở địa chỉ trên → nút Chia sẻ → *Thêm vào MH chính*.
+- **Android (Chrome):** mở địa chỉ trên → menu ⋮ → *Thêm vào màn hình chính* / *Cài đặt ứng dụng*.
+
+## Cấu trúc
+
+| Tệp | Vai trò |
+|---|---|
+| `index.html`, `style.css` | Giao diện |
+| `lich-phap.js` | Lõi lịch pháp, bảng sao, lễ tết, ca dao |
+| `ngoc-hap.js` | Cơ sở dữ liệu 181 sao Ngọc Hạp (nghĩa, nên, kỵ, cách an) |
+| `le-tet.js` | Thiệp lễ tết (phong tục, món ăn, hiệu ứng) |
+| `bieu-tuong.js` | Bộ biểu tượng vẽ nét cho Nhắc việc và Ngày lặp lại |
+| `ui.js` | Điều khiển giao diện, nhắc việc, phân tích câu tự nhiên |
+| `sw.js`, `manifest.json` | Chạy ngoại tuyến, cài như ứng dụng |
+
+Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của người dùng.
+
+© 2026 Lê Lệnh Bắc. Bảo lưu mọi quyền — xem tệp LICENSE. Phông chữ theo giấy phép SIL OFL.

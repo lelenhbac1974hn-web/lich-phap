@@ -436,13 +436,26 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 
 /* ── Dòng rút gọn có biểu tượng (dùng chung cho Ngày lặp lại và Nhắc việc) ── */
 .ds-gon,.ds-viec{gap:6px}
-.nhac-muc.dong-gon,.viec-muc.dong-gon{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:0 10px;align-items:center;
-  padding:8px 10px 8px 8px;border:1px solid var(--vien);border-left-width:1px;border-radius:14px;background:var(--the)}
+.nhac-muc.dong-gon,.viec-muc.dong-gon{display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:0 10px;align-items:center;
+  padding:0 10px 0 0;border:1px solid var(--vien);border-left-width:1px;border-radius:12px;background:var(--the);overflow:hidden;min-height:54px}
 .nhac-muc.dong-gon.gan{background:var(--l-nhat)}
-.dong-gon .bieu{position:relative;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:22px;line-height:1;
-  background:var(--l-nhat,#F3ECDD);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--l,#B5862A) 22%,transparent)}
-.viec-muc.dong-gon .bieu{background:color-mix(in srgb,var(--p) 12%,#FFF8EC);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--p) 28%,transparent)}
-.bieu-uu{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;border:2px solid var(--the);background:var(--p)}
+/* Biểu tượng: cột vuông đầu dòng, liền khối với dòng, không bo góc */
+.dong-gon .bieu{--m:var(--l,#B5862A);position:relative;grid-row:1/span 2;align-self:stretch;width:50px;min-height:54px;border-radius:0;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--m) 13%,transparent);border-right:1px solid color-mix(in srgb,var(--m) 24%,transparent);color:color-mix(in srgb,var(--m) 78%,#2A1A10)}
+.viec-muc.dong-gon .bieu{--m:var(--p,#8A6A3E)}
+.viec-muc.dong-gon.p0 .bieu{--m:#8A6A3E}
+.da-xong .bieu{--m:var(--ngoc,#2E7D5B);opacity:.75}
+.dong-gon .bieu svg,.chon-bieu svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dong-gon .bieu svg .dac,.chon-bieu svg .dac{fill:currentColor;stroke:none}
+.dong-gon .bieu svg .dac-nhat,.chon-bieu svg .dac-nhat{fill:color-mix(in srgb,currentColor 22%,transparent)}
+.bieu-uu{position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 11px 11px 0;border-color:transparent var(--p) transparent transparent}
+.dong-gon .gon-nd{padding:9px 0}
+/* Bộ chọn biểu tượng trong khung nhập */
+.chon-bieu{display:flex;gap:4px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.chon-bieu button{flex:none;width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--vien);background:var(--the);color:#6B4A2A;border-radius:0;padding:0;cursor:pointer}
+.chon-bieu button svg{width:22px;height:22px}
+.chon-bieu .cb-tu{width:auto;padding:0 10px;font:600 13px var(--chu)}
+.chon-bieu button.chon{background:var(--thu-phap,#9E1D15);border-color:var(--thu-phap,#9E1D15);color:#FFF3DC}
 .gon-nd{min-width:0}
 .gon-ten{font-size:15px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gon-phu{display:flex;gap:4px 8px;flex-wrap:nowrap;margin-top:2px;font-size:12px;color:var(--muc-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -454,13 +467,14 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .da-xong .gon-ten{text-decoration:line-through;text-decoration-color:var(--muc-3);color:var(--muc-3)}
 .dong-gon.mo{align-items:start}
 .dong-gon.mo .gon-ten{white-space:normal}
-.gon-chi-tiet{grid-column:1/-1;margin-top:10px;padding-top:10px;border-top:1px dashed var(--vien);display:grid;gap:6px;animation:nuoc-vao2 .3s ease}
+.gon-chi-tiet{grid-column:2/-1;margin:0 0 10px;padding-top:10px;border-top:1px dashed var(--vien);display:grid;gap:6px;animation:nuoc-vao2 .3s ease}
 .gon-chi-tiet p{margin:0;font-size:13px;line-height:1.5;color:var(--muc-2)}
 .gon-ghi{background:#FBF4E4;border-radius:10px;padding:8px 10px;color:var(--muc)!important}
 .gon-ghi.rong{background:none;padding:0;color:var(--muc-3)!important;font-style:italic}
 .gon-chi-tiet .nut{justify-self:start}
 .nhac-goi-y.canh-bao{color:var(--son-dam);font-weight:600}
-.nhom-nut.xong.chac{background:#D2691E;color:#fff;font-size:12px}
+.nhom-nut.xong.chac{background:#D2691E;color:#fff;font-size:12px;line-height:1.15;padding:6px 4px}
+.trang-viec .nhom-nut:not(.chac){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Danh sách cuộn khoảng 5 dòng trên máy tính */
 #ds-viec,#ds-nhac .nhac-ds{max-height:390px;overflow-y:auto;overscroll-behavior:contain;padding:3px 3px 4px;margin:-3px -3px 0;scrollbar-width:thin}
 
@@ -871,3 +885,16 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 }
 @media (max-width:430px){.ten{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── Giới thiệu chương trình ── */
+.gt-dau{position:relative;padding:26px 22px 20px;color:#FFF3DC;background:linear-gradient(160deg,#B8261D,var(--thu-phap-dam,#6B0F0A));border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.gt-dau .gt-an{width:52px;height:52px;display:grid;place-items:center;border:2px solid rgba(255,243,220,.85);font:700 30px/1 "Songti SC","SimSun","Noto Serif CJK SC",serif;transform:rotate(-3deg);margin-bottom:10px}
+.gt-dau h3{font-size:26px;margin:0}
+.gt-dau p{margin:4px 0 0;font-size:13px;opacity:.9}
+.lop-gt .tam-dong{color:#fff}
+.gt-than{padding:6px 20px 22px}
+.gt-than section{padding:12px 0;border-bottom:1px dashed var(--vien)}
+.gt-than h4{margin:0 0 6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--thu-phap,#9E1D15)}
+.gt-than p,.gt-than li{font-size:14px;line-height:1.6;color:var(--muc-2);margin:0 0 6px}
+.gt-than ul{margin:0;padding-left:18px}
+.gt-cuoi{margin-top:14px!important;font-size:12px!important;color:var(--muc-3)!important;text-align:center}

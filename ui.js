@@ -637,7 +637,7 @@
       <div class="the-tieu-de">
         <h3>Sao Ngọc Hạp</h3>
         <span>Ngày ${x.ccNgay}, tháng ${THANG_AM[x.am.month - 1]} âm lịch · chạm tên sao để xem nghĩa</span>
-        ${CSDL.sao.length ? `<button type="button" class="nut nho tra-sao-mo" data-tra-sao>Tra cứu ${CSDL.sao.length} sao</button>` : ""}
+        ${CSDL.sao.length ? `<button type="button" class="nut nho tra-sao-mo" data-tra-sao>Tra cứu ${CSDL.sao.length} sao</button><button type="button" class="nut nho" data-gioi-thieu="gt-can-cu">Căn cứ</button>` : ""}
       </div>
       <div class="sao-cot">
         <div>
@@ -672,6 +672,47 @@
   function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.classList.remove("hien"); setTimeout(() => t.remove(), 320); }
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
+  /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
+  const PHIEN_BAN = "1.8.0";
+  function moGioiThieu(muc) {
+    const soDa = CSDL.sao.filter(s => s.tt).length;
+    const el = moTam(`
+      <header class="gt-dau"><div class="gt-an" aria-hidden="true">曆</div>
+        <h3>Lịch Pháp</h3><p>Lịch âm dương · xem ngày theo Ngọc Hạp · nhắc việc</p></header>
+      <div class="gt-than">
+        <section><h4>Chương trình</h4>
+          <p>Lịch Pháp là lịch vạn niên dành cho người Việt: mỗi ngày là một tờ lịch có âm lịch, can chi, tiết khí, trực, nhị thập bát tú, giờ hoàng đạo và các sao tốt xấu theo Ngọc Hạp. Ứng dụng chạy trên trình duyệt, cài được lên màn hình iPhone/Android như một ứng dụng, dùng được khi không có mạng; mọi dữ liệu nhắc việc chỉ lưu trong máy của bạn.</p></section>
+        <section><h4>Tính năng chính</h4><ul>
+          <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước (mỗi hướng một kiểu lật); lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
+          <li><b>Giờ</b> — mặt đồng hồ 12 canh giờ, giờ hoàng đạo, hướng Hỷ thần, Tài thần.</li>
+          <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
+          <li><b>Luận giải</b> — chấm điểm ngày theo việc (khởi công, cưới hỏi, ký kết…), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
+          <li><b>Nhắc</b> — Nhắc việc và Ngày lặp lại (giỗ âm lịch, sinh nhật, kỷ niệm). Gõ câu tự nhiên như “Họp giao ban 8h sáng mai”, “Giỗ bố 20/10 âm” — ứng dụng tự hiểu ngày, giờ.</li></ul></section>
+        <section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
+          <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
+        <section><h4>Căn cứ xem sao</h4>
+          <p>Sao tốt xấu an theo bảng 12 tháng trong sách <b>Ngọc Hạp Thông Thư</b> (bản dịch Việt), không trộn với các hệ khác. Mỗi sao ghi rõ: nghĩa, việc nên làm, việc kiêng, cách an theo tháng. Hiện ${soDa}/${CSDL.sao.length} sao <b>đã đối chiếu Ngọc Hạp</b>, số còn lại <b>đang đối chiếu</b> do bản in thiếu hoặc chưa nhất quán.</p>
+          <p>Tên chữ Hán của sao đối chiếu theo bản Hán Nôm <b>“Ngọc hạp toản yếu thông dụng”</b> (1926).</p></section>
+        <section><h4>Tài liệu tham khảo</h4><ul>
+          <li>Ngọc Hạp Thông Thư — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.</li>
+          <li>Ngọc Hạp Chánh Tông — tài liệu đối chiếu bổ sung.</li>
+          <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — tên sao chữ Hán.</li>
+          <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
+          <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>
+        <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>
+      </div>`, "lop-gt");
+    if (muc) { const m = el.querySelector("#" + muc); if (m) setTimeout(() => m.scrollIntoView({ block: "start" }), 60); }
+  }
+  document.addEventListener("click", e => { const b = e.target.closest("[data-gioi-thieu]"); if (b) { e.preventDefault(); moGioiThieu(b.dataset.gioiThieu); } });
+
+  /* Bỏ ghi chú nghiên cứu (số trang, nhóm xếp trong sách) khỏi lời giải nghĩa, chỉ giữ ý nghĩa */
+  function nghiaGon(n) {
+    if (!n) return "";
+    const g = n.replace(/\s*\([^()]*\btr\.\s*\d+[^()]*\)/gi, "")
+      .replace(/(^|[.;]\s+)Tr\.\s*\d+(?:\s*\([^()]*\))?\s*:\s*/g, "$1")
+      .replace(/\s+([.,;])/g, "$1").replace(/\.{2,}/g, ".").replace(/\s{2,}/g, " ").trim();
+    return g.replace(/(^|[.;]\s+)(\p{Ll})/gu, (m, a, c) => a + c.toUpperCase());
+  }
   function moTheSao(s, tuTra) {
     const thangNay = ttNgay(st.jd).am.month;
     const an = s.an && s.an.thang ? Array.from({ length: 12 }, (_, i) => {
@@ -688,11 +729,10 @@
         ${s.han ? `<p class="ts-han-nho">${esc(s.han)}</p>` : ""}
       </header>
       <div class="ts-than">
-        ${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
+        ${nghiaGon(s.nghia) ? `<p class="ts-nghia">${esc(nghiaGon(s.nghia))}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
         ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
         ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
-        <p class="ts-nguon">Nguồn: Ngọc Hạp Thông Thư${s.trang.length ? `, tr. ${s.trang.join(", ")}` : ""}${s.han ? " · tên chữ Hán theo bản 1926" : ""}<br>
-          <span class="${s.tt ? "da" : "chua"}">${s.tt ? "✓ Đã đối chiếu đủ với sách" : "⚠ Cần xem lại: sách in chưa đủ hoặc chưa nhất quán"}</span></p>
+        <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt ? "✓ Đã đối chiếu Ngọc Hạp" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
         ${tuTra ? `<button type="button" class="nut nho" data-tra-lai>‹ Về danh sách</button>` : ""}
       </div>`, "lop-sao");
     if (cu) el.dataset.tim = cu;
@@ -709,7 +749,7 @@
       const q = bo(o.value.trim()); el.dataset.tim = o.value;
       const ds = CSDL.sao.filter(s => !q || bo(s.ten).includes(q) || (s.han || "").includes(o.value.trim()))
         .sort((a, b) => a.ten.localeCompare(b.ten, "vi"));
-      ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><i></i><b>${esc(s.ten)}</b>${s.han ? `<small>${esc(s.han)}</small>` : ""}<span>${esc((s.nghia || "").slice(0, 60))}${(s.nghia || "").length > 60 ? "…" : ""}</span></button></li>`).join("")
+      ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><i></i><b>${esc(s.ten)}</b>${s.han ? `<small>${esc(s.han)}</small>` : ""}<span>${(g => esc(g.slice(0, 60)) + (g.length > 60 ? "…" : ""))(nghiaGon(s.nghia))}</span></button></li>`).join("")
         || `<li class="rong">Không tìm thấy sao nào.</li>`;
     };
     o.addEventListener("input", ve2); ve2();
@@ -721,40 +761,17 @@
     if (e.target.closest("[data-tra-sao]")) moTraSao("");
   });
 
-  /* ── Biểu tượng tự chọn theo nội dung việc / sự kiện ── */
-  const BIEU = [
-    [/giỗ|gio |kỵ|ky nhat|húy|huý|tang|mộ\b|mo phan/, "🕯️"],
-    [/sinh nhật|sinh nhat|thôi nôi|đầy tháng/, "🎂"],
-    [/mừng thọ|mung tho|thượng thọ/, "🍑"],
-    [/cưới|cuoi|ăn hỏi|dạm ngõ|đính hôn/, "💍"],
-    [/thành lập|thanh lap|công ty|cong ty/, "🏢"],
-    [/kỷ niệm|kỉ niệm|ky niem/, "🎉"],
-    [/trung thu/, "🏮"], [/tết|tet /, "🧧"], [/ông táo|ong tao/, "🐟"], [/vu lan|rằm|ram |mồng một|mùng 1|chùa|chua |lễ phật|thắp hương|thap huong|cúng|cung /, "🙏"],
-    [/họp|hop |giao ban|hội nghị|hoi nghi|gặp|gap /, "👥"],
-    [/gọi|goi |điện thoại|dien thoai/, "📞"],
-    [/email|thư |mail|zalo|nhắn/, "✉️"],
-    [/hợp đồng|hop dong|ký |ky |chữ ký/, "✍️"],
-    [/nộp|nop |hồ sơ|ho so|báo cáo|bao cao|văn bản|giấy tờ|tờ trình/, "📄"],
-    [/nghiệm thu|nghiem thu|công trường|cong truong|bê tông|be tong|cọc|coc |cầu |thi công|thi cong|móng|dầm/, "🏗️"],
-    [/thanh toán|thanh toan|công nợ|cong no|chuyển khoản|tiền|tien |lương|luong|thuế|thue|hoá đơn|hóa đơn/, "💰"],
-    [/ngân hàng|ngan hang|vay|tiết kiệm/, "🏦"],
-    [/mua|chợ|cho |siêu thị|sieu thi/, "🛒"],
-    [/máy bay|may bay|sân bay|chuyến bay/, "✈️"],
-    [/xe|đăng kiểm|dang kiem|bảo dưỡng|thay dầu/, "🚗"],
-    [/đi |xuất hành|công tác|cong tac|về quê|ve que/, "🧳"],
-    [/khám|kham|bác sĩ|bac si|bệnh viện|benh vien|thuốc|thuoc|tiêm/, "💊"],
-    [/học|hoc |thi |lớp|lop |trường|truong/, "📚"],
-    [/sửa|sua |thợ|điện nước|dien nuoc/, "🔧"],
-    [/dọn|don |nhà cửa|giặt/, "🏠"],
-    [/ăn|cơm|com |nhậu|tiệc|tiec/, "🍜"],
-    [/cà phê|cafe|ca phe/, "☕"],
-    [/tập|chạy bộ|thể dục|gym|bóng/, "🏃"]
-  ];
-  function chonBieu(ten, loai) {
-    const s = " " + String(ten || "").toLowerCase() + " ";
-    for (const [re, e] of BIEU) if (re.test(s)) return e;
-    return { gio: "🕯️", sinhnhat: "🎂", sukien: "📌", sukienam: "🌙" }[loai] || "📝";
+  /* ── Biểu tượng: bộ vẽ sẵn trong bieu-tuong.js, tự chọn theo nội dung hoặc người dùng chọn ── */
+  const BTU = window.BieuTuong;
+  const chonBieu = (ten, loai, daChon) => BTU.svg(BTU.chon(ten, loai, daChon));
+  const bieuHopLe = b => typeof b === "string" && BTU.BT[b] ? b : "";
+  function veChonBieu(id) {
+    $(id).innerHTML = `<button type="button" class="cb-tu chon" data-bieu="" title="Tự chọn theo nội dung">Tự động</button>` +
+      BTU.ds.map(k => `<button type="button" data-bieu="${k}" title="${BTU.BT[k].ten}" aria-label="${BTU.BT[k].ten}">${BTU.svg(k)}</button>`).join("");
+    $(id).addEventListener("click", e => { const b = e.target.closest("[data-bieu]"); if (b) datBieu(id, b.dataset.bieu); });
   }
+  function datBieu(id, k) { $(id).querySelectorAll("[data-bieu]").forEach(b => b.classList.toggle("chon", b.dataset.bieu === (k || ""))); }
+  const docBieu = id => ($(id).querySelector(".chon") || { dataset: { bieu: "" } }).dataset.bieu;
 
   /* ═════════ NHẮC NGÀY LẶP LẠI ═════════ */
   const KHOA_NHAC = "lichphap:nhac";
@@ -778,7 +795,8 @@
       ten: n.ten.trim().slice(0, 80), loai: n.loai, ngay: n.ngay, thang: n.thang,
       nam: n.nam == null ? null : n.nam,
       truoc: soNguyen(n.truoc, 0, 60) ? n.truoc : 3,
-      ghi: typeof n.ghi === "string" ? n.ghi.trim().slice(0, 160) : ""
+      ghi: typeof n.ghi === "string" ? n.ghi.trim().slice(0, 160) : "",
+      bieu: bieuHopLe(n.bieu)
     };
   }
   function docNhac() {
@@ -847,7 +865,7 @@
       const lanToiTxt = t ? `${THU_NGAN[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}${t.yy !== ttNgay(jdHomNay()).yy ? "/" + t.yy : ""}` : "—";
       const dem = con === 0 ? "Hôm nay" : con === 1 ? "Mai" : con > 999 ? "—" : `${con} ngày`;
       return `<li class="nhac-muc dong-gon l-${n.loai}${con <= n.truoc ? " gan" : ""}${mo ? " duoc-chon mo" : ""}${dangSua === n.id ? " dang-sua" : ""}" data-chon="${esc(n.id)}" tabindex="0" aria-selected="${mo}" aria-expanded="${mo}">
-        <span class="bieu" aria-hidden="true">${chonBieu(n.ten, n.loai)}</span>
+        <span class="bieu" aria-hidden="true">${chonBieu(n.ten, n.loai, n.bieu)}</span>
         <div class="gon-nd">
           <div class="gon-ten">${esc(n.ten)}</div>
           <div class="gon-phu">${lanToiTxt}${LOAI[n.loai].lich === "am" ? ` · ${n.ngay}/${n.thang} âm` : ""}${dn ? ` · ${dn}` : ""}</div>
@@ -974,6 +992,7 @@
     if ($("n-hieu")) $("n-hieu").innerHTML = "";
     moForm(false);
     $("f-nhac").reset();
+    datBieu("n-bieu", "");
     $("n-loi").textContent = "";
     $("n-luu").textContent = "Thêm nhắc";
     $("n-huy").hidden = true;
@@ -986,7 +1005,7 @@
     $("n-ten").value = n.ten; $("n-loai").value = n.loai;
     $("n-ngay").value = n.ngay; $("n-thang").value = n.thang;
     $("n-nam").value = n.nam == null ? "" : n.nam;
-    $("n-truoc").value = String(n.truoc); $("n-ghi").value = n.ghi;
+    $("n-truoc").value = String(n.truoc); $("n-ghi").value = n.ghi; datBieu("n-bieu", n.bieu);
     if ($("n-truoc").value !== String(n.truoc)) $("n-truoc").value = "3";
     $("n-luu").textContent = "Lưu thay đổi";
     $("n-huy").hidden = false;
@@ -999,7 +1018,7 @@
     const n = {
       ten: $("n-ten").value, loai: $("n-loai").value,
       ngay: so("n-ngay"), thang: so("n-thang"), nam: so("n-nam"),
-      truoc: Number($("n-truoc").value), ghi: $("n-ghi").value
+      truoc: Number($("n-truoc").value), ghi: $("n-ghi").value, bieu: docBieu("n-bieu")
     };
     const am = LOAI[n.loai].lich === "am";
     if (!n.ten.trim()) return { loi: "Chưa nhập tên lời nhắc.", o: "n-ten" };
@@ -1127,7 +1146,7 @@
       gio: typeof v.gio === "string" && /^\d{2}:\d{2}$/.test(v.gio) ? v.gio : null,
       uuTien: so(v.uuTien, 0, 3) ? v.uuTien : 0,
       lap: LAP[v.lap] ? v.lap : "khong",
-      ghi: typeof v.ghi === "string" ? v.ghi.slice(0, 500) : "",
+      ghi: typeof v.ghi === "string" ? v.ghi.slice(0, 500) : "", bieu: bieuHopLe(v.bieu),
       xong: !!v.xong, xongLuc: Number(v.xongLuc) || null, taoLuc: Number(v.taoLuc) || Date.now(), daBao: !!v.daBao
     };
   }
@@ -1350,7 +1369,7 @@
     const dem = v.xong ? "✓ Xong" : conNgay == null ? "" : qh ? "Quá hạn" : conNgay === 0 ? (v.gio || "Hôm nay") : conNgay === 1 ? "Mai" : `${conNgay} ngày`;
     return `<li class="viec-muc dong-gon p${v.uuTien}${v.xong ? " da-xong" : ""}${chon ? " duoc-chon mo" : ""}${viecSua === v.id ? " dang-sua" : ""}${qh ? " qua-han" : ""}"
         data-viec-id="${esc(v.id)}" tabindex="0" role="option" aria-selected="${chon}" aria-expanded="${chon}">
-      <span class="bieu" aria-hidden="true">${chonBieu(v.ten, "viec")}${v.uuTien ? `<i class="bieu-uu p${v.uuTien}"></i>` : ""}</span>
+      <span class="bieu" aria-hidden="true">${chonBieu(v.ten, "viec", v.bieu)}${v.uuTien ? `<i class="bieu-uu p${v.uuTien}"></i>` : ""}</span>
       <div class="gon-nd">
         <div class="gon-ten">${esc(v.ten)}</div>
         ${ngay || lap ? `<div class="gon-phu">${ngay}${lap}</div>` : ""}
@@ -1380,7 +1399,7 @@
     let html = "";
     if (locViec === "xong") {
       const ds = nhom.xong.slice().sort((a, b) => (b.xongLuc || 0) - (a.xongLuc || 0)).slice(0, 60);
-      html = ds.length ? `<ul class="ds-viec">${ds.map(veMucViec).join("")}</ul><button type="button" class="nut nho xoa-xong" data-xoa-xong>Xoá hết việc đã xong</button>` : "";
+      html = ds.length ? `<section class="cum-viec cum-xong"><h4>Đã hoàn thành<i>${ds.length}</i></h4><ul class="ds-viec">${ds.map(veMucViec).join("")}</ul></section><button type="button" class="nut nho xoa-xong" data-xoa-xong>Xoá hết việc đã xong</button>` : "";
     } else {
       const ds = sap(nhom[locViec]), cum = new Map();
       ds.forEach(v => {
@@ -1407,7 +1426,7 @@
     if (!vc) viecChon = null;
     $("v-xong").disabled = $("v-sua").disabled = $("v-xoa").disabled = !vc;
     const hoiXong = !!vc && choXongViec === vc.id;
-    $("v-xong").textContent = vc && vc.xong ? "↺ Chưa xong" : hoiXong ? "Chưa tới hẹn · bấm lại" : "✓ Xong";
+    $("v-xong").textContent = vc && vc.xong ? "↺ Mở lại" : hoiXong ? "Chưa tới hẹn · bấm lại" : "✓ Xong";
     $("v-xong").classList.toggle("chac", hoiXong);
     const chac = !!vc && choXoaViec === vc.id;
     $("v-xoa").classList.toggle("chac", chac);
@@ -1463,7 +1482,7 @@
     $("v-mo").textContent = "Đóng"; $("v-mo").classList.add("dang-mo");
     $("v-go").value = v ? v.ten : "";
     $("v-ngay").value = v ? jdSangO(v.jd) : ""; $("v-gio").value = v && v.gio || "";
-    datUu(v ? v.uuTien : 0); $("v-lap").value = v ? v.lap : "khong"; $("v-ghi").value = v ? v.ghi : "";
+    datUu(v ? v.uuTien : 0); $("v-lap").value = v ? v.lap : "khong"; $("v-ghi").value = v ? v.ghi : ""; datBieu("v-bieu", v ? v.bieu : "");
     $("v-luu").textContent = v ? "Lưu thay đổi" : "Thêm việc"; $("v-loi").textContent = "";
     hieuNhap();
     $("v-go").focus();
@@ -1555,7 +1574,7 @@
       const k = phanTichViec(g);
       // Tên: khi thêm mới lấy phần còn lại sau khi tách ngày giờ; khi sửa mà người dùng không gõ thêm ngày giờ thì giữ nguyên câu
       const ten = (viecSua && k.jd == null && !k.gio ? g : k.ten) || g;
-      const du = { ten, jd: oSangJd($("v-ngay").value), gio: $("v-gio").value || null, uuTien: docUu(), lap: $("v-lap").value, ghi: $("v-ghi").value };
+      const du = { ten, jd: oSangJd($("v-ngay").value), gio: $("v-gio").value || null, uuTien: docUu(), lap: $("v-lap").value, ghi: $("v-ghi").value, bieu: docBieu("v-bieu") };
       if (du.lap !== "khong" && du.jd == null) du.jd = jdHomNay();
       let id;
       if (viecSua) { capNhatViec(viecSua, du); id = viecSua; baoTam(`Đã lưu “${esc(ten)}”`); }
@@ -1704,7 +1723,7 @@
     else if (b.dataset.viec) { st.viec = b.dataset.viec; ve(); }
   });
   $("nut-hom-nay").addEventListener("click", () => den(jdHomNay()));
-  $("nut-hom-nay-logo").addEventListener("click", e => { e.preventDefault(); den(jdHomNay()); });
+  $("nut-hom-nay-logo").addEventListener("click", e => { e.preventDefault(); moGioiThieu(); });
   $("o-ngay").addEventListener("change", e => {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(e.target.value);
     if (m) den(jdFromDate(+m[3], +m[2], +m[1]));
@@ -1717,6 +1736,7 @@
     else if (e.key === "ArrowDown" && document.body.dataset.tab === "ngay") { e.preventDefault(); den(st.jd - 1, "xuong"); }
   });
 
+  veChonBieu("n-bieu"); veChonBieu("v-bieu");
   ganNhac();
   ganViec();
   ganGiuLe();
