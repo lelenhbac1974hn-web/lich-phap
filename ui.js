@@ -674,7 +674,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.8.5";
+  const PHIEN_BAN = "1.9.0";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt).length;
     const el = moTam(`
@@ -693,11 +693,12 @@
           <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
         <section><h4>Căn cứ xem sao</h4>
           <p>Sao tốt xấu an theo bảng 12 tháng trong sách <b>Ngọc Hạp Thông Thư</b> (bản dịch Việt), không trộn với các hệ khác. Mỗi sao ghi rõ: nghĩa, việc nên làm, việc kiêng, cách an theo tháng. Hiện ${soDa}/${CSDL.sao.length} sao <b>đã đối chiếu Ngọc Hạp</b>, số còn lại <b>đang đối chiếu</b> do bản in thiếu hoặc chưa nhất quán.</p>
-          <p>Tên chữ Hán của sao đối chiếu theo bản Hán Nôm <b>“Ngọc hạp toản yếu thông dụng”</b> (1926).</p></section>
+          <p>Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán <b>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký</b> và bản Hán Nôm <b>Ngọc hạp toản yếu thông dụng</b> (1926). Ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.</p></section>
         <section><h4>Tài liệu tham khảo</h4><ul>
           <li>Ngọc Hạp Thông Thư — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.</li>
+          <li>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký (bản khắc chữ Hán) — bảng sao tốt, sao xấu 12 tháng.</li>
           <li>Ngọc Hạp Chánh Tông — tài liệu đối chiếu bổ sung.</li>
-          <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — tên sao chữ Hán.</li>
+          <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.</li>
           <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
           <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>
         <section><h4>Bản quyền</h4>

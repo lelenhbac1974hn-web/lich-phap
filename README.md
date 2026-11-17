@@ -32,15 +32,16 @@ Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong �
 - Sao tốt xấu an theo bảng 12 tháng trong sách **Ngọc Hạp Thông Thư** (bản dịch Việt); không trộn
   với hệ xem ngày khác. Mỗi sao trong ứng dụng ghi trạng thái *Đã đối chiếu Ngọc Hạp* hoặc
   *Đang đối chiếu Ngọc Hạp* (bản in còn thiếu hoặc chưa nhất quán).
-- Tên chữ Hán của sao đối chiếu theo bản Hán Nôm **"Ngọc hạp toản yếu thông dụng"** (1926).
+- Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán **Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký** và bản Hán Nôm **"Ngọc hạp toản yếu thông dụng"** (1926); ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.
 
 ## Tài liệu tham khảo
 
 1. *Ngọc Hạp Thông Thư* — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.
-2. *Ngọc Hạp Chánh Tông* — tài liệu đối chiếu bổ sung.
-3. *Ngọc hạp toản yếu thông dụng* (Hán Nôm, 1926) — tên sao chữ Hán.
-4. Hồ Ngọc Đức, *Thuật toán tính âm lịch* — phần lịch pháp.
-5. Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.
+2. *Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký* (bản khắc chữ Hán) — bảng sao 12 tháng.
+3. *Ngọc Hạp Chánh Tông* — tài liệu đối chiếu bổ sung.
+4. *Ngọc hạp toản yếu thông dụng* (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.
+5. Hồ Ngọc Đức, *Thuật toán tính âm lịch* — phần lịch pháp.
+6. Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.
 
 ## Cài lên điện thoại
 
