@@ -133,10 +133,12 @@ h3,h4,p{margin:0}
 }
 @keyframes bong-lat{to{opacity:1}}
 
-/* Tờ cũ nằm yên bên dưới trong lúc tờ mới phủ lên (kiểu 3 và 4) */
-.cot-to-lich>.to-lich.roi-gan,.cot-to-lich>.to-lich.roi-xuong{z-index:0;animation:nen-lui .62s ease forwards}
-@keyframes nen-lui{to{filter:brightness(.88);transform:scale(.985)}}
-.cot-to-lich>.to-lich.vao-gan,.cot-to-lich>.to-lich.vao-xuong{position:relative;z-index:2}
+/* Lùi ngày (kiểu 3 và 4): tờ thật đã là ngày mới, nằm yên dưới cùng.
+   Bản chụp tờ cũ phủ lên trên và tối dần; bản chụp tờ mới chuyển động phủ lên trên cùng. */
+.cot-to-lich>.to-lich.roi-gan,.cot-to-lich>.to-lich.roi-xuong{z-index:4;animation:nen-lui .62s ease forwards}
+@keyframes nen-lui{to{opacity:.92;transform:scale(.985)}}
+.cot-to-lich>.to-lich.roi.vao-gan,.cot-to-lich>.to-lich.roi.vao-xuong{z-index:5}
+.to-lich.roi .tl-so{filter:none}
 
 /* 3. Dán lại (về ngày trước, vuốt phải): tờ trước trượt từ trái vào, hơi xoay rồi nằm khít gáy */
 .cot-to-lich>.to-lich.vao-gan{transform-origin:0 0;animation:dan-vao .6s cubic-bezier(.2,.95,.3,1.08)}
@@ -415,6 +417,18 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .the-ngay{background:#E3EEF7;color:#1E4F7A}.the-gio{background:var(--vang-nhat);color:#6E4F0E}
 .the-lap{background:var(--ngoc-nhat);color:#155C43}.the-uu{background:var(--son-nhat);color:var(--son-dam)}
 
+/* ── Nhóm nút 4 ô và khung nhập việc (cùng khuôn Ngày lặp lại) ── */
+.trang-viec .nhac-nhom{margin-bottom:8px}
+.nhom-4 .nhom-nut{font-size:13.5px;padding:11px 4px}
+.nhom-nut.xong:not(:disabled){color:var(--ngoc)}
+.trang-viec .nhac-goi-y{margin:0 0 10px}
+.viec-form{display:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;background:#FBF3E0;border:1px solid #E6D8B5;border-radius:14px;padding:16px;margin-bottom:12px;
+  animation:nuoc-vao2 .35s ease}
+#nhac.mo-viec .viec-form{display:grid}
+.viec-form .truong:not(.rong-4){grid-column:span 2}
+.viec-form textarea{width:100%;border:1px solid var(--vien);background:var(--the);border-radius:10px;padding:8px 11px;font:500 16px var(--chu);color:var(--muc);resize:vertical;outline:0}
+.viec-form .go-hieu{margin-top:-4px}
+
 /* ── Bộ lọc thông minh (kiểu Apple Reminders) ── */
 .loc-viec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:12px}
 .loc{--m:#2F6FA8;border:1px solid var(--vien);background:var(--the);border-radius:14px;padding:8px 6px 7px;text-align:left;display:flex;flex-direction:column;gap:1px;
@@ -440,7 +454,18 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 .viec-muc.p1{--p:#2F6FA8}.viec-muc.p2{--p:#D2691E}.viec-muc.p3{--p:var(--son)}
 .viec-muc.vua-them{animation:vua-them .6s cubic-bezier(.3,1.4,.5,1)}
 @keyframes vua-them{from{transform:translateY(-8px) scale(.97);opacity:0;box-shadow:0 0 0 4px rgba(181,134,42,.35)}}
-.viec-muc.dang-mo{border-color:var(--vang);box-shadow:0 10px 24px -14px rgba(60,35,5,.55)}
+.viec-muc{cursor:pointer;outline:0;-webkit-tap-highlight-color:transparent}
+.ds-viec .viec-muc{transition:opacity .3s,transform .35s cubic-bezier(.3,1.4,.5,1),box-shadow .3s,border-color .3s}
+#ds-viec:has(.duoc-chon) .viec-muc:not(.duoc-chon){opacity:.5}
+.viec-muc.duoc-chon{border-color:var(--p);background:#fff;transform:scale(1.015);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--p) 28%,transparent),0 10px 22px -12px rgba(60,35,5,.55)}
+.viec-muc.dang-sua{outline:2px dashed var(--vang);outline-offset:2px}
+.viec-muc:focus-visible{box-shadow:0 0 0 3px rgba(181,134,42,.35)}
+.vm-cham{width:14px;height:14px;margin-top:4px;border-radius:50%;border:2px solid var(--p);background:color-mix(in srgb,var(--p) 14%,transparent);
+  display:grid;place-items:center;font-size:9px;font-weight:800;color:#fff}
+.da-xong .vm-cham{background:var(--p)}
+.vm-uu{font-weight:600}
+.vm-uu.p1{color:#2F6FA8}.vm-uu.p2{color:#D2691E}.vm-uu.p3{color:var(--son)}
 .tich{width:26px;height:26px;margin-top:1px;border-radius:50%;border:2px solid var(--p);background:color-mix(in srgb,var(--p) 8%,transparent);
   display:grid;place-items:center;padding:0;transition:background .25s,transform .25s;-webkit-tap-highlight-color:transparent}
 .tich svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .3s .05s}

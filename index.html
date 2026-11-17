@@ -71,13 +71,29 @@
 
     <!-- ═══ NHẮC VIỆC ═══ -->
     <div class="trang-viec">
-      <form class="go-nhanh" id="f-viec" autocomplete="off">
-        <div class="go-o">
-          <input id="v-go" maxlength="140" enterkeyhint="done"
-            placeholder="Thêm việc… vd: Họp giao ban 8h sáng mai" aria-label="Thêm việc mới" />
-          <button type="submit" class="go-them" aria-label="Thêm việc">＋</button>
+      <div class="nhac-nhom nhom-4" role="toolbar" aria-label="Thao tác việc">
+        <button type="button" class="nhom-nut them" id="v-mo">＋ Thêm</button>
+        <button type="button" class="nhom-nut xong" id="v-xong" disabled>✓ Xong</button>
+        <button type="button" class="nhom-nut" id="v-sua" disabled>Sửa</button>
+        <button type="button" class="nhom-nut xoa" id="v-xoa" disabled>Xoá</button>
+      </div>
+      <p class="nhac-goi-y" id="v-goi-y"></p>
+      <form class="viec-form" id="f-viec" autocomplete="off" novalidate>
+        <label class="truong rong-4"><span>Việc cần làm</span>
+          <input id="v-go" maxlength="140" enterkeyhint="done" placeholder="vd: Họp giao ban 8h sáng mai" /></label>
+        <div class="go-hieu rong-4" id="v-hieu" aria-live="polite"></div>
+        <label class="truong"><span>Ngày</span><input type="date" id="v-ngay" /></label>
+        <label class="truong"><span>Giờ nhắc</span><input type="time" id="v-gio" /></label>
+        <div class="truong rong-4"><span>Ưu tiên</span><div class="uu-chon" id="v-uu">
+          <button type="button" class="p0 chon" data-uu="0">Không</button><button type="button" class="p1" data-uu="1">Thấp</button><button type="button" class="p2" data-uu="2">Vừa</button><button type="button" class="p3" data-uu="3">Cao</button></div></div>
+        <label class="truong rong-4"><span>Lặp lại</span><select id="v-lap">
+          <option value="khong">Không lặp</option><option value="ngay">Hằng ngày</option><option value="tuan">Hằng tuần</option><option value="thang">Hằng tháng</option><option value="nam">Hằng năm</option></select></label>
+        <label class="truong rong-4"><span>Ghi chú</span><textarea id="v-ghi" rows="2" maxlength="500"></textarea></label>
+        <p class="nhac-loi rong-4" id="v-loi" role="alert"></p>
+        <div class="nhac-nut rong-4">
+          <button type="button" class="nut" id="v-huy">Huỷ</button>
+          <button type="submit" class="nut nut-chinh" id="v-luu">Thêm việc</button>
         </div>
-        <div class="go-hieu" id="v-hieu" aria-live="polite"></div>
       </form>
       <div class="loc-viec" id="loc-viec" role="tablist" aria-label="Danh sách việc"></div>
       <div class="xin-bao" id="xin-bao" hidden></div>

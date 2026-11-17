@@ -193,13 +193,21 @@
     const moi = khung.querySelector(".to-lich:not(.roi)");
     if (toCu) {
       khung.appendChild(toCu);
-      toCu.addEventListener("animationend", ev => { if (ev.target === toCu) toCu.remove(); });
-      setTimeout(() => toCu.remove(), 1400); // dự phòng nếu trình duyệt bỏ sự kiện
+      if (kieu === "xe" || kieu === "len") {
+        toCu.addEventListener("animationend", ev => { if (ev.target === toCu) toCu.remove(); });
+        setTimeout(() => toCu.remove(), 1400); // dự phòng nếu trình duyệt bỏ sự kiện
+      }
     }
     if (moi && (kieu === "gan" || kieu === "xuong")) {
-      moi.classList.add(`vao-${kieu}`);
-      moi.addEventListener("animationend", ev => { if (ev.target === moi) moi.classList.remove(...LOP_HIEU_UNG); });
-      setTimeout(() => moi.classList.remove(...LOP_HIEU_UNG), 1400);
+      /* Lùi ngày: cũng chỉ cho BẢN CHỤP chuyển động (như khi tiến ngày). Tờ thật nằm yên bên dưới,
+         nên lớp cảnh động và chữ đổ bóng không phải vẽ lại trong lúc xoay 3D — hết nhấp nháy trên iPhone. */
+      const vao = moi.cloneNode(true);
+      vao.classList.remove(...LOP_HIEU_UNG);
+      vao.classList.add("roi", `vao-${kieu}`);
+      khung.appendChild(vao);
+      const xong = () => { vao.remove(); if (toCu) toCu.remove(); };
+      vao.addEventListener("animationend", ev => { if (ev.target === vao) xong(); });
+      setTimeout(xong, 1400);
     }
   }
 
@@ -998,7 +1006,7 @@
     try { const a = JSON.parse(docKhoa(KHOA_VIEC, "[]")); return Array.isArray(a) ? a.filter(v => v && v.ten).map(chuanViec) : []; }
     catch (e) { return []; }
   })();
-  let locViec = "homnay", viecMo = null;
+  let locViec = "homnay", viecChon = null, viecSua = null, choXoaViec = null, henXoaViec = 0;
   const luuViec = () => ghiKhoa(KHOA_VIEC, JSON.stringify(viec));
 
   /* ── Hiểu câu tiếng Việt: ngày, giờ, lặp, ưu tiên ── */
@@ -1125,27 +1133,15 @@
     const ngay = v.jd == null ? "" : `<span class="vm-ngay${qh ? " qua-han" : v.jd === hom ? " hom-nay" : ""}">${nhanNgayViec(v.jd)}${v.gio ? ` · ${v.gio}` : ""}</span>`;
     const lap = v.lap !== "khong" ? `<span class="vm-lap" title="${LAP[v.lap]}">↻ ${LAP[v.lap]}</span>` : "";
     const ghi = v.ghi ? `<span class="vm-ghi">${esc(v.ghi.split("\n")[0])}</span>` : "";
-    const mo = viecMo === v.id;
-    const sua = mo ? `
-      <div class="vm-sua">
-        <label class="truong rong-4"><span>Tên việc</span><input data-sua-truong="ten" value="${esc(v.ten)}" maxlength="140" /></label>
-        <label class="truong"><span>Ngày</span><input type="date" data-sua-truong="ngay" value="${v.jd == null ? "" : (t => `${t.yy}-${hai(t.mm)}-${hai(t.dd)}`)(ttNgay(v.jd))}" /></label>
-        <label class="truong"><span>Giờ nhắc</span><input type="time" data-sua-truong="gio" value="${v.gio || ""}" /></label>
-        <div class="truong rong-4"><span>Ưu tiên</span><div class="uu-chon">${UU.map((u, i) => `<button type="button" class="p${i}${v.uuTien === i ? " chon" : ""}" data-uu="${i}">${u}</button>`).join("")}</div></div>
-        <label class="truong rong-4"><span>Lặp lại</span><select data-sua-truong="lap">${Object.keys(LAP).map(k => `<option value="${k}"${v.lap === k ? " selected" : ""}>${LAP[k]}</option>`).join("")}</select></label>
-        <label class="truong rong-4"><span>Ghi chú</span><textarea data-sua-truong="ghi" rows="2" maxlength="500">${esc(v.ghi)}</textarea></label>
-        <div class="vm-sua-nut rong-4">
-          <button type="button" class="nut nho xoa-viec" data-xoa-viec>Xoá việc</button>
-          <button type="button" class="nut nho nut-chinh" data-dong-viec>Xong</button>
-        </div>
-      </div>` : "";
-    return `<li class="viec-muc p${v.uuTien}${v.xong ? " da-xong" : ""}${mo ? " dang-mo" : ""}${qh ? " qua-han" : ""}" data-viec-id="${esc(v.id)}">
-      <button type="button" class="tich" data-tich aria-label="${v.xong ? "Đánh dấu chưa xong" : "Đánh dấu đã xong"}"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9"/></svg></button>
-      <div class="vm-nd" data-mo-viec tabindex="0" role="button" aria-expanded="${mo}">
+    const chon = viecChon === v.id;
+    const uu = v.uuTien ? `<span class="vm-uu p${v.uuTien}">⚑ ${UU[v.uuTien]}</span>` : "";
+    return `<li class="viec-muc p${v.uuTien}${v.xong ? " da-xong" : ""}${chon ? " duoc-chon" : ""}${viecSua === v.id ? " dang-sua" : ""}${qh ? " qua-han" : ""}"
+        data-viec-id="${esc(v.id)}" tabindex="0" role="option" aria-selected="${chon}">
+      <span class="vm-cham" aria-hidden="true">${v.xong ? "✓" : ""}</span>
+      <div class="vm-nd">
         <div class="vm-ten">${esc(v.ten)}</div>
-        ${ngay || lap || ghi ? `<div class="vm-phu">${ngay}${lap}${ghi}</div>` : ""}
+        ${ngay || lap || uu || ghi ? `<div class="vm-phu">${ngay}${lap}${uu}${ghi}</div>` : ""}
       </div>
-      ${sua}
     </li>`;
   }
 
@@ -1180,13 +1176,24 @@
       html = thuTu.map(k => `<section class="cum-viec${k === "qua" ? " cum-qua" : ""}"><h4>${tieuDe(k)}<i>${cum.get(k).length}</i></h4><ul class="ds-viec">${cum.get(k).map(veMucViec).join("")}</ul></section>`).join("");
     }
     if (!html) {
-      const loi = { homnay: ["Hôm nay rảnh việc", "Gõ việc vào ô bên trên, ví dụ “Gọi anh Tuấn 9h sáng mai !!” hoặc “Nộp hồ sơ thứ 6”."],
+      const loi = { homnay: ["Hôm nay rảnh việc", "Bấm “＋ Thêm”, gõ một câu như “Gọi anh Tuấn 9h sáng mai” — ứng dụng tự điền ngày, giờ."],
         saptoi: ["Chưa có việc sắp tới", "Thêm việc có ngày, ví dụ “Họp giao ban thứ 2 hằng tuần”, “Đi lễ chùa rằm”."],
-        tatca: ["Chưa có việc nào", "Gõ một câu bình thường; ứng dụng tự hiểu ngày, giờ, lặp lại và mức gấp."],
-        xong: ["Chưa hoàn thành việc nào", "Chạm vòng tròn bên trái một việc để đánh dấu xong."] }[locViec];
+        tatca: ["Chưa có việc nào", "Bấm “＋ Thêm” để thêm việc đầu tiên."],
+        xong: ["Chưa hoàn thành việc nào", "Chạm chọn một việc rồi bấm “✓ Xong”."] }[locViec];
       html = `<div class="viec-trong"><b>${loi[0]}</b>${loi[1]}</div>`;
     }
     $("ds-viec").innerHTML = html;
+
+    /* Nhóm nút: Xong · Sửa · Xoá chỉ sáng khi đã chọn một việc */
+    const vc = viec.find(v => v.id === viecChon);
+    if (!vc) viecChon = null;
+    $("v-xong").disabled = $("v-sua").disabled = $("v-xoa").disabled = !vc;
+    $("v-xong").textContent = vc && vc.xong ? "↺ Chưa xong" : "✓ Xong";
+    const chac = !!vc && choXoaViec === vc.id;
+    $("v-xoa").classList.toggle("chac", chac);
+    $("v-xoa").textContent = chac ? "Bấm lần nữa" : "Xoá";
+    const coViec = locViec === "xong" ? nhom.xong.length : nhom[locViec].length;
+    $("v-goi-y").textContent = coViec && !vc ? "Chạm vào một việc để chọn, rồi bấm Xong, Sửa hoặc Xoá." : "";
 
     const can = soViecCan();
     $("dem-viec").hidden = !can; $("dem-viec").textContent = can;
@@ -1222,6 +1229,29 @@
     }
   }
 
+  /* ── Khung nhập việc (giống khung Ngày lặp lại) ── */
+  const jdSangO = jd => jd == null ? "" : (t => `${t.yy}-${hai(t.mm)}-${hai(t.dd)}`)(ttNgay(jd));
+  const oSangJd = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? jdFromDate(+m[3], +m[2], +m[1]) : null; };
+  let chamTay = {};
+  function datUu(n) { document.querySelectorAll("#v-uu [data-uu]").forEach(b => b.classList.toggle("chon", +b.dataset.uu === n)); }
+  const docUu = () => +(document.querySelector("#v-uu .chon") || { dataset: { uu: 0 } }).dataset.uu;
+  function moFormViec(v) {
+    viecSua = v ? v.id : null; chamTay = v ? { ngay: 1, gio: 1, uu: 1, lap: 1 } : {};
+    $("nhac").classList.add("mo-viec");
+    $("v-mo").textContent = "Đóng"; $("v-mo").classList.add("dang-mo");
+    $("v-go").value = v ? v.ten : "";
+    $("v-ngay").value = v ? jdSangO(v.jd) : ""; $("v-gio").value = v && v.gio || "";
+    datUu(v ? v.uuTien : 0); $("v-lap").value = v ? v.lap : "khong"; $("v-ghi").value = v ? v.ghi : "";
+    $("v-luu").textContent = v ? "Lưu thay đổi" : "Thêm việc"; $("v-loi").textContent = "";
+    hieuNhap();
+    $("v-go").focus();
+  }
+  function dongFormViec() {
+    viecSua = null;
+    $("nhac").classList.remove("mo-viec");
+    $("v-mo").textContent = "＋ Thêm"; $("v-mo").classList.remove("dang-mo");
+  }
+  /* Gõ câu tự nhiên: hiện nhãn xem trước và tự điền các ô chưa sửa tay */
   function hieuNhap() {
     const g = $("v-go").value.trim();
     if (!g) { $("v-hieu").innerHTML = ""; return; }
@@ -1231,6 +1261,10 @@
     if (k.lap !== "khong") the.push(`<span class="the-lap">↻ ${LAP[k.lap]}</span>`);
     if (k.uuTien) the.push(`<span class="the-uu p${k.uuTien}">⚑ Ưu tiên ${UU[k.uuTien].toLowerCase()}</span>`);
     $("v-hieu").innerHTML = the.join("");
+    if (!chamTay.ngay && k.jd != null) $("v-ngay").value = jdSangO(k.jd);
+    if (!chamTay.gio && k.gio) $("v-gio").value = k.gio;
+    if (!chamTay.lap && k.lap !== "khong") $("v-lap").value = k.lap;
+    if (!chamTay.uu && k.uuTien) datUu(k.uuTien);
   }
 
   /* ── Nhắc đúng giờ (khi ứng dụng đang mở) ── */
@@ -1266,24 +1300,64 @@
       const b = e.target.closest("[data-nhac-trang]");
       if (b) datTrang(b.dataset.nhacTrang);
     });
+    /* Khung nhập */
     $("v-go").addEventListener("input", hieuNhap);
+    $("v-ngay").addEventListener("change", () => { chamTay.ngay = 1; });
+    $("v-gio").addEventListener("change", () => { chamTay.gio = 1; });
+    $("v-lap").addEventListener("change", () => { chamTay.lap = 1; });
+    $("v-uu").addEventListener("click", e => { const b = e.target.closest("[data-uu]"); if (b) { chamTay.uu = 1; datUu(+b.dataset.uu); } });
+    $("v-huy").addEventListener("click", () => { dongFormViec(); veViec(); });
+    $("v-mo").addEventListener("click", () => { if ($("nhac").classList.contains("mo-viec")) dongFormViec(); else moFormViec(null); veViec(); });
     $("f-viec").addEventListener("submit", e => {
       e.preventDefault();
       const g = $("v-go").value.trim();
-      if (!g) return;
+      if (!g) { $("v-loi").textContent = "Chưa nhập việc cần làm."; $("v-go").focus(); return; }
       const k = phanTichViec(g);
-      if (!k.ten) { baoTam("Chưa có tên việc — gõ thêm nội dung việc cần làm."); return; }
-      const v = chuanViec({ ten: k.ten, jd: k.jd, gio: k.gio, lap: k.lap, uuTien: k.uuTien });
-      viec.push(v); luuViec();
-      $("v-go").value = ""; hieuNhap();
-      if (locViec === "xong" || (locViec === "homnay" && (v.jd == null || v.jd > jdHomNay()))) locViec = v.jd == null ? "tatca" : v.jd > jdHomNay() ? "saptoi" : "homnay";
+      // Tên: khi thêm mới lấy phần còn lại sau khi tách ngày giờ; khi sửa mà người dùng không gõ thêm ngày giờ thì giữ nguyên câu
+      const ten = (viecSua && k.jd == null && !k.gio ? g : k.ten) || g;
+      const du = { ten, jd: oSangJd($("v-ngay").value), gio: $("v-gio").value || null, uuTien: docUu(), lap: $("v-lap").value, ghi: $("v-ghi").value };
+      if (du.lap !== "khong" && du.jd == null) du.jd = jdHomNay();
+      let id;
+      if (viecSua) { capNhatViec(viecSua, du); id = viecSua; baoTam(`Đã lưu “${esc(ten)}”`); }
+      else { const v = chuanViec(du); viec.push(v); luuViec(); id = v.id; }
+      const vMoi = viec.find(v => v.id === id);
+      dongFormViec();
+      viecChon = id;
+      if (locViec === "xong" || (locViec === "homnay" && (vMoi.jd == null || vMoi.jd > jdHomNay())) || (locViec === "saptoi" && !(vMoi.jd > jdHomNay())))
+        locViec = vMoi.jd == null ? "tatca" : vMoi.jd > jdHomNay() ? "saptoi" : "homnay";
       ve();
-      const moi = document.querySelector(`[data-viec-id="${v.id}"]`);
+      const moi = document.querySelector(`[data-viec-id="${id}"]`);
       if (moi) { moi.classList.add("vua-them"); moi.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+    });
+    /* Nhóm nút Xong · Sửa · Xoá */
+    $("v-xong").addEventListener("click", () => {
+      if (!viecChon) return;
+      const id = viecChon, v = viec.find(x => x.id === id);
+      if (!v) return;
+      if (!v.xong && v.lap === "khong") viecChon = null; // việc xong rời khỏi danh sách đang xem
+      tichViec(id);
+    });
+    $("v-sua").addEventListener("click", () => {
+      const v = viec.find(x => x.id === viecChon);
+      if (v) { choXoaViec = null; moFormViec(v); veViec(); $("khung").scrollTop = 0; }
+    });
+    $("v-xoa").addEventListener("click", () => {
+      if (!viecChon) return;
+      clearTimeout(henXoaViec);
+      if (choXoaViec === viecChon) {
+        const cu = viec.slice(), v = viec.find(x => x.id === viecChon);
+        viec = viec.filter(x => x.id !== viecChon);
+        if (viecSua === viecChon) dongFormViec();
+        viecChon = null; choXoaViec = null; luuViec(); ve();
+        baoTam(`Đã xoá “${esc(v.ten)}”`, () => { viec = cu; luuViec(); ve(); });
+      } else {
+        choXoaViec = viecChon; veViec();
+        henXoaViec = setTimeout(() => { choXoaViec = null; veViec(); }, 4000);
+      }
     });
     $("loc-viec").addEventListener("click", e => {
       const b = e.target.closest("[data-loc]");
-      if (b) { locViec = b.dataset.loc; viecMo = null; veViec(); }
+      if (b) { locViec = b.dataset.loc; viecChon = null; choXoaViec = null; veViec(); }
     });
     $("xin-bao").addEventListener("click", e => {
       if (!e.target.closest("[data-xin-bao]")) return;
@@ -1299,39 +1373,14 @@
         return;
       }
       if (!id) return;
-      if (e.target.closest("[data-tich]")) {
-        li.classList.add("dang-tich");
-        setTimeout(() => tichViec(id), giamDong.matches ? 0 : 380);
-      } else if (e.target.closest("[data-xoa-viec]")) {
-        const cu = viec.slice(), v = viec.find(x => x.id === id);
-        viec = viec.filter(x => x.id !== id); viecMo = null; luuViec(); ve();
-        baoTam(`Đã xoá “${esc(v.ten)}”`, () => { viec = cu; luuViec(); ve(); });
-      } else if (e.target.closest("[data-dong-viec]")) {
-        viecMo = null; veViec();
-      } else if (e.target.closest("[data-uu]")) {
-        capNhatViec(id, { uuTien: +e.target.closest("[data-uu]").dataset.uu }); veViec();
-      } else if (e.target.closest("[data-mo-viec]")) {
-        viecMo = viecMo === id ? null : id; veViec();
-        if (viecMo) { const o = document.querySelector(`[data-viec-id="${id}"] [data-sua-truong="ten"]`); if (o && window.matchMedia("(hover:hover)").matches) o.focus(); }
-      }
+      /* Chạm một việc để chọn (sáng lên); chạm lại để bỏ chọn */
+      viecChon = viecChon === id ? null : id;
+      choXoaViec = null;
+      veViec();
     });
     ds.addEventListener("keydown", e => {
-      const nd = e.target.closest("[data-mo-viec]");
-      if (nd && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); nd.click(); }
-    });
-    ds.addEventListener("change", e => {
-      const o = e.target.closest("[data-sua-truong]"), li = e.target.closest("[data-viec-id]");
-      if (!o || !li) return;
-      const id = li.dataset.viecId, t = o.dataset.suaTruong, val = o.value;
-      if (t === "ten") { if (val.trim()) capNhatViec(id, { ten: val }); }
-      else if (t === "ngay") {
-        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val);
-        capNhatViec(id, { jd: m ? jdFromDate(+m[3], +m[2], +m[1]) : null });
-      }
-      else if (t === "gio") capNhatViec(id, { gio: val || null });
-      else if (t === "lap") capNhatViec(id, { lap: val });
-      else if (t === "ghi") capNhatViec(id, { ghi: val });
-      if (t !== "ten" && t !== "ghi") ve(); else { veToLich(thongTin(st.jd, st.viec)); }
+      const li = e.target.closest("[data-viec-id]");
+      if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); li.click(); }
     });
     setInterval(soatGio, 20000);
     document.addEventListener("visibilitychange", () => { if (!document.hidden) { soatGio(); veViec(); } });
