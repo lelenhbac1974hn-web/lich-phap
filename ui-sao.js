@@ -58,7 +58,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.14.0";
+const PHIEN_BAN = "1.14.1";
 function moGioiThieu(muc) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
   const el = moTam(`
@@ -71,12 +71,12 @@ function moGioiThieu(muc) {
         <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước (mỗi hướng một kiểu lật); lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
         <li><b>Giờ</b> — mặt đồng hồ 12 canh giờ, giờ hoàng đạo, hướng Hỷ thần, Tài thần.</li>
         <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
-        <li><b>Luận giải</b> — xét ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao, xuất hành) bằng hai kiểu: <b>Cộng sao</b> (thang điểm) và <b>Theo sách</b> (theo quy tắc Ngọc Hạp Thông Thư, ghi số trang), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
+        <li><b>Luận giải</b> — xét ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao, xuất hành) bằng hai kiểu: <b>Cộng sao</b> (thang điểm) và <b>Theo sách</b> (theo quy tắc Ngọc Hạp Thông Thư), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
         <li><b>Nhắc</b> — Nhắc việc và Ngày lặp lại (giỗ âm lịch, sinh nhật, kỷ niệm). Gõ câu tự nhiên như “Họp giao ban 8h sáng mai”, “Giỗ bố 20/10 âm” — ứng dụng tự hiểu ngày, giờ.</li></ul></section>
       <section id="gt-luan"><h4>Hai kiểu luận ngày</h4>
         <p>Ở mục <b>Luận giải</b> có nút chuyển <b>Cộng sao · Theo sách</b>. Lịch tháng tô màu theo kiểu đang chọn; ứng dụng nhớ lựa chọn của bạn.</p>
         <p><b>Cộng sao</b> — cách chấm điểm nhanh: cộng điểm cho hoàng đạo, trực tốt, nhị thập bát tú tốt, sao tốt; trừ điểm cho hắc đạo, sao xấu, Tam nương, Nguyệt kỵ, Dương công kỵ. Tổng điểm quy ra 5 mức từ Rất xấu tới Rất tốt.</p>
-        <p><b>Theo sách</b> — xét đúng thứ tự Ngọc Hạp Thông Thư dạy, mỗi lý do ghi số trang sách (TT tr.…):</p>
+        <p><b>Theo sách</b> — xét đúng thứ tự Ngọc Hạp Thông Thư dạy, mỗi lý do nói rõ bằng lời:</p>
         <ol>
           <li><b>Sáu ngày đại kỵ</b>: Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước. Sách dạy sao tốt không cứu được (tr.9) → <b>Rất xấu</b>.</li>
           <li><b>Ngày kiêng</b>: ngày sách ghi kiêng mọi việc (Thiên cương, Đại hao, Tiểu hồng sa, Tứ ly, Tứ tuyệt…) và ngày kiêng riêng của việc đang chọn (động thổ thì xét Vãng vong, Thổ cấm, Thiên hoả, Nguyệt phá…) → <b>Xấu</b> hoặc <b>Rất xấu</b>.</li>
@@ -115,7 +115,7 @@ const KHOA_HD = "lichphap:da-xem-huong-dan";
 const HUONG_DAN = [
   ["lich", "Tờ lịch mỗi ngày", "Vuốt trái hoặc vuốt lên để sang ngày sau, vuốt phải hoặc vuốt xuống để về ngày trước. Chạm ô ngày trên cùng để chọn ngày bất kỳ, bấm “Hôm nay” để quay về."],
   ["co", "Chọn việc định làm", "Hàng nút trên cùng: Việc chung, Động thổ, Ký kết, Khai trương, Xuất hành. Ngày tốt hay xấu được xét theo việc bạn chọn."],
-  ["sao", "Ngày tốt hay xấu", "Dải màu dưới tờ lịch cho biết mức tốt xấu, chạm vào để đọc lý do. Mục Luận giải có hai kiểu: Cộng sao (chấm điểm) và Theo sách (theo Ngọc Hạp Thông Thư, ghi số trang)."],
+  ["sao", "Ngày tốt hay xấu", "Dải màu dưới tờ lịch cho biết mức tốt xấu, chạm vào để đọc lý do. Mục Luận giải có hai kiểu: Cộng sao (chấm điểm) và Theo sách (theo Ngọc Hạp Thông Thư)."],
   ["dongHo", "Giờ và tháng", "Thẻ Giờ: giờ hoàng đạo màu xanh, hắc đạo màu đỏ, chạm ô giờ để xem. Thẻ Tháng: vạch màu dưới mỗi ngày cho biết tốt xấu, tiện chọn ngày cho việc lớn."],
   ["nen", "Nhắc việc, ngày giỗ", "Thẻ Nhắc → “+ Thêm”, gõ một câu như “Giỗ bố 20/10 âm” hay “Họp giao ban 8h sáng mai”. Dữ liệu chỉ lưu trong máy của bạn."]
 ];

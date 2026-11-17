@@ -15,7 +15,7 @@ sau lần mở đầu tiên. Dữ liệu nhắc việc chỉ lưu trong máy ng�
 | **Ngày** | Tờ lịch lật: vuốt trái hoặc lên sang ngày sau, vuốt phải hoặc xuống về ngày trước, mỗi hướng một kiểu lật. Lễ tết hiện trên tờ lịch; nhấn giữ biểu tượng lễ để đọc phong tục, món ăn, ca dao. Câu ca dao, tục ngữ mỗi ngày. |
 | **Giờ** | Mặt đồng hồ 12 canh giờ, giờ hoàng đạo / hắc đạo, hướng Hỷ thần, Tài thần. |
 | **Tháng** | Lịch tháng âm dương, tô màu ngày tốt xấu theo việc đang xem, đánh dấu lễ tết, ngày có nhắc. |
-| **Luận giải** | Xét ngày theo việc (việc chung, động thổ · khởi công, ký kết hợp đồng, khai trương · bàn giao, xuất hành) bằng hai kiểu: **Cộng sao** (thang điểm) và **Theo sách** (quy tắc Ngọc Hạp Thông Thư: sáu ngày đại kỵ không sao nào cứu, ngày kiêng theo việc, hoàng đạo, trực, sao tốt xấu hợp việc — mỗi lý do ghi số trang), trực, sao Ngọc Hạp của ngày, tra cứu 155 sao (nghĩa, nên, kỵ, cách an theo tháng). |
+| **Luận giải** | Xét ngày theo việc (việc chung, động thổ · khởi công, ký kết hợp đồng, khai trương · bàn giao, xuất hành) bằng hai kiểu: **Cộng sao** (thang điểm) và **Theo sách** (quy tắc Ngọc Hạp Thông Thư: sáu ngày đại kỵ không sao nào cứu, ngày kiêng theo việc, hoàng đạo, trực, sao tốt xấu hợp việc ), trực, sao Ngọc Hạp của ngày, tra cứu 155 sao (nghĩa, nên, kỵ, cách an theo tháng). |
 | **Nhắc** | *Nhắc việc*: gõ câu tự nhiên ("Họp giao ban 8h sáng mai", "Đi lễ chùa rằm tháng tới") — tự hiểu ngày, giờ, lặp lại, ưu tiên; xác nhận trước khi đánh dấu xong việc chưa tới hẹn. *Ngày lặp lại*: giỗ theo âm lịch, sinh nhật, kỷ niệm theo dương lịch ("Giỗ bố 20/10 âm, năm mất 2021"). Mỗi mục có biểu tượng vẽ sẵn (tự chọn theo nội dung hoặc chọn tay), sắp gần nhất lên đầu, chạm để xem ghi chú. |
 
 Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong ứng dụng. Lần mở đầu có **hướng dẫn 5 bước**
@@ -29,7 +29,7 @@ ngày/tháng/năm kèm ngày âm. Từ 23 giờ (giờ Tý) lịch hiện ngày 
 **Cộng sao** — chấm điểm nhanh: cộng cho hoàng đạo, trực tốt, nhị thập bát tú tốt, sao tốt; trừ cho
 hắc đạo, sao xấu, Tam nương, Nguyệt kỵ, Dương công kỵ. Tổng điểm quy ra 5 mức (Rất xấu → Rất tốt).
 
-**Theo sách** — xét đúng thứ tự *Ngọc Hạp Thông Thư* dạy, mỗi lý do ghi số trang sách:
+**Theo sách** — xét đúng thứ tự *Ngọc Hạp Thông Thư* dạy (số trang sách giữ trong dữ liệu để rà soát, không hiện trên màn hình):
 
 1. **Sáu ngày đại kỵ** — Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước: sách
    dạy sao tốt không cứu được (tr.9) → *Rất xấu*.

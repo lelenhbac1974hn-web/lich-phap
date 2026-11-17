@@ -5,6 +5,8 @@
 "use strict";
 
 /* ── Phán định tốt xấu ── */
+/* Bỏ ghi chú số trang "(TT tr.9)" khỏi câu hiện cho người dùng */
+const boTrang = s => String(s).replace(/\s*\(TT tr\.[^)]*\)/g, "");
 /* Nút chọn kiểu luận: Cộng sao (thang điểm) · Theo sách (quy tắc Ngọc Hạp Thông Thư) */
 const nutKieu = () => `<div class="pd-kieu" role="tablist" aria-label="Kiểu luận">
     <button type="button" role="tab" data-kieu="sao" aria-selected="${st.kieu === "sao"}">Cộng sao</button>
@@ -14,20 +16,21 @@ function vePhanDinh(x) {
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
   const thang = BAC_UI.map((b, i) => `<i class="${b.lop}${i === soBac ? " dang" : ""}" title="${b.t}"></i>`).join("");
   const li = (ds, lop) => ds.map(t => `<li class="${lop}">${esc(t)}</li>`).join("");
-  const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(m.t)}${m.trang ? ` <em class="pd-tr">${esc(m.trang)}</em>` : ""}</li>`).join("");
+  /* Lý do luận theo sách hiện bằng lời thường; số trang sách chỉ giữ trong dữ liệu (luan-sach.js), không đưa lên màn hình */
+  const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(boTrang(m.t))}</li>`).join("");
   $("phan-dinh").className = `the the-phan-dinh ${bac.lop}`;
   $("phan-dinh").innerHTML = sach ? `
     <div class="pd-dau"><div class="pd-nhan">Luận theo sách · ${esc(viec.ten)}</div>${nutKieu()}</div>
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
-    <div class="pd-ket">${esc(ls.ket)}</div>
+    <div class="pd-ket">${esc(boTrang(ls.ket))}</div>
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
-    ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được (TT tr.9)</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
+    ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
     <div class="pd-ly">
       <div><h4>Điều tốt</h4><ul>${liSach(ls.tot, "cong") || '<li class="rong">Không có</li>'}</ul></div>
       <div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || '<li class="rong">Không phạm</li>'}</ul></div>
     </div>
     ${ls.nhac.length ? `<ul class="pd-nhac">${liSach(ls.nhac, "nhac")}</ul>` : ""}
-    <p class="pd-nguon">Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. Số trang là trang sách. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>` : `
+    <p class="pd-nguon">Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>` : `
     <div class="pd-dau"><div class="pd-nhan">Phán định · ${esc(viec.ten)}</div>${nutKieu()}</div>
     <div class="pd-chinh">
       <div class="pd-bac">${bac.t}</div>
@@ -52,7 +55,7 @@ function veTomTat(x) {
   const el = $("tom-tat");
   el.className = `tom-tat ${bac.lop}`;
   const ky = kyNgay(cd);
-  const phu = sach ? (x.ls.khongCuu[0] || x.ls.kieng[0] || { t: x.ls.ket }).t
+  const phu = sach ? boTrang((x.ls.khongCuu[0] || x.ls.kieng[0] || { t: x.ls.ket }).t)
     : (ky.length ? ky.join(" · ") + " · " : "") + `Trực ${cd.truc.t} · ${cd.than.t} · Sao ${cd.saoTen}`;
   el.innerHTML = `
     <span class="tt-nhan">${sach ? "Theo sách" : "Phán định"} · ${esc(viec.ten)}</span>

@@ -309,13 +309,11 @@ function ganNhac() {
     if (!ok) $("n-loi").textContent = "Trình duyệt không cho lưu dữ liệu; lời nhắc sẽ mất khi đóng trang.";
   });
   /* Chạm một lời nhắc để chọn (chạm lại để bỏ chọn); ô đếm ngày vẫn mở ngày đó */
-  const chonNhac = li => {
+  const chonNhac = li => doiMoGon($("ds-nhac"), () => {
     nhacChon = nhacChon === li.dataset.chon ? null : li.dataset.chon;
     choXoa = null;
     veNhac();
-    const mo = nhacChon && document.querySelector(`#ds-nhac [data-chon="${nhacChon}"]`);
-    if (mo) setTimeout(() => mo.scrollIntoView({ block: "nearest" }), 30);
-  };
+  });
   $("ds-nhac").addEventListener("click", e => {
     if (e.target.closest("[data-jd]")) return;
     const li = e.target.closest("[data-chon]");
@@ -591,6 +589,42 @@ function ngayLapTiep(v) {
   if (mo > 12) { mo = 1; y++; }
   const dai = jdFromDate(1, mo === 12 ? 1 : mo + 1, mo === 12 ? y + 1 : y) - jdFromDate(1, mo, y);
   return jdFromDate(Math.min(t.dd, dai), mo, y);
+}
+
+/* ── Mở / thu chi tiết một mục (Nhắc việc, Ngày lặp lại): phần chi tiết trượt mở và thu lại mềm,
+   chữ hiện dần — thay cho bật tắt đột ngột. Máy đặt "giảm chuyển động" thì đổi ngay, không hiệu ứng. ── */
+const itChuyenDong = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let dangDoiMo = false;
+function doiMoGon(vung, doi) {
+  if (dangDoiMo) return;
+  const cu = vung.querySelector(".gon-chi-tiet");
+  const xong = () => {
+    doi();
+    const moi = vung.querySelector(".gon-chi-tiet");
+    if (moi && !itChuyenDong()) {
+      const cs = getComputedStyle(moi), cao = moi.scrollHeight;
+      moi.style.overflow = "hidden";
+      const am = moi.animate([
+        { height: "0px", opacity: 0, paddingTop: "0px", marginBottom: "0px", transform: "translateY(-6px)" },
+        { height: cao + "px", opacity: 1, paddingTop: cs.paddingTop, marginBottom: cs.marginBottom, transform: "none" }
+      ], { duration: 380, easing: "cubic-bezier(.22,1,.36,1)" });
+      am.onfinish = am.oncancel = () => { moi.style.overflow = ""; };
+      setTimeout(() => am.playState === "running" && am.finish(), 500); // máy tạm dừng hiệu ứng thì vẫn mở hẳn
+      const li = moi.closest("li");
+      setTimeout(() => li && li.scrollIntoView({ block: "nearest", behavior: "smooth" }), 120);
+    }
+  };
+  if (!cu || itChuyenDong()) { xong(); return; }
+  dangDoiMo = true;
+  const cs = getComputedStyle(cu);
+  cu.style.overflow = "hidden";
+  const a = cu.animate([
+    { height: cu.offsetHeight + "px", opacity: 1, paddingTop: cs.paddingTop, marginBottom: cs.marginBottom },
+    { height: "0px", opacity: 0, paddingTop: "0px", marginBottom: "0px" }
+  ], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+  let daXong = false;
+  a.onfinish = a.oncancel = () => { if (daXong) return; daXong = true; dangDoiMo = false; xong(); };
+  setTimeout(() => a.onfinish(), 340); // chốt an toàn: hiệu ứng không chạy (máy tạm dừng) vẫn đổi được
 }
 
 /* ── Thông báo tạm có nút Hoàn tác ── */
@@ -888,9 +922,11 @@ function ganViec() {
     }
     if (!id) return;
     /* Chạm một việc để chọn và mở chi tiết; chạm lại để thu gọn */
-    viecChon = viecChon === id ? null : id;
-    choXoaViec = null; choXongViec = null;
-    veViec();
+    doiMoGon(ds, () => {
+      viecChon = viecChon === id ? null : id;
+      choXoaViec = null; choXongViec = null;
+      veViec();
+    });
   });
   ds.addEventListener("keydown", e => {
     const li = e.target.closest("[data-viec-id]");
