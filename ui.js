@@ -23,7 +23,9 @@
   }
   const thuCuaJd = j => (j + 1) % 7; // 0 = Chủ Nhật
 
-  const st = { jd: jdHomNay(), viec: "chung" };
+  /* kieu: "sao" = cộng sao (thang điểm), "sach" = luận theo sách (luan-sach.js) */
+  const st = { jd: jdHomNay(), viec: "chung", kieu: (() => { try { return localStorage.getItem("lichphap:kieu-luan") === "sach" ? "sach" : "sao"; } catch (e) { return "sao"; } })() };
+  const bacTheoKieu = (j, am, viec) => st.kieu === "sach" ? luanTheoSach(j, am, viec).bac : chamDiem(j, am, viec).bac;
 
   /* ── Gom toàn bộ thông tin một ngày ── */
   function thongTin(j, viec) {
@@ -36,6 +38,7 @@
       thu: thuCuaJd(j),
       le: leCuaNgay(j),
       cd: chamDiem(j, am, viec),
+      ls: luanTheoSach(j, am, viec),
       gio: gioTrongNgay(j),
       tiet: tietKhi(j),
       ccNgay: ccNgay(j),
@@ -327,19 +330,35 @@
   }
 
   /* ── Phán định tốt xấu ── */
+  /* Nút chọn kiểu luận: Cộng sao (thang điểm) · Theo sách (quy tắc Ngọc Hạp Thông Thư) */
+  const nutKieu = () => `<div class="pd-kieu" role="tablist" aria-label="Kiểu luận">
+      <button type="button" role="tab" data-kieu="sao" aria-selected="${st.kieu === "sao"}">Cộng sao</button>
+      <button type="button" role="tab" data-kieu="sach" aria-selected="${st.kieu === "sach"}">Theo sách</button></div>`;
   function vePhanDinh(x) {
-    const cd = x.cd, bac = BAC_UI[cd.bac];
+    const sach = st.kieu === "sach", cd = x.cd, ls = x.ls, soBac = sach ? ls.bac : cd.bac, bac = BAC_UI[soBac];
     const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
-    const thang = BAC_UI.map((b, i) => `<i class="${b.lop}${i === cd.bac ? " dang" : ""}" title="${b.t}"></i>`).join("");
+    const thang = BAC_UI.map((b, i) => `<i class="${b.lop}${i === soBac ? " dang" : ""}" title="${b.t}"></i>`).join("");
     const li = (ds, lop) => ds.map(t => `<li class="${lop}">${esc(t)}</li>`).join("");
+    const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(m.t)}${m.trang ? ` <em class="pd-tr">${esc(m.trang)}</em>` : ""}</li>`).join("");
     $("phan-dinh").className = `the the-phan-dinh ${bac.lop}`;
-    $("phan-dinh").innerHTML = `
-      <div class="pd-nhan">Phán định · ${esc(viec.ten)}</div>
+    $("phan-dinh").innerHTML = sach ? `
+      <div class="pd-dau"><div class="pd-nhan">Luận theo sách · ${esc(viec.ten)}</div>${nutKieu()}</div>
+      <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
+      <div class="pd-ket">${esc(ls.ket)}</div>
+      <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
+      ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được (TT tr.9)</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
+      <div class="pd-ly">
+        <div><h4>Điều tốt</h4><ul>${liSach(ls.tot, "cong") || '<li class="rong">Không có</li>'}</ul></div>
+        <div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || '<li class="rong">Không phạm</li>'}</ul></div>
+      </div>
+      ${ls.nhac.length ? `<ul class="pd-nhac">${liSach(ls.nhac, "nhac")}</ul>` : ""}
+      <p class="pd-nguon">Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. Số trang là trang sách.</p>` : `
+      <div class="pd-dau"><div class="pd-nhan">Phán định · ${esc(viec.ten)}</div>${nutKieu()}</div>
       <div class="pd-chinh">
         <div class="pd-bac">${bac.t}</div>
         <div class="pd-diem"><b>${cd.diem > 0 ? "+" : ""}${cd.diem}</b><span>điểm</span></div>
       </div>
-      <div class="pd-thang" role="img" aria-label="Bậc ${cd.bac + 1} trên 5">${thang}</div>
+      <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
       ${cd.chan.length ? `<div class="pd-chan"><b>Kỵ tuyệt đối cho việc này</b>${cd.chan.map(esc).join(" · ")}</div>` : ""}
       <div class="pd-ly">
         <div><h4>Điểm cộng</h4><ul>${li(cd.cong, "cong") || '<li class="rong">Không có</li>'}</ul></div>
@@ -349,16 +368,17 @@
 
   /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
   function veTomTat(x) {
-    const cd = x.cd, bac = BAC_UI[cd.bac];
+    const sach = st.kieu === "sach", cd = x.cd, soBac = sach ? x.ls.bac : cd.bac, bac = BAC_UI[soBac];
     const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
     const el = $("tom-tat");
     el.className = `tom-tat ${bac.lop}`;
+    const phu = sach ? (x.ls.khongCuu[0] || x.ls.kieng[0] || { t: x.ls.ket }).t : `Trực ${cd.truc.t} · ${cd.than.t} · Sao ${cd.saoTen}`;
     el.innerHTML = `
-      <span class="tt-nhan">Phán định · ${esc(viec.ten)}</span>
-      <b class="tt-diem">${cd.diem > 0 ? "+" : ""}${cd.diem}</b>
+      <span class="tt-nhan">${sach ? "Theo sách" : "Phán định"} · ${esc(viec.ten)}</span>
+      <b class="tt-diem">${sach ? "" : (cd.diem > 0 ? "+" : "") + cd.diem}</b>
       <strong class="tt-bac">${bac.t}</strong>
-      <span class="tt-phu">Trực ${cd.truc.t} · ${cd.than.t} · Sao ${cd.saoTen} <em>›</em></span>
-      <span class="pd-thang">${BAC_UI.map((b, i) => `<i class="${b.lop}${i === cd.bac ? " dang" : ""}"></i>`).join("")}</span>`;
+      <span class="tt-phu">${esc(phu)} <em>›</em></span>
+      <span class="pd-thang">${BAC_UI.map((b, i) => `<i class="${b.lop}${i === soBac ? " dang" : ""}"></i>`).join("")}</span>`;
   }
 
   /* ── Chuyển mục bằng thanh menu chạm ── */
@@ -579,9 +599,9 @@
     let o = "";
     for (let i = 0; i < lech; i++) o += `<div class="o trong"></div>`;
     for (let n = 0; n < soNgay; n++) {
-      const j = dau + n, am = amCuaJd(j), cd = chamDiem(j, am, st.viec);
+      const j = dau + n, am = amCuaJd(j), bacNgay = bacTheoKieu(j, am, st.viec);
       const le = leCuaNgay(j), thu = thuCuaJd(j);
-      const lop = ["o", BAC_UI[cd.bac].lop];
+      const lop = ["o", BAC_UI[bacNgay].lop];
       if (j === st.jd) lop.push("chon");
       if (j === hom) lop.push("hom-nay");
       if (thu === 0 || le.some(l => l.nghi)) lop.push("do");
@@ -590,7 +610,7 @@
       const vh = viecCuaNgay(j);
       const ten = nh.map(n => n.ten).concat(vh.map(v => v.ten), le.length ? [le[0].ten] : []).join(" · ");
       if (nh.length) lop.push("co-nhac");
-      o += `<button type="button" class="${lop.join(" ")}" data-jd="${j}" title="${esc(`${BAC_UI[cd.bac].t} · ${ccNgay(j)}${ten ? " · " + ten : ""}`)}">
+      o += `<button type="button" class="${lop.join(" ")}" data-jd="${j}" title="${esc(`${BAC_UI[bacNgay].t} · ${ccNgay(j)}${ten ? " · " + ten : ""}`)}">
         ${nh.length ? '<span class="o-nhac"></span>' : ""}
         ${vh.length ? `<span class="o-viec">${vh.length}</span>` : ""}
         <span class="o-duong">${n + 1}</span>
@@ -674,9 +694,9 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.9.4";
+  const PHIEN_BAN = "1.10.0";
   function moGioiThieu(muc) {
-    const soDa = CSDL.sao.filter(s => s.tt).length;
+    const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
     const el = moTam(`
       <header class="gt-dau"><div class="gt-an" aria-hidden="true">曆</div>
         <h3>Lịch Pháp</h3><p>Lịch âm dương · xem ngày theo Ngọc Hạp · nhắc việc</p></header>
@@ -687,12 +707,12 @@
           <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước (mỗi hướng một kiểu lật); lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
           <li><b>Giờ</b> — mặt đồng hồ 12 canh giờ, giờ hoàng đạo, hướng Hỷ thần, Tài thần.</li>
           <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
-          <li><b>Luận giải</b> — chấm điểm ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
+          <li><b>Luận giải</b> — xét ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao, xuất hành) bằng hai kiểu: <b>Cộng sao</b> (thang điểm) và <b>Theo sách</b> (theo quy tắc Ngọc Hạp Thông Thư, ghi số trang), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
           <li><b>Nhắc</b> — Nhắc việc và Ngày lặp lại (giỗ âm lịch, sinh nhật, kỷ niệm). Gõ câu tự nhiên như “Họp giao ban 8h sáng mai”, “Giỗ bố 20/10 âm” — ứng dụng tự hiểu ngày, giờ.</li></ul></section>
         <section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
           <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
         <section><h4>Căn cứ xem sao</h4>
-          <p>Sao tốt xấu an theo bảng 12 tháng trong sách <b>Ngọc Hạp Thông Thư</b> (bản dịch Việt), không trộn với các hệ khác. Mỗi sao ghi rõ: nghĩa, việc nên làm, việc kiêng, cách an theo tháng. Hiện ${soDa}/${CSDL.sao.length} sao <b>đã đối chiếu Ngọc Hạp</b>, số còn lại <b>đang đối chiếu</b> do bản in thiếu hoặc chưa nhất quán.</p>
+          <p>Sao tốt xấu an theo bảng 12 tháng trong sách <b>Ngọc Hạp Thông Thư</b> (bản dịch Việt), không trộn với các hệ khác. Mỗi sao ghi rõ: nghĩa, việc nên làm, việc kiêng, cách an theo tháng. Trong ${CSDL.sao.length} sao, ${soDa} sao <b>đã đối chiếu</b> từ hai sách trở lên (khi các sách khác nhau thì theo đa số), ${soMot} sao chỉ có Thông Thư ghi. Sao không có bảng an hay quy tắc tính trong sách đã được loại khỏi chương trình.</p>
           <p>Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán <b>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký</b> và bản Hán Nôm <b>Ngọc hạp toản yếu thông dụng</b> (1926). Ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.</p></section>
         <section><h4>Tài liệu tham khảo</h4><ul>
           <li>Ngọc Hạp Thông Thư — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.</li>
@@ -737,7 +757,7 @@
         ${nghiaGon(s.nghia) ? `<p class="ts-nghia">${esc(nghiaGon(s.nghia))}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
         ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
         ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
-        <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt ? "✓ Đã đối chiếu Ngọc Hạp" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
+        <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt === 1 ? "✓ Đã đối chiếu Ngọc Hạp" : s.tt === 2 ? "✓ Theo Ngọc Hạp Thông Thư (một nguồn)" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
         ${tuTra ? `<button type="button" class="nut nho" data-tra-lai>‹ Về danh sách</button>` : ""}
       </div>`, "lop-sao");
     if (cu) el.dataset.tim = cu;
@@ -1714,6 +1734,13 @@
 
   /* ── Sự kiện ── */
   document.addEventListener("click", e => {
+    const k = e.target.closest("[data-kieu]");
+    if (k) {
+      st.kieu = k.dataset.kieu === "sach" ? "sach" : "sao";
+      try { localStorage.setItem("lichphap:kieu-luan", st.kieu); } catch (er) { /* trình duyệt chặn lưu: chỉ giữ trong phiên */ }
+      ve();
+      return;
+    }
     const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec],[data-tab],[data-gio]");
     if (!b) return;
     if (b.dataset.gio) { st.gioChon = Number(b.dataset.gio); veMatGio(thongTin(st.jd, st.viec)); }

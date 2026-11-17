@@ -253,24 +253,19 @@ const saoCuaNgay = j => TU[(j + 11) % 28];
 /* ═════════════ NGÀY KIÊNG CỐ ĐỊNH THEO ÂM LỊCH ═════════════ */
 const TAM_NUONG = [3, 7, 13, 18, 22, 27];
 const NGUYET_KY = [5, 14, 23];
-/* Dương công kỵ nhật — 13 ngày cố định mỗi năm âm lịch, đại kỵ khởi công xây dựng */
-const DUONG_CONG = {
-  1: [13],
-  2: [11],
-  3: [9],
-  4: [7],
-  5: [5],
-  6: [3],
-  7: [8, 29],
-  8: [27],
-  9: [25],
-  10: [23],
-  11: [21],
-  12: [19]
-};
+/* Dương công kỵ nhật — 13 ngày mỗi năm âm lịch, đọc từ CSDL sao (DUONG_CONG_KY, Thông Thư tr.52, 141, 158–159) */
+let DUONG_CONG = null;
+function bangDuongCong() {
+  if (DUONG_CONG) return DUONG_CONG;
+  const s = typeof window !== "undefined" && window.NGOC_HAP_CSDL && window.NGOC_HAP_CSDL.sao.find(x => x.id === "DUONG_CONG_KY");
+  if (!s) throw new Error("CSDL thiếu sao DUONG_CONG_KY");
+  DUONG_CONG = {};
+  for (let m = 1; m <= 12; m++) DUONG_CONG[m] = (s.an.thang[m] || []).map(Number);
+  return DUONG_CONG;
+}
 const laTamNuong = am => TAM_NUONG.includes(am.day);
 const laNguyetKy = am => NGUYET_KY.includes(am.day);
-const laDuongCong = am => !am.leap && (DUONG_CONG[am.month] || []).includes(am.day);
+const laDuongCong = am => !am.leap && (bangDuongCong()[am.month] || []).includes(am.day);
 
 /* ══ SAO TỐT – SAO XẤU · NGỌC HẠP ══
    Danh sách sao chương trình dùng để luận ngày: [tên hiển thị, ý nghĩa ngắn, mã sao trong CSDL].
@@ -325,7 +320,7 @@ const SAO_XAU = [["Thiên cương","Xấu mọi việc","THIEN_CUONG"],
   ["Tiểu hồng sa","Xấu mọi việc","TIEU_HONG_SA"],
   ["Đại hao","Xấu mọi việc","DAI_HAO"],
   ["Tiểu hao","Xấu về kinh doanh, cầu tài","TIEU_HAO"],
-  ["Nguyệt phá","Xấu về xây dựng nhà cửa","NGUYET_PHA"],
+  ["Nguyệt phá","Xấu về xây dựng nhà cửa","NGUYET_PHA"],
   ["Địa phá","Kỵ xây dựng","DIA_PHA"],
   ["Thổ phủ","Kỵ xây dựng, động thổ","THO_PHU"],
   ["Thổ ôn","Kỵ xây dựng, đào ao, đào giếng","THO_ON"],
@@ -353,7 +348,7 @@ const SAO_XAU = [["Thiên cương","Xấu mọi việc","THIEN_CUONG"],
   ["Lôi công","Xấu với xây dựng nhà cửa","LOI_CONG"],
   ["Cô thần","Xấu với giá thú","CO_THAN"],
   ["Quả tú","Xấu với giá thú","QUA_TU"],
-  ["Sát chủ","Xấu mọi việc","SAT_CHU"],
+  ["Sát chủ","Xấu mọi việc","SAT_CHU"],
   ["Tội chỉ","Xấu với tế tự, kiện cáo","TOI_CHI"],
   ["Ngũ hư","Kỵ khởi tạo, giá thú, an táng","NGU_HU"],
   ["Không phòng","Kỵ giá thú","KHONG_PHONG"],
