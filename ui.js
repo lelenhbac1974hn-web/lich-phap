@@ -612,15 +612,24 @@
   }
 
   /* ── Sao Ngọc Hạp ── */
+  /* ── CSDL sao Ngọc Hạp: tra theo tên sao của chương trình ── */
+  const CSDL = window.NGOC_HAP_CSDL || { sao: [] };
+  const saoTheoTen = new Map();
+  CSDL.sao.forEach(s => { saoTheoTen.set(s.ten, s); (s.ct || []).forEach(t => { if (!saoTheoTen.has(t)) saoTheoTen.set(t, s); }); });
+
   function veNgocHap(x) {
     const nh = x.cd.nh;
     const ds = (sao, lop) => sao.length
-      ? sao.map(s => `<li class="${lop}"><b>${esc(s[0])}</b><span>${esc(s[1] || "")}</span></li>`).join("")
+      ? sao.map(s => {
+          const r = saoTheoTen.get(s[0]);
+          return `<li class="${lop}"><button type="button" class="sao-nut" data-sao="${esc(s[0])}"><b>${esc(s[0])}${r && r.han ? `<small>${esc(r.han)}</small>` : ""}</b><span>${esc(s[1] || "")}</span></button></li>`;
+        }).join("")
       : `<li class="rong">Không có sao nào chiếu.</li>`;
     $("ngoc-hap").innerHTML = `
       <div class="the-tieu-de">
         <h3>Sao Ngọc Hạp</h3>
-        <span>Ngày ${x.ccNgay}, tháng ${THANG_AM[x.am.month - 1]} âm lịch</span>
+        <span>Ngày ${x.ccNgay}, tháng ${THANG_AM[x.am.month - 1]} âm lịch · chạm tên sao để xem nghĩa</span>
+        ${CSDL.sao.length ? `<button type="button" class="nut nho tra-sao-mo" data-tra-sao>Tra cứu ${CSDL.sao.length} sao</button>` : ""}
       </div>
       <div class="sao-cot">
         <div>
@@ -633,6 +642,76 @@
         </div>
       </div>`;
   }
+
+  /* ── Thẻ sao và bảng tra cứu (dạng tấm trượt lên từ đáy) ── */
+  let tamSao = null;
+  function moTam(html, lop) {
+    dongTam();
+    tamSao = document.createElement("div");
+    tamSao.className = `tam-lop ${lop || ""}`;
+    tamSao.setAttribute("role", "dialog"); tamSao.setAttribute("aria-modal", "true");
+    tamSao.innerHTML = `<div class="tam"><button type="button" class="tam-dong" aria-label="Đóng">✕</button>${html}</div>`;
+    document.body.appendChild(tamSao);
+    requestAnimationFrame(() => tamSao && tamSao.classList.add("hien"));
+    tamSao.addEventListener("click", e => {
+      if (e.target === tamSao || e.target.closest(".tam-dong")) dongTam();
+      const b = e.target.closest("[data-sao-id]");
+      if (b) { const s = CSDL.sao.find(z => z.id === b.dataset.saoId); if (s) moTheSao(s, true); }
+      if (e.target.closest("[data-tra-lai]")) moTraSao(tamSao && tamSao.dataset.tim);
+    });
+    return tamSao;
+  }
+  function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.classList.remove("hien"); setTimeout(() => t.remove(), 320); }
+  document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
+
+  function moTheSao(s, tuTra) {
+    const thangNay = ttNgay(st.jd).am.month;
+    const an = s.an && s.an.thang ? Array.from({ length: 12 }, (_, i) => {
+      const v = (s.an.thang[String(i + 1)] || []).join(", ") || "—";
+      return `<div class="${i + 1 === thangNay ? "nay" : ""}"><span>T${i + 1}</span><b>${esc(v)}</b></div>`;
+    }).join("") : "";
+    const ds = (tieu, arr, lop) => arr && arr.length ? `<div class="ts-viec ${lop}"><h4>${tieu}</h4><p>${arr.map(esc).join(" · ")}</p></div>` : "";
+    const cu = tamSao && tamSao.dataset.tim;
+    const el = moTam(`
+      <header class="ts-dau ${s.loai}">
+        ${s.han ? `<div class="ts-han" aria-hidden="true">${esc(s.han)}</div>` : ""}
+        <span class="ts-loai">${s.loai === "tot" ? "Cát tinh · sao tốt" : "Hung tinh · sao xấu"}</span>
+        <h3>${esc(s.ten)}</h3>
+        ${s.han ? `<p class="ts-han-nho">${esc(s.han)}</p>` : ""}
+      </header>
+      <div class="ts-than">
+        ${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
+        ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
+        ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
+        <p class="ts-nguon">Nguồn: Ngọc Hạp Thông Thư${s.trang.length ? `, tr. ${s.trang.join(", ")}` : ""}${s.han ? " · tên chữ Hán theo bản 1926" : ""}<br>
+          <span class="${s.tt ? "da" : "chua"}">${s.tt ? "✓ Đã đối chiếu đủ với sách" : "⚠ Cần xem lại: sách in chưa đủ hoặc chưa nhất quán"}</span></p>
+        ${tuTra ? `<button type="button" class="nut nho" data-tra-lai>‹ Về danh sách</button>` : ""}
+      </div>`, "lop-sao");
+    if (cu) el.dataset.tim = cu;
+  }
+
+  function moTraSao(tim) {
+    const el = moTam(`
+      <header class="tra-dau"><h3>Tra cứu sao Ngọc Hạp</h3><p>${CSDL.sao.length} sao · theo Ngọc Hạp Thông Thư</p>
+        <input type="search" class="tra-o" placeholder="Gõ tên sao, ví dụ: thiên đức" aria-label="Tìm sao" value="${esc(tim || "")}" /></header>
+      <ul class="tra-ds"></ul>`, "lop-tra");
+    const o = el.querySelector(".tra-o"), ul = el.querySelector(".tra-ds");
+    const bo = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
+    const ve2 = () => {
+      const q = bo(o.value.trim()); el.dataset.tim = o.value;
+      const ds = CSDL.sao.filter(s => !q || bo(s.ten).includes(q) || (s.han || "").includes(o.value.trim()))
+        .sort((a, b) => a.ten.localeCompare(b.ten, "vi"));
+      ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><i></i><b>${esc(s.ten)}</b>${s.han ? `<small>${esc(s.han)}</small>` : ""}<span>${esc((s.nghia || "").slice(0, 60))}${(s.nghia || "").length > 60 ? "…" : ""}</span></button></li>`).join("")
+        || `<li class="rong">Không tìm thấy sao nào.</li>`;
+    };
+    o.addEventListener("input", ve2); ve2();
+  }
+
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-sao]");
+    if (b) { const s = saoTheoTen.get(b.dataset.sao); if (s) moTheSao(s); else baoTam("Chưa có dữ liệu sách cho sao này."); return; }
+    if (e.target.closest("[data-tra-sao]")) moTraSao("");
+  });
 
   /* ═════════ NHẮC NGÀY LẶP LẠI ═════════ */
   const KHOA_NHAC = "lichphap:nhac";
