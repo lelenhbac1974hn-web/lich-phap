@@ -102,15 +102,14 @@ function veMatGio(x) {
     const [x0, y0] = cuc(R1, a0), [x1, y1] = cuc(R1, a1);
     const [x2, y2] = cuc(R0, a1), [x3, y3] = cuc(R0, a0);
     const d = `M${x0.toFixed(1)} ${y0.toFixed(1)} A${R1} ${R1} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)} A${R0} ${R0} 0 0 0 ${x3.toFixed(1)} ${y3.toFixed(1)} Z`;
-    const [tx, ty] = cuc(137, g.i * 30), [nx, ny] = cuc(111, g.i * 30), [kx, ky] = cuc(85, g.i * 30);
+    const [tx, ty] = cuc(112, g.i * 30);
     const lop = ["mui", g.hd ? "hd" : "hac"];
     if (laHomNay && g.i === gioNay) lop.push("dang");
     if (g.i === st.gioChon) lop.push("chon");
     mang += `<g class="${lop.join(" ")}" data-gio="${g.i}" role="button" tabindex="0" aria-label="Giờ ${g.can} ${g.chi}, ${g.khung} giờ, ${g.than}, ${g.hd ? "hoàng đạo" : "hắc đạo"}">
       <path d="${d}"/>
-      <text x="${tx.toFixed(1)}" y="${(ty + 5).toFixed(1)}" class="chi">${g.chi}</text>
-      <text x="${nx.toFixed(1)}" y="${(ny + 3).toFixed(1)}" class="than">${g.than}</text>
-      <text x="${kx.toFixed(1)}" y="${(ky + 3).toFixed(1)}" class="khung">${g.khung}</text>
+      <text x="${tx.toFixed(1)}" y="${(ty - 2).toFixed(1)}" class="chi">${g.chi}</text>
+      <text x="${tx.toFixed(1)}" y="${(ty + 16).toFixed(1)}" class="khung">${g.khung}</text>
     </g>`;
   });
   /* Vạch phút quanh mép và kim chỉ giờ hiện tại */
@@ -138,8 +137,9 @@ function veMatGio(x) {
       <circle cx="${C}" cy="${C}" r="${R0 - 7}" class="tam-gio"/>
       <circle cx="${C}" cy="${C}" r="${R0 - 11}" class="tam-vien"/>
       <text x="${C}" y="${C + (laHomNay ? 3 : 1)}" class="tam-so${laHomNay ? " nho" : ""}">${tamTren}</text>
-      <text x="${C}" y="${C + 19}" class="tam-chu">${tamDuoi}</text>
+      <text x="${C}" y="${C + 24}" class="tam-chu">${tamDuoi}</text>
     </svg>
+    <div class="chu-gio"><span><i></i>Hoàng đạo</span><span class="hac"><i></i>Hắc đạo</span>${laHomNay ? '<span class="dang"><i></i>Đang diễn ra</span>' : ""}</div>
     <div class="gio-chi-tiet ${chon.hd ? "hd" : "hac"}">
       <div class="gct-dau">
         <div><b>Giờ ${chon.can} ${chon.chi}</b><span>${chon.khung} giờ${laHomNay && chon.i === gioNay ? " · đang diễn ra" : ""}</span></div>
@@ -183,7 +183,13 @@ function veLichThang(x) {
   const lech = (thuCuaJd(dau) + 6) % 7; // tuần bắt đầu Thứ Hai
   const hom = jdHomNay();
   let o = "";
-  for (let i = 0; i < lech; i++) o += `<div class="o trong"></div>`;
+  /* Ngày của tháng trước / tháng sau lấp chỗ trống đầu và cuối lưới, tô nhạt */
+  const oNgoai = j => {
+    const am = amCuaJd(j), d = jdToDate(j)[0];
+    return `<button type="button" class="o ngoai${thuCuaJd(j) === 0 ? " do" : ""}" data-jd="${j}" title="${esc(ccNgay(j))}">
+      <span class="o-duong">${d}</span><span class="o-am">${am.day === 1 ? `${am.day}/${am.month}${am.leap ? "n" : ""}` : am.day}</span></button>`;
+  };
+  for (let i = lech; i > 0; i--) o += oNgoai(dau - i);
   for (let n = 0; n < soNgay; n++) {
     const j = dau + n, am = amCuaJd(j), bacNgay = bacTheoKieu(j, am, st.viec);
     const le = leCuaNgay(j), thu = thuCuaJd(j);
@@ -210,6 +216,7 @@ function veLichThang(x) {
       })()}
     </button>`;
   }
+  for (let i = 0; (lech + soNgay + i) % 7; i++) o += oNgoai(dau + soNgay + i);
   const amDau = amCuaJd(dau), amCuoi = amCuaJd(dau + soNgay - 1);
   const chuThich = BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("");
   $("lich-thang").innerHTML = `
