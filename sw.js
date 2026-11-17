@@ -1,6 +1,6 @@
 /* Lịch Pháp — bộ đệm chạy không cần mạng. © 2026 Lê Lệnh Bắc
    Mỗi lần phát hành bản mới: đổi số phiên bản ở dòng dưới. */
-const C = 'lp-v1.8.3';
+const C = 'lp-v1.8.4';
 const F = ['./', 'index.html', 'style.css', 'lich-phap.js', 'le-tet.js', 'ngoc-hap.js', 'bieu-tuong.js', 'ui.js', 'manifest.json',
   'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'apple-touch-icon.png',
   'be-vietnam-pro-latin-300-italic.woff2', 'be-vietnam-pro-latin-400-normal.woff2',
@@ -22,7 +22,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request).then(r => {
+    fetch(e.request.url, { cache: "no-cache", credentials: "same-origin" }).then(r => {
       if (r && r.ok) { const cp = r.clone(); caches.open(C).then(c => c.put(e.request, cp)); }
       return r;
     }).catch(() => caches.match(e.request).then(r => r || caches.match('index.html')))

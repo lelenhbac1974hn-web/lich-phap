@@ -437,10 +437,10 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 /* ── Dòng rút gọn có biểu tượng (dùng chung cho Ngày lặp lại và Nhắc việc) ── */
 .ds-gon,.ds-viec{gap:6px}
 .nhac-muc.dong-gon,.viec-muc.dong-gon{display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:0 10px;align-items:center;
-  padding:0 10px 0 0;border:1px solid var(--vien);border-left-width:1px;border-radius:12px;background:var(--the);overflow:hidden;min-height:54px}
+  padding:0 10px 0 0;border:1px solid var(--vien);border-left-width:1px;border-radius:12px;background:var(--the);min-height:54px}
 .nhac-muc.dong-gon.gan{background:var(--l-nhat)}
 /* Biểu tượng: cột vuông đầu dòng, liền khối với dòng, không bo góc */
-.dong-gon .bieu{--m:var(--l,#B5862A);position:relative;grid-row:1/span 2;align-self:stretch;width:50px;min-height:54px;border-radius:0;display:grid;place-items:center;
+.dong-gon .bieu{--m:var(--l,#B5862A);position:relative;grid-row:1/span 2;align-self:stretch;width:50px;min-height:54px;border-radius:11px 0 0 11px;display:grid;place-items:center;
   background:color-mix(in srgb,var(--m) 13%,transparent);border-right:1px solid color-mix(in srgb,var(--m) 24%,transparent);color:color-mix(in srgb,var(--m) 78%,#2A1A10)}
 .viec-muc.dong-gon .bieu{--m:var(--p,#8A6A3E)}
 .viec-muc.dong-gon.p0 .bieu{--m:#8A6A3E}
@@ -906,3 +906,5 @@ button.o:hover{border-color:var(--m);background:var(--the);transform:translateY(
 @media (max-width:760px){.khung>*:not(.bao-tam),.cot-phai>*,.hang-duoi>*{width:100%;min-width:0;align-self:stretch}}
 .ds-gon>li,.ds-viec>li,.nhac-ds>li{flex-shrink:0;min-height:max-content}
 .ds-gon,.ds-viec,.nhac-ds{grid-auto-rows:max-content;align-content:start}
+/* Dòng đang mở: biểu tượng nằm trên cùng, luôn thấy */
+.dong-gon.mo .bieu{place-items:start center;padding-top:14px}

@@ -673,7 +673,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.8.3";
+  const PHIEN_BAN = "1.8.4";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt).length;
     const el = moTam(`
@@ -1071,7 +1071,7 @@
       choXoa = null;
       veNhac();
       const mo = nhacChon && document.querySelector(`#ds-nhac [data-chon="${nhacChon}"]`);
-      if (mo) setTimeout(() => mo.scrollIntoView({ block: "nearest", behavior: "smooth" }), 30);
+      if (mo) setTimeout(() => mo.scrollIntoView({ block: "nearest" }), 30);
     };
     $("ds-nhac").addEventListener("click", e => {
       if (e.target.closest("[data-jd]")) return;
