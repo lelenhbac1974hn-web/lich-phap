@@ -849,8 +849,87 @@
     $("n-mo").textContent = mo ? "Đóng" : "＋ Thêm";
     $("n-mo").classList.toggle("dang-mo", mo);
   }
+  /* ── Hiểu câu tự nhiên cho Ngày lặp lại: "Giỗ bố 20/10 âm, năm mất 2021", "Kỷ niệm ngày cưới 25/6/2005" ── */
+  const SO_THANG = { giêng: 1, gieng: 1, chạp: 12, chap: 12, "mười một": 11, "muoi mot": 11, một: 1, mot: 1, hai: 2, ba: 3, tư: 4, tu: 4, bốn: 4, bon: 4, năm: 5, nam: 5, sáu: 6, bảy: 7, bay: 7, tám: 8, tam: 8, chín: 9, chin: 9, mười: 10, muoi: 10 };
+  const SO_NGAY = { một: 1, mot: 1, hai: 2, ba: 3, bốn: 4, bon: 4, năm: 5, nam: 5, sáu: 6, bảy: 7, bay: 7, tám: 8, tam: 8, chín: 9, chin: 9, mười: 10, muoi: 10 };
+  function phanTichLap(goc) {
+    let chu = " " + goc + " ";
+    const thuong = () => chu.toLowerCase();
+    const B = "(?=[\\s,.;!?]|$)";
+    const cat = (re, xuLy) => { const m = re.exec(thuong()); if (!m) return false; if (xuLy(m) === false) return false; chu = chu.slice(0, m.index) + " " + chu.slice(m.index + m[0].length); return true; };
+    const ket = { ngay: null, thang: null, nam: null, truoc: null, am: false, coLoai: null };
+    const t0 = thuong();
+    if (/giỗ|gio |ngày kỵ|ngay ky|kỵ nhật|ky nhat|húy nhật|huý nhật/.test(t0)) ket.coLoai = "gio";
+    else if (/sinh nhật|sinh nhat|mừng thọ|mung tho/.test(t0)) ket.coLoai = "sinhnhat";
+    else if (/kỷ niệm|kỉ niệm|ky niem|ngày cưới|ngay cuoi|đám cưới|dam cuoi|thành lập|thanh lap/.test(t0)) ket.coLoai = "kyniem";
+    // Nhắc trước N ngày
+    cat(new RegExp(`\\s(?:nhắc|nhac)\\s+(?:trước|truoc)\\s*(\\d{1,2})\\s*(?:ngày|ngay)?${B}`), m => { ket.truoc = +m[1]; });
+    // Năm mất / năm sinh / năm cưới
+    cat(new RegExp(`\\s(?:năm mất|nam mat|mất năm|mat nam|năm sinh|nam sinh|sinh năm|sinh nam|năm cưới|nam cuoi|cưới năm|cuoi nam|từ năm|tu nam|năm|nam)\\s*(\\d{4})${B}`), m => { ket.nam = +m[1]; });
+    // Rằm / mùng N tháng M
+    const THANG_RE = "(giêng|gieng|chạp|chap|mười một|muoi mot|một|mot|hai|ba|tư|tu|bốn|bon|năm|nam|sáu|bảy|bay|tám|tam|chín|chin|mười|muoi|\\d{1,2})";
+    const soThang = s => /^\d+$/.test(s) ? +s : SO_THANG[s];
+    cat(new RegExp(`\\s(?:ngày\\s+|ngay\\s+)?(rằm|ram|(?:mùng|mồng|mung|mong)\\s*(\\d{1,2}|một|mot|hai|ba|bốn|bon|năm|nam|sáu|bảy|bay|tám|tam|chín|chin|mười|muoi))\\s+(?:tháng|thang)\\s+${THANG_RE}${B}`), m => {
+      ket.ngay = /^r/.test(m[1]) ? 15 : (/^\d+$/.test(m[2]) ? +m[2] : SO_NGAY[m[2]]); ket.thang = soThang(m[3]); ket.am = true;
+    });
+    // Ngày D tháng M (năm Y)
+    if (ket.ngay == null) cat(new RegExp(`\\s(?:ngày\\s+|ngay\\s+)?(\\d{1,2})\\s+(?:tháng|thang)\\s+${THANG_RE}(?:\\s+(?:năm|nam)\\s+(\\d{4}))?${B}`), m => {
+      ket.ngay = +m[1]; ket.thang = soThang(m[2]); if (m[3]) ket.nam = +m[3];
+    });
+    // dd/mm(/yyyy)
+    if (ket.ngay == null) cat(new RegExp(`\\s(?:ngày\\s+|ngay\\s+)?(\\d{1,2})\\s*[/\\-.]\\s*(\\d{1,2})(?:\\s*[/\\-.]\\s*(\\d{4}))?${B}`), m => {
+      ket.ngay = +m[1]; ket.thang = +m[2]; if (m[3]) ket.nam = +m[3];
+    });
+    // Âm lịch / dương lịch nói rõ
+    cat(new RegExp(`\\s(âm lịch|am lich|âm|am|ngày âm|ngay am)${B}`), () => { ket.am = true; });
+    if (cat(new RegExp(`\\s(dương lịch|duong lich|dương|duong)${B}`), () => {})) ket.duong = true;
+    if (!(ket.thang >= 1 && ket.thang <= 12)) { ket.thang = null; }
+    // Loại lời nhắc
+    if (ket.coLoai === "gio") ket.loai = ket.duong ? "sukien" : "gio";
+    else if (ket.coLoai === "sinhnhat") ket.loai = ket.am ? "sukienam" : "sinhnhat";
+    else ket.loai = ket.am ? "sukienam" : "sukien";
+    ket.ten = chu.replace(/\s+/g, " ").replace(/^[\s,.;:-]+|[\s,.;:-]+$/g, "").replace(/\s+(ngày|ngay)$/i, "").trim();
+    if (ket.ten) ket.ten = ket.ten[0].toUpperCase() + ket.ten.slice(1);
+    return ket;
+  }
+  let chamLap = {}, loaiEp = null;
+  function hieuNhapLap() {
+    const g = $("n-cau").value.trim(), the = [];
+    if (!g) { $("n-hieu").innerHTML = ""; return; }
+    const k = phanTichLap(g);
+    if (loaiEp) k.loai = loaiEp;
+    const l = LOAI[k.loai];
+    // Tự điền các ô người dùng chưa sửa tay
+    if (!chamLap.ten && k.ten) $("n-ten").value = k.ten;
+    if (!chamLap.loai) { $("n-loai").value = k.loai; datNhanForm(); }
+    if (!chamLap.ngay && k.ngay) $("n-ngay").value = k.ngay;
+    if (!chamLap.thang && k.thang) $("n-thang").value = k.thang;
+    if (!chamLap.nam && k.nam) $("n-nam").value = k.nam;
+    if (!chamLap.truoc && k.truoc != null) { const o = [...$("n-truoc").options].find(x => +x.value >= k.truoc); $("n-truoc").value = o ? o.value : "15"; }
+    const [bieu, tenLoai] = k.coLoai === "gio" ? ["🕯️", "Ngày giỗ"] : k.coLoai === "sinhnhat" ? ["🎂", "Sinh nhật"] : k.coLoai === "kyniem" ? ["💍", "Kỷ niệm"] : ["📌", "Sự kiện"];
+    the.push(`<span class="the-le">${bieu} ${tenLoai} · ${l.lich === "am" ? "âm lịch" : "dương lịch"}</span>`);
+    const loai = $("n-loai").value, ngay = +$("n-ngay").value, thang = +$("n-thang").value, nam = $("n-nam").value ? +$("n-nam").value : null;
+    const thu = chuanHoa({ ten: $("n-ten").value || "x", loai, ngay, thang, nam, truoc: 3 });
+    if (hopLe(thu)) {
+      const j = lanToi(thu, jdHomNay()), t = j != null && ttNgay(j), dn = j != null && soNam(thu, j);
+      the.push(`<span class="the-ngay">📅 Hằng năm ${ngayGoc(thu)}${t ? ` · lần tới ${THU_NGAN[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}` : ""}</span>`);
+      if (dn) the.push(`<span class="the-lap">${dn}</span>`);
+    } else if (k.ngay || k.thang) the.push(`<span class="the-uu p3">Ngày tháng chưa hợp lệ</span>`);
+    else the.push(`<span class="the-uu">Thêm ngày, ví dụ “20/10 âm” hoặc “mùng 3 tháng chạp”</span>`);
+    // Gợi ý đổi âm/dương khi câu không nói rõ
+    if (!k.am && !k.duong) {
+      if (loai === "sinhnhat") the.push(`<button type="button" class="goi-y" data-ep-loai="sukienam">Tính theo âm lịch</button>`);
+      else if (loai === "sukien") the.push(`<button type="button" class="goi-y" data-ep-loai="sukienam">Tính theo âm lịch</button>`);
+      else if (loai === "gio") the.push(`<button type="button" class="goi-y" data-ep-loai="sukien">Giỗ theo dương lịch</button>`);
+      else if (loai === "sukienam") the.push(`<button type="button" class="goi-y" data-ep-loai="${k.coLoai === "sinhnhat" ? "sinhnhat" : "sukien"}">Tính theo dương lịch</button>`);
+    }
+    $("n-hieu").innerHTML = the.join("");
+  }
+
   function xoaForm() {
     dangSua = null;
+    chamLap = {}; loaiEp = null;
+    if ($("n-hieu")) $("n-hieu").innerHTML = "";
     moForm(false);
     $("f-nhac").reset();
     $("n-loi").textContent = "";
@@ -890,12 +969,20 @@
   }
 
   function ganNhac() {
-    $("n-loai").addEventListener("change", datNhanForm);
+    $("n-loai").addEventListener("change", () => { chamLap.loai = 1; datNhanForm(); });
+    [["n-ten", "ten"], ["n-ngay", "ngay"], ["n-thang", "thang"], ["n-nam", "nam"], ["n-truoc", "truoc"]].forEach(([id, k]) =>
+      $(id).addEventListener("change", () => { chamLap[k] = 1; if ($("n-cau").value.trim()) hieuNhapLap(); }));
+    $("n-cau").addEventListener("input", hieuNhapLap);
+    $("n-cau").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("f-nhac").requestSubmit(); } });
+    $("n-hieu").addEventListener("click", e => {
+      const b = e.target.closest("[data-ep-loai]");
+      if (b) { loaiEp = b.dataset.epLoai; chamLap.loai = 0; hieuNhapLap(); }
+    });
     $("n-mo").addEventListener("click", () => {
       if (window.matchMedia("(max-width:760px)").matches) {
         const mo = !$("nhac").classList.contains("mo-form");
-        if (mo) { xoaForm(); moForm(true); $("n-ten").focus(); } else xoaForm();
-      } else { xoaForm(); $("n-ten").focus(); }
+        if (mo) { xoaForm(); moForm(true); $("n-cau").focus(); } else xoaForm();
+      } else { xoaForm(); $("n-cau").focus(); }
       veNhac();
     });
     $("n-huy").addEventListener("click", () => { xoaForm(); veNhac(); });
