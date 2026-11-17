@@ -20,6 +20,28 @@ sau lần mở đầu tiên. Dữ liệu nhắc việc chỉ lưu trong máy ng�
 
 Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong ứng dụng.
 
+## Hai kiểu luận ngày
+
+Ở mục **Luận giải** có nút chuyển **Cộng sao · Theo sách**; lịch tháng tô màu theo kiểu đang chọn.
+
+**Cộng sao** — chấm điểm nhanh: cộng cho hoàng đạo, trực tốt, nhị thập bát tú tốt, sao tốt; trừ cho
+hắc đạo, sao xấu, Tam nương, Nguyệt kỵ, Dương công kỵ. Tổng điểm quy ra 5 mức (Rất xấu → Rất tốt).
+
+**Theo sách** — xét đúng thứ tự *Ngọc Hạp Thông Thư* dạy, mỗi lý do ghi số trang sách:
+
+1. **Sáu ngày đại kỵ** — Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước: sách
+   dạy sao tốt không cứu được (tr.9) → *Rất xấu*.
+2. **Ngày kiêng** — ngày kiêng mọi việc (Thiên cương, Đại hao – Tử khí – Quan phù, Tiểu hồng sa, Tứ ly,
+   Tứ tuyệt, Thập ác đại bại…) và ngày kiêng riêng của việc đang chọn (động thổ: Vãng vong, Thổ cấm,
+   Thiên hoả, Địa hoả, Nguyệt phá, Lỗ ban sát…; xuất hành: Không vong bốn mùa…) → *Xấu* hoặc *Rất xấu*.
+3. **Điều tốt** — ngày hoàng đạo (tr.45–47), trực tốt (Kiến, Mãn, Bình, Định, Chấp, Thành — tr.153–154),
+   sao tốt hợp việc (đọc phần "nên" của từng sao), quy tắc tốt theo việc (Tạo ốc, Lộc mã, Thiên thành,
+   Thiên quan, Sinh khí…). Giải thần giải được sao xấu (tr.9, 153); sao xấu nhẹ (tr.11) được sao tốt gánh đỡ.
+
+Theo sách thì khắt khe: khoảng 60% số ngày trong năm là ngày kiêng cho việc chung — đúng như lời sách.
+Ba mức khi không phạm kiêng (Bình thường, Tốt, Rất tốt) là cách chia của chương trình. Các quy tắc theo
+tuổi người, theo giờ, cưới hỏi, an táng có trong cơ sở tri thức (148 quy tắc) nhưng chưa đưa vào luận ngày.
+
 ## Căn cứ lịch pháp
 
 - Âm lịch tính theo thuật toán thiên văn của **Hồ Ngọc Đức**, múi giờ Việt Nam (GMT+7): điểm sóc,
@@ -30,8 +52,9 @@ Bấm logo 曆 ở góc trên để mở phần **Giới thiệu** ngay trong �
 ## Căn cứ xem sao
 
 - Sao tốt xấu an theo bảng 12 tháng trong sách **Ngọc Hạp Thông Thư** (bản dịch Việt); không trộn
-  với hệ xem ngày khác. Mỗi sao trong ứng dụng ghi trạng thái *Đã đối chiếu Ngọc Hạp* hoặc
-  *Đang đối chiếu Ngọc Hạp* (bản in còn thiếu hoặc chưa nhất quán).
+  với hệ xem ngày khác. Mỗi sao trong ứng dụng ghi *Đã đối chiếu Ngọc Hạp* (hai sách trở lên khớp
+  nhau; khi các sách khác nhau thì theo đa số) hoặc *Theo Ngọc Hạp Thông Thư (một nguồn)*.
+- Sao không có bảng an hay quy tắc tính trong sách nào thì loại khỏi chương trình; ô sách để trống thì không an.
 - Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán **Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký** và bản Hán Nôm **"Ngọc hạp toản yếu thông dụng"** (1926); ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.
 
 ## Tài liệu tham khảo

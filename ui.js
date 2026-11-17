@@ -352,7 +352,7 @@
         <div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || '<li class="rong">Không phạm</li>'}</ul></div>
       </div>
       ${ls.nhac.length ? `<ul class="pd-nhac">${liSach(ls.nhac, "nhac")}</ul>` : ""}
-      <p class="pd-nguon">Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. Số trang là trang sách.</p>` : `
+      <p class="pd-nguon">Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. Số trang là trang sách. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>` : `
       <div class="pd-dau"><div class="pd-nhan">Phán định · ${esc(viec.ten)}</div>${nutKieu()}</div>
       <div class="pd-chinh">
         <div class="pd-bac">${bac.t}</div>
@@ -694,7 +694,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.10.0";
+  const PHIEN_BAN = "1.10.1";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
     const el = moTam(`
@@ -709,6 +709,21 @@
           <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
           <li><b>Luận giải</b> — xét ngày theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao, xuất hành) bằng hai kiểu: <b>Cộng sao</b> (thang điểm) và <b>Theo sách</b> (theo quy tắc Ngọc Hạp Thông Thư, ghi số trang), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
           <li><b>Nhắc</b> — Nhắc việc và Ngày lặp lại (giỗ âm lịch, sinh nhật, kỷ niệm). Gõ câu tự nhiên như “Họp giao ban 8h sáng mai”, “Giỗ bố 20/10 âm” — ứng dụng tự hiểu ngày, giờ.</li></ul></section>
+        <section id="gt-luan"><h4>Hai kiểu luận ngày</h4>
+          <p>Ở mục <b>Luận giải</b> có nút chuyển <b>Cộng sao · Theo sách</b>. Lịch tháng tô màu theo kiểu đang chọn; ứng dụng nhớ lựa chọn của bạn.</p>
+          <p><b>Cộng sao</b> — cách chấm điểm nhanh: cộng điểm cho hoàng đạo, trực tốt, nhị thập bát tú tốt, sao tốt; trừ điểm cho hắc đạo, sao xấu, Tam nương, Nguyệt kỵ, Dương công kỵ. Tổng điểm quy ra 5 mức từ Rất xấu tới Rất tốt.</p>
+          <p><b>Theo sách</b> — xét đúng thứ tự Ngọc Hạp Thông Thư dạy, mỗi lý do ghi số trang sách (TT tr.…):</p>
+          <ol>
+            <li><b>Sáu ngày đại kỵ</b>: Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước. Sách dạy sao tốt không cứu được (tr.9) → <b>Rất xấu</b>.</li>
+            <li><b>Ngày kiêng</b>: ngày sách ghi kiêng mọi việc (Thiên cương, Đại hao, Tiểu hồng sa, Tứ ly, Tứ tuyệt…) và ngày kiêng riêng của việc đang chọn (động thổ thì xét Vãng vong, Thổ cấm, Thiên hoả, Nguyệt phá…) → <b>Xấu</b> hoặc <b>Rất xấu</b>.</li>
+            <li>Không phạm kiêng thì xét <b>điều tốt</b>: ngày hoàng đạo, trực tốt (Kiến, Mãn, Bình, Định, Chấp, Thành — tr.153–154), sao tốt hợp việc, quy tắc tốt theo việc (Tạo ốc, Lộc mã, Thiên thành…). Có Giải thần thì giải được sao xấu; sao xấu nhẹ (tr.11) được nhiều sao tốt gánh đỡ.</li>
+          </ol>
+          <p>Theo sách thì rất khắt khe: khoảng sáu phần mười số ngày trong năm là ngày kiêng cho việc chung — đúng như lời sách. Riêng ba mức không phạm kiêng (Bình thường, Tốt, Rất tốt) là cách chia của chương trình dựa trên các điều tốt sách nêu. Các quy tắc theo tuổi người, theo giờ, cưới hỏi, an táng đã có trong cơ sở tri thức nhưng chưa đưa vào luận ngày.</p></section>
+        <section><h4>Dùng nhanh</h4><ol>
+          <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
+          <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng, chọn kiểu luận ở mục Luận giải, mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
+          <li><b>Đọc nghĩa sao:</b> chạm tên sao ở mục Luận giải, hoặc bấm “Tra cứu” để tìm theo tên.</li>
+          <li><b>Thêm việc, ngày giỗ:</b> thẻ Nhắc → “＋ Thêm” → gõ một câu tự nhiên.</li></ol></section>
         <section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
           <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
         <section><h4>Căn cứ xem sao</h4>
