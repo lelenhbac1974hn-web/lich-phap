@@ -674,7 +674,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
   /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-  const PHIEN_BAN = "1.9.1";
+  const PHIEN_BAN = "1.9.2";
   function moGioiThieu(muc) {
     const soDa = CSDL.sao.filter(s => s.tt).length;
     const el = moTam(`
