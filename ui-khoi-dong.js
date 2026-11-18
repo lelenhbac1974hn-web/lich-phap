@@ -58,7 +58,7 @@ function doiThang(buoc) {
 document.addEventListener("click", e => {
   const k = e.target.closest("[data-kieu]");
   if (k) {
-    st.kieu = k.dataset.kieu === "sach" ? "sach" : "sao";
+    st.kieu = k.dataset.kieu === "sao" ? "sao" : "sach";
     try { localStorage.setItem("lichphap:kieu-luan", st.kieu); } catch (er) { /* trình duyệt chặn lưu: chỉ giữ trong phiên */ }
     ve();
     return;

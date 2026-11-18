@@ -399,7 +399,8 @@ function saoNgocHap(j, thangAm) {
   };
 }
 
-/* ═════════════ CHẤM ĐIỂM NGÀY TỐT – XẤU ═════════════ */
+/* ═════════════ CHẤM ĐIỂM NGÀY TỐT – XẤU ("Cộng sao") ═════════════
+   Thang điểm của chương trình; sáu ngày đại kỵ của sách (ngayDaiKy, luan-sach.js) luôn chặn về Rất xấu. */
 const VIEC = [{
   id: "chung",
   ten: "Việc chung",
@@ -493,6 +494,9 @@ function chamDiem(j, am, viecId = "chung") {
   if (viec.chan.includes("duongcong") && dc) chan.push("Dương công kỵ nhật — đại kỵ khởi công");
   if (viec.chan.includes("tamnuong") && tn) chan.push("Tam nương sát");
   if (viec.chan.includes("nguyetky") && nk) chan.push("Nguyệt kỵ");
+  /* Sáu ngày đại kỵ theo Ngọc Hạp Thông Thư (luan-sach.js): kỵ mọi việc, điểm sao tốt không cứu được */
+  const daiKy = typeof ngayDaiKy === "function" ? ngayDaiKy(j, am) : [];
+  for (const t of daiKy) if (!chan.some(c => c.startsWith(t))) chan.push(t);
   let bac;
   if (chan.length) bac = 0;else if (diem >= 6) bac = 4;else if (diem >= 3) bac = 3;else if (diem >= 0) bac = 2;else if (diem >= -4) bac = 1;else bac = 0;
   return {
@@ -508,6 +512,7 @@ function chamDiem(j, am, viecId = "chung") {
     tn,
     nk,
     dc,
+    daiKy,
     nh
   };
 }

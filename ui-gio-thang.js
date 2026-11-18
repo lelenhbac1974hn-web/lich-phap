@@ -11,6 +11,13 @@ const boTrang = s => String(s).replace(/\s*\(TT tr\.[^)]*\)/g, "");
 const nutKieu = () => `<div class="pd-kieu" role="tablist" aria-label="Kiểu luận">
     <button type="button" role="tab" data-kieu="sao" aria-selected="${st.kieu === "sao"}">Cộng sao</button>
     <button type="button" role="tab" data-kieu="sach" aria-selected="${st.kieu === "sach"}">Theo sách</button></div>`;
+/* Hai kiểu lệch nhau từ 2 bậc thì ghi một dòng kiểu kia nói gì, để người xem không bị bất ngờ khi chuyển nút */
+function dongKieuKhac(sach, cd, ls) {
+  if (Math.abs(cd.bac - ls.bac) < 2) return "";
+  const t = sach ? `Cộng sao chấm <b>${BAC_UI[cd.bac].t}</b> (${cd.diem > 0 ? "+" : ""}${cd.diem} điểm): thang điểm không xét các ngày kiêng sách ghi.`
+    : `Theo sách: <b>${BAC_UI[ls.bac].t}</b> — ${esc(boTrang(ls.ket))}.`;
+  return `<p class="pd-khac">${t}</p>`;
+}
 function vePhanDinh(x) {
   const sach = st.kieu === "sach", cd = x.cd, ls = x.ls, soBac = sach ? ls.bac : cd.bac, bac = BAC_UI[soBac];
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
@@ -24,6 +31,7 @@ function vePhanDinh(x) {
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
     <div class="pd-ket">${esc(boTrang(ls.ket))}</div>
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
+    ${dongKieuKhac(true, cd, ls)}
     ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
     <div class="pd-ly">
       <div><h4>Điều tốt</h4><ul>${liSach(ls.tot, "cong") || '<li class="rong">Không có</li>'}</ul></div>
@@ -37,16 +45,17 @@ function vePhanDinh(x) {
       <div class="pd-diem"><b>${cd.diem > 0 ? "+" : ""}${cd.diem}</b><span>điểm</span></div>
     </div>
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
-    ${cd.chan.length ? `<div class="pd-chan"><b>Kỵ tuyệt đối cho việc này</b>${cd.chan.map(esc).join(" · ")}</div>` : ""}
+    ${dongKieuKhac(false, cd, ls)}
+    ${cd.chan.length ? `<div class="pd-chan"><b>${cd.daiKy.length ? "Ngày đại kỵ — sao tốt không cứu được" : "Kỵ tuyệt đối cho việc này"}</b>${cd.chan.map(esc).join(" · ")}</div>` : ""}
     <div class="pd-ly">
       <div><h4>Điểm cộng</h4><ul>${li(cd.cong, "cong") || '<li class="rong">Không có</li>'}</ul></div>
       <div><h4>Điểm trừ</h4><ul>${li(cd.tru, "tru") || '<li class="rong">Không có</li>'}</ul></div>
     </div>`;
 }
 
-/* Ngày kỵ lớn (Tam nương, Nguyệt kỵ, Dương công kỵ) ghi bằng chữ trong dòng phụ của dải tốt xấu — không thêm hàng,
+/* Sáu ngày đại kỵ (Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, con nước) ghi bằng chữ trong dòng phụ của dải tốt xấu — không thêm hàng,
    để dải luôn cao như nhau và tờ lịch không co giãn giữa các ngày */
-const kyNgay = cd => [cd.tn && "Tam nương", cd.nk && "Nguyệt kỵ", cd.dc && "Dương công kỵ"].filter(Boolean);
+const kyNgay = cd => cd.daiKy;
 
 /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
 function veTomTat(x) {

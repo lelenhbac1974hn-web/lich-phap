@@ -24,10 +24,12 @@ ngày/tháng/năm kèm ngày âm. Từ 23 giờ (giờ Tý) lịch hiện ngày 
 
 ## Hai kiểu luận ngày
 
-Ở mục **Luận giải** có nút chuyển **Cộng sao · Theo sách**; lịch tháng tô màu theo kiểu đang chọn.
+Ở mục **Luận giải** có nút chuyển **Cộng sao · Theo sách** (mặc định **Theo sách**); lịch tháng tô màu theo kiểu đang chọn.
+Khi hai kiểu chênh nhau từ hai mức trở lên, thẻ phán định ghi thêm một dòng kiểu kia nói gì.
 
 **Cộng sao** — chấm điểm nhanh: cộng cho hoàng đạo, trực tốt, nhị thập bát tú tốt, sao tốt; trừ cho
 hắc đạo, sao xấu, Tam nương, Nguyệt kỵ, Dương công kỵ. Tổng điểm quy ra 5 mức (Rất xấu → Rất tốt).
+Sáu ngày đại kỵ của sách (mục 1 dưới đây) luôn là *Rất xấu*, như kiểu Theo sách.
 
 **Theo sách** — xét đúng thứ tự *Ngọc Hạp Thông Thư* dạy (số trang sách giữ trong dữ liệu để rà soát, không hiện trên màn hình):
 
@@ -49,7 +51,8 @@ tuổi người, theo giờ, cưới hỏi, an táng có trong cơ sở tri th�
 - Âm lịch tính theo thuật toán thiên văn của **Hồ Ngọc Đức**, múi giờ Việt Nam (GMT+7): điểm sóc,
   trung khí, tháng nhuận, tháng đủ / thiếu, can chi năm – tháng – ngày – giờ, 24 tiết khí, trực.
 - Kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) so với các trang lịch phổ biến:
-  âm lịch, can chi, tiết khí, trực khớp 100%.
+  âm lịch, can chi, tiết khí, trực khớp 100%. Mỗi lần phát hành chạy lại 510 ngày này (lịch pháp, sao,
+  mức tốt xấu của 5 việc × 2 kiểu luận) và so với mẫu chuẩn đã duyệt.
 
 ## Căn cứ xem sao
 

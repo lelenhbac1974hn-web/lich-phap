@@ -45,8 +45,8 @@ function jdHomNay() {
 const jdLich = () => jdHomNay() + (new Date().getHours() >= 23 ? 1 : 0);
 const thuCuaJd = j => (j + 1) % 7; // 0 = Chủ Nhật
 
-/* kieu: "sao" = cộng sao (thang điểm), "sach" = luận theo sách (luan-sach.js) */
-const st = { jd: jdLich(), viec: "chung", kieu: (() => { try { return localStorage.getItem("lichphap:kieu-luan") === "sach" ? "sach" : "sao"; } catch (e) { return "sao"; } })() };
+/* kieu: "sach" = luận theo sách (luan-sach.js, mặc định từ bản 1.16.0), "sao" = cộng sao (thang điểm); nhớ lựa chọn của người dùng */
+const st = { jd: jdLich(), viec: "chung", kieu: (() => { try { return localStorage.getItem("lichphap:kieu-luan") === "sao" ? "sao" : "sach"; } catch (e) { return "sach"; } })() };
 const bacTheoKieu = (j, am, viec) => st.kieu === "sach" ? luanTheoSach(j, am, viec).bac : chamDiem(j, am, viec).bac;
 
 /* ── Gom toàn bộ thông tin một ngày ── */

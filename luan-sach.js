@@ -47,12 +47,22 @@
   }
   const trangTT = tr => "TT tr." + (tr || []).join(", ");
 
+  /* Thông tin ngày để khớp quy tắc. Tháng nhuận tạm dùng số tháng chính — chờ đối sách (kế hoạch nâng cấp, đợt 2) */
+  function thongTinNgay(j, am) {
+    const can = CAN[(j + 9) % 10], chi = CHI[(j + 1) % 12];
+    return { thang: am.month, ngay: am.day, can, chi, canChi: can + " " + chi,
+      canNam: CAN[(am.year + 6) % 10], tiet: tietKhi(j), tietMai: tietKhi(j + 1) };
+  }
+  /* Sáu ngày đại kỵ (Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, con nước): sách dạy sao tốt không cứu được.
+     Dùng chung cho cả hai kiểu luận để hai kiểu không bao giờ nói ngược nhau ở những ngày này. */
+  function ngayDaiKy(j, am) {
+    const LG = window.LUAN_GIAI, n = thongTinNgay(j, am);
+    return LG.quyTac.filter(q => LG.khongCuu.ds.includes(q.id) && khop(q, n)).map(q => q.ten.split(" (")[0]);
+  }
   function luanTheoSach(j, am, viecId = "chung") {
     const LG = window.LUAN_GIAI;
     if (!LG) throw new Error("Chưa nạp luan-giai.js");
-    const can = CAN[(j + 9) % 10], chi = CHI[(j + 1) % 12];
-    const n = { thang: am.leap ? am.month : am.month, ngay: am.day, can, chi, canChi: can + " " + chi,
-      canNam: CAN[(am.year + 6) % 10], tiet: tietKhi(j), tietMai: tietKhi(j + 1) };
+    const n = thongTinNgay(j, am);
     const khongCuu = [], kieng = [], tot = [], nhac = [];
     /* 1. Quy tắc trong chương luận giải */
     for (const q of LG.quyTac) {
@@ -104,4 +114,5 @@
     return { bac, ket, khongCuu, kieng, tot, nhac, than, truc };
   }
   window.luanTheoSach = luanTheoSach;
+  window.ngayDaiKy = ngayDaiKy;
 })();
