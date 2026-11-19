@@ -7,10 +7,22 @@
 /* ── Phán định tốt xấu ── */
 /* Bỏ ghi chú số trang "(TT tr.9)" khỏi câu hiện cho người dùng */
 const boTrang = s => String(s).replace(/\s*\(TT tr\.[^)]*\)/g, "");
-/* Nút chọn kiểu luận: Cộng sao (thang điểm) · Theo sách (quy tắc Ngọc Hạp Thông Thư) */
+/* Nút chọn kiểu luận: Cộng sao (thang điểm) · Theo sách (quy tắc Ngọc Hạp Thông Thư) — tab gạch chân trên đầu tờ */
 const nutKieu = () => `<div class="pd-kieu" role="tablist" aria-label="Kiểu luận">
     <button type="button" role="tab" data-kieu="sao" aria-selected="${st.kieu === "sao"}">Cộng sao</button>
     <button type="button" role="tab" data-kieu="sach" aria-selected="${st.kieu === "sach"}">Theo sách</button></div>`;
+/* Ba thông số của ngày (trực · hoàng đạo · nhị thập bát tú): chữ in trên tờ Luận ngày, không phải thẻ */
+function thongSoNgay(x) {
+  const { truc, than, saoTen, saoTot } = x.cd;
+  const o = (nhan, ten, lop, tag, mo) => `<div><small>${nhan}</small><b>${ten}</b><em class="${lop}">${tag}</em><span>${mo}</span></div>`;
+  return `<div class="pd-ba">` +
+    o("Thập nhị trực", `Trực ${truc.t}`, truc.g > 0 ? "tot" : truc.g < 0 ? "xau" : "vua",
+      truc.g > 0 ? "Trực tốt" : truc.g < 0 ? "Trực xấu" : "Trực vừa", esc(truc.v)) +
+    o("Hoàng đạo", than.t, than.hd ? "tot" : "xau", than.hd ? "Hoàng đạo" : "Hắc đạo",
+      than.hd ? "Thần hoàng đạo chủ trì — thuận cho việc khởi sự." : "Thần hắc đạo chủ trì — nên tránh việc lớn.") +
+    o("Nhị thập bát tú", `Sao ${saoTen}`, saoTot ? "tot" : "xau", saoTot ? "Cát tú" : "Hung tú",
+      `Năm ${x.ccNam} · tuổi ${x.conGiap}. Tiết ${x.tiet}.`) + `</div>`;
+}
 /* Hai kiểu lệch nhau từ 2 bậc thì ghi một dòng kiểu kia nói gì, để người xem không bị bất ngờ khi chuyển nút */
 function dongKieuKhac(sach, cd, ls) {
   if (Math.abs(cd.bac - ls.bac) < 2) return "";
@@ -25,9 +37,9 @@ function vePhanDinh(x) {
   const li = (ds, lop) => ds.map(t => `<li class="${lop}">${esc(t)}</li>`).join("");
   /* Lý do luận theo sách hiện bằng lời thường; số trang sách chỉ giữ trong dữ liệu (luan-sach.js), không đưa lên màn hình */
   const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(boTrang(m.t))}</li>`).join("");
-  $("phan-dinh").className = `the the-phan-dinh ${bac.lop}`;
-  $("phan-dinh").innerHTML = sach ? `
-    <div class="pd-dau"><div class="pd-nhan">Luận theo sách · ${esc(viec.ten)}</div>${nutKieu()}</div>
+  $("phan-dinh").className = `the to-giay the-phan-dinh ${bac.lop}`;
+  const dau = `<div class="tg-dau pd-dau"><h3 class="pd-nhan">Luận ngày<span> · ${esc(viec.ten)}</span></h3>${nutKieu()}</div>`;
+  $("phan-dinh").innerHTML = dau + `<div class="tg-than">` + (sach ? `
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
     <div class="pd-ket">${esc(boTrang(ls.ket))}</div>
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
@@ -42,8 +54,8 @@ function vePhanDinh(x) {
     </div>
     ${ls.thamKhao && ls.thamKhao.length ? `<div class="pd-tk"><h4>Sách tham khảo</h4><ul>${ls.thamKhao.map(m => `<li class="${/cat/.test(m.muc) ? "cong" : "tru"}">${esc(m.t)} <small>· ${esc(m.nguon)}</small></li>`).join("")}</ul></div>` : ""}
     ${ls.nhac.length ? `<ul class="pd-nhac">${liSach(ls.nhac, "nhac")}</ul>` : ""}
+    ${thongSoNgay(x)}
     <p class="pd-nguon">${ls.kyNho ? "Sách chính: Ngọc Hạp Thông Thư; Chánh Tông, bản chữ Hán chỉ để tham khảo. " : ""}Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>` : `
-    <div class="pd-dau"><div class="pd-nhan">Phán định · ${esc(viec.ten)}</div>${nutKieu()}</div>
     <div class="pd-chinh">
       <div class="pd-bac">${bac.t}</div>
       <div class="pd-diem"><b>${cd.diem > 0 ? "+" : ""}${cd.diem}</b><span>điểm</span></div>
@@ -55,7 +67,9 @@ function vePhanDinh(x) {
     <div class="pd-ly">
       <div><h4>Điểm cộng</h4><ul>${li(cd.cong, "cong") || '<li class="rong">Không có</li>'}</ul></div>
       <div><h4>Điểm trừ</h4><ul>${li(cd.tru, "tru") || '<li class="rong">Không có</li>'}</ul></div>
-    </div>`;
+    </div>
+    ${thongSoNgay(x)}
+    <p class="pd-nguon">Cộng điểm hoàng đạo, trực tốt, cát tú, sao tốt; trừ điểm hắc đạo, sao xấu. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>`) + `</div>`;
 }
 
 /* Sáu ngày đại kỵ (Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, con nước) ghi bằng chữ trong dòng phụ của dải tốt xấu — không thêm hàng,
@@ -160,8 +174,10 @@ function veMatGio(x) {
   const tamTren = laHomNay ? `${hai(bay.getHours())}:${hai(bay.getMinutes())}` : tot.length;
   const tamDuoi = laHomNay ? `giờ ${gio[gioNay].chi}` : "giờ tốt";
   const canNgay = (jG + 9) % 10, chiNgay = (jG + 1) % 12;
+  /* Một tờ giấy: mặt giờ ở trên (đứng yên), dưới là hướng của ngày (cố định) rồi chi tiết giờ đang chọn (dài ngắn tuỳ giờ) */
   $("mat-gio").innerHTML = `
-    <div class="the-tieu-de"><h3>Giờ trong ngày</h3><span>${jG !== x.j ? "Từ 23 giờ sang ngày" : "Ngày"} ${ccNgay(jG)} ·${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
+    <div class="tg-dau"><h3>Giờ trong ngày</h3><span class="tg-dau-phu">${jG !== x.j ? "Từ 23 giờ sang ngày" : "Ngày"} ${ccNgay(jG)} · ${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
+    <div class="tg-than">
     <svg class="dia" viewBox="-6 -6 352 352" role="group" aria-label="Mười hai giờ can chi">
       ${vach}
       ${mang}
@@ -172,41 +188,21 @@ function veMatGio(x) {
       <text x="${C}" y="${C + 24}" class="tam-chu">${tamDuoi}</text>
     </svg>
     <div class="chu-gio"><span><i></i>Hoàng đạo</span><span class="hac"><i></i>Hắc đạo</span>${laHomNay ? '<span class="dang"><i></i>Đang diễn ra</span>' : ""}</div>
+    <div class="pd-ba huong">
+      <div><small>Hỷ thần</small><b>${HY_THAN[canNgay]}</b></div>
+      <div><small>Tài thần</small><b>${TAI_THAN[canNgay]}</b></div>
+      <div><small>Ngày xung</small><b>${CHI[(chiNgay + 6) % 12]}</b></div>
+    </div>
     <div class="gio-chi-tiet ${chon.hd ? "hd" : "hac"}">
       <div class="gct-dau">
-        <div><b>Giờ ${chon.can} ${chon.chi}</b><span>${chon.khung} giờ${laHomNay && chon.i === gioNay ? " · đang diễn ra" : ""}</span></div>
-        <em>${chon.hd ? "Hoàng đạo" : "Hắc đạo"}</em>
+        <b>Giờ ${chon.can} ${chon.chi}</b><em>${chon.hd ? "Hoàng đạo" : "Hắc đạo"}</em>
+        <span>${chon.khung} giờ${laHomNay && chon.i === gioNay ? " · đang diễn ra" : ""}</span>
       </div>
       <p><strong>${chon.than}</strong> — ${Y_THAN[chon.than] || ""}</p>
       <p class="gct-xung">Giờ xung tuổi <b>${chon.xung}</b></p>
-      ${laHomNay && chon.i !== gioNay ? `<button type="button" class="gct-bay" data-gio="${gioNay}">Bây giờ ${hai(bay.getHours())}:${hai(bay.getMinutes())} · giờ ${gio[gioNay].can} ${gio[gioNay].chi} · ${gio[gioNay].hd ? "hoàng đạo" : "hắc đạo"} ›</button>` : ""}
+      ${laHomNay && chon.i !== gioNay ? `<button type="button" class="gct-bay" data-gio="${gioNay}">${ic("dongHo")}Về giờ hiện tại · ${hai(bay.getHours())}:${hai(bay.getMinutes())} giờ ${gio[gioNay].chi}</button>` : ""}
     </div>
-    <div class="huong">
-      <div><span>Hỷ thần</span><b>${HY_THAN[canNgay]}</b></div>
-      <div><span>Tài thần</span><b>${TAI_THAN[canNgay]}</b></div>
-      <div><span>Ngày xung</span><b>${CHI[(chiNgay + 6) % 12]}</b></div>
     </div>`;
-}
-
-/* ── Ba thẻ: Trực · Thần · Tú ── */
-function veBoBa(x) {
-  const { truc, than, saoTen, saoTot } = x.cd;
-  const the = (nhan, ten, lop, tag, mo) => `
-    <div class="the the-nho ${lop}">
-      <div class="tn-nhan">${nhan}</div>
-      <div class="tn-ten">${ten}</div>
-      <div class="tn-tag">${tag}</div>
-      <p>${mo}</p>
-    </div>`;
-  $("bo-ba").innerHTML =
-    the("Thập nhị trực", `Trực ${truc.t}`, truc.g > 0 ? "tot" : truc.g < 0 ? "xau" : "vua",
-      truc.g > 0 ? "Trực tốt" : truc.g < 0 ? "Trực xấu" : "Trực trung bình", esc(truc.v)) +
-    the("Hoàng đạo · Hắc đạo", than.t, than.hd ? "tot" : "xau",
-      than.hd ? "Ngày hoàng đạo" : "Ngày hắc đạo",
-      than.hd ? "Thần hoàng đạo chủ trì — thuận cho việc khởi sự." : "Thần hắc đạo chủ trì — nên tránh việc lớn.") +
-    the("Nhị thập bát tú", `Sao ${saoTen}`, saoTot ? "tot" : "xau",
-      saoTot ? "Cát tú" : "Hung tú",
-      `Năm ${x.ccNam} · tuổi ${x.conGiap}. Tiết ${x.tiet}.`);
 }
 
 /* ── Lịch tháng ── */

@@ -18,12 +18,13 @@ function veNgocHap(x) {
         return `<li class="${lop}"><button type="button" class="sao-nut" data-sao="${esc(s[0])}"><b>${esc(s[0])}${r && r.han ? `<small>${esc(r.han)}</small>` : ""}</b><span>${esc(s[1] || "")}</span></button></li>`;
       }).join("")
     : `<li class="rong">Không có sao nào chiếu.</li>`;
+  /* Tờ thứ hai của Luận giải: hai cột Cát tinh · Hung tinh trên cùng một tờ; Tra cứu, Căn cứ là chữ màu chính ở đầu tờ */
   $("ngoc-hap").innerHTML = `
-    <div class="the-tieu-de">
+    <div class="tg-dau">
       <h3>Sao Ngọc Hạp</h3>
-      <span>Ngày ${x.ccNgay}, tháng ${THANG_AM[x.am.month - 1]} âm lịch · chạm tên sao để xem nghĩa</span>
-      ${CSDL.sao.length ? `<button type="button" class="nut nho tra-sao-mo" data-tra-sao>Tra cứu ${CSDL.sao.length} sao</button><button type="button" class="nut nho" data-gioi-thieu="gt-can-cu">Căn cứ</button>` : ""}
+      ${CSDL.sao.length ? `<button type="button" class="tg-lien" data-tra-sao>Tra cứu</button><button type="button" class="tg-lien" data-gioi-thieu="gt-can-cu">Căn cứ</button>` : ""}
     </div>
+    <p class="tg-phu">Ngày ${x.ccNgay}, tháng ${THANG_AM[x.am.month - 1]} âm lịch · chạm tên sao để xem nghĩa</p>
     <div class="sao-cot">
       <div>
         <h4 class="tot"><i></i>Cát tinh <em>${nh.tot.length}</em></h4>
@@ -58,7 +59,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.20.3";
+const PHIEN_BAN = "1.20.4";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [

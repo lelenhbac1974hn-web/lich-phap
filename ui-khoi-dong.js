@@ -24,7 +24,6 @@ function ve() {
   veTomTat(x);
   vePhanDinh(x);
   veMatGio(x);
-  veBoBa(x);
   veLichThang(x);
   veNgocHap(x);
   veNhac();
