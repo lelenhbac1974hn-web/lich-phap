@@ -58,7 +58,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.20.2";
+const PHIEN_BAN = "1.20.3";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -83,7 +83,9 @@ function trangMenu(id) {
         ${chonGD("sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày")}
         ${chonGD("toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối")}</section>
       <section><h4>Tờ lịch</h4>
-        ${chonTo("trien", "Triện tốt xấu trên tờ lịch", "Tốt xấu của việc đang chọn đóng thành triện ở chân tờ, cạnh ngày âm")}
+        ${chonTo("g", "Dòng tốt xấu ở chân tờ", "Mặc định · một hàng cuối vùng âm lịch: việc, kết quả và lý do rút gọn")}
+        ${chonTo("e", "Triện tốt xấu", "Triện vuông màu theo bậc, giữa ngày âm và can chi")}
+        ${chonTo("f", "Thang 5 bậc dưới tháng âm", "Kết quả kèm thang 5 bậc mảnh, ngay dưới tháng âm")}
         ${chonTo("goc", "Tờ lịch gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới")}</section>`,
     "huong-dan": `<section><h4>Dùng nhanh</h4><ol>
         <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>

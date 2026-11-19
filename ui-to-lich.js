@@ -28,6 +28,7 @@ function veToLich(x) {
     .concat(laHom ? sapToi().filter(o => o.j != null && o.con > 0 && o.con <= o.n.truoc).map(o => nhanNhac(o.n.ten, chuThuong(chuDem(o.con)))) : [])
     .join("");
   const lo = Array.from({ length: 9 }, () => "<i></i>").join("");
+  const totXau = totXauChanTo(x);
   $("to-lich").innerHTML = `
     <article class="to-lich${nghi ? " nghi" : ""}">
       <div class="gay" aria-hidden="true">${lo}</div>
@@ -53,15 +54,17 @@ function veToLich(x) {
           <div>
             <div class="am-so">${x.am.day}</div>
             <div class="am-thang">Tháng ${THANG_AM[x.am.month - 1]}${x.am.leap ? " nhuận" : ""} <em>${x.du ? "đủ" : "thiếu"}</em></div>
+            ${totXau.f}
           </div>
         </div>
-        ${trienToLich(x)}
+        ${totXau.e}
         <dl class="am-phai">
           ${jdCanChi(x.j) !== x.j ? `<div title="Từ 23 giờ đã sang giờ Tý của ngày mới"><dt>Từ 23 giờ</dt><dd>${ccNgay(x.j + 1)}</dd></div>` : `<div><dt>Ngày</dt><dd>${x.ccNgay}</dd></div>`}
           <div><dt>Tháng</dt><dd>${x.ccThang}</dd></div>
           <div><dt>Năm</dt><dd>${x.ccNam}</dd></div>
           <div><dt>Tiết</dt><dd>${x.tiet}</dd></div>
         </dl>
+        ${totXau.g}
       </footer>
       <div class="tl-bong" aria-hidden="true"></div>
       <button class="goc" data-buoc="1" type="button" aria-label="Xé tờ lịch, sang ngày sau" title="Xé tờ lịch"></button>
@@ -70,12 +73,20 @@ function veToLich(x) {
   xepNhan();
 }
 
-/* Triện tốt xấu ở chân tờ, giữa ngày âm và lưới can chi (mẫu E, anh Bắc chọn 19/11/2026):
-   kết quả của việc đang chọn theo kiểu luận đang chọn; chạm để sang Luận giải.
-   Menu Giao diện → Tờ lịch → "Tờ lịch gốc" thì ẩn triện, hiện lại dải tóm tắt riêng dưới tờ lịch. */
-function trienToLich(x) {
-  const bac = BAC_UI[st.kieu === "sach" ? x.ls.bac : x.cd.bac], viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
-  return `<button type="button" class="tl-trien ${bac.lop}" data-tab="luan" aria-label="${esc(viec.ten)}: ${bac.t} — xem luận giải">${bac.t.split(" ").join("<br>")}</button>`;
+/* Tốt xấu của việc đang chọn (theo kiểu luận đang chọn) đặt ngay ở chân tờ, vùng âm lịch; chạm để sang Luận giải.
+   Ba kiểu, chọn trong menu Giao diện → Tờ lịch (anh Bắc chốt 19/11/2026):
+     g (mặc định) — một hàng mỏng cuối vùng âm: việc · kết quả · lý do rút gọn;
+     e — triện vuông giữa ngày âm và lưới can chi;  f — dòng kết quả + thang 5 bậc dưới tháng âm;
+     goc — tờ lịch gốc: không có ở chân tờ, hiện dải tóm tắt riêng bên dưới.
+   Vẽ cả ba, CSS chỉ hiện kiểu đang chọn (body[data-kieu-to]). */
+function totXauChanTo(x) {
+  const soBac = st.kieu === "sach" ? x.ls.bac : x.cd.bac, bac = BAC_UI[soBac], viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
+  const nhan = `aria-label="${esc(viec.ten)}: ${bac.t} — xem luận giải"`, thang = BAC_UI.map((b, i) => `<i${i <= soBac ? ` class="${bac.lop}"` : ""}></i>`).join("");
+  return {
+    e: `<button type="button" class="tl-trien ${bac.lop}" data-tab="luan" ${nhan}>${bac.t.split(" ").join("<br>")}</button>`,
+    f: `<button type="button" class="tl-bac-f ${bac.lop}" data-tab="luan" ${nhan}><b>${bac.t}</b><span class="tl-thang5">${thang}</span><em>›</em></button>`,
+    g: `<button type="button" class="tl-hang ${bac.lop}" data-tab="luan" ${nhan}><span>${esc(viec.ten)}</span><b>${bac.t}</b><em>${esc(lyDoNgan(x))}</em><i>›</i></button>`
+  };
 }
 
 /* Ngày có nhiều nhắc / lễ: tờ lịch giữ nguyên cỡ, nhãn không được đè lên ca dao.

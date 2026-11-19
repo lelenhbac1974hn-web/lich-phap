@@ -62,6 +62,14 @@ function vePhanDinh(x) {
    để dải luôn cao như nhau và tờ lịch không co giãn giữa các ngày */
 const kyNgay = cd => cd.daiKy;
 
+/* Lý do rút gọn cho hàng tốt xấu ở chân tờ lịch: điều nặng nhất trước (đại kỵ → kiêng → điều tốt), bỏ ghi chú trong ngoặc */
+function lyDoNgan(x) {
+  if (st.kieu !== "sach") { const cd = x.cd, ky = kyNgay(cd); return (ky.length ? ky.join(" · ") + " · " : "") + `Trực ${cd.truc.t} · ${cd.than.t}`; }
+  const ls = x.ls, ds = ls.khongCuu.length ? ls.khongCuu : ls.kieng.length ? ls.kieng : ls.tot;
+  const t = ds.map(m => boTrang(m.t).replace(/\s*\([^)]*\)/g, "").replace(/^Sao tốt hợp việc:\s*/, ""));
+  return t.length ? t.map((s, i) => i ? chuThuong(s) : s).join(" · ") : boTrang(ls.ket);
+}
+
 /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
 function veTomTat(x) {
   const sach = st.kieu === "sach", cd = x.cd, soBac = sach ? x.ls.bac : cd.bac, bac = BAC_UI[soBac];
