@@ -152,7 +152,8 @@
     nh.tot.forEach(([ten]) => { const s = m.get(ten); if (s && hopViec((s.nen || []).concat(s.nghia ? [s.nghia] : []), viecId)) saoTot.push(ten); });
     nh.xau.forEach(([ten]) => {
       const s = m.get(ten); if (!s) return;
-      if (laNhe(ten)) { saoXauNhe.push(ten); return; }
+      /* Sao đã nêu ở khung đại kỵ (Sát chủ: TT tr.9 "không cứu được" thắng tr.11 "sao xấu nhẹ") thì không nhắc lại ở mục nhẹ */
+      if (laNhe(ten)) { if (!khongCuu.some(k => String(k.t).startsWith(ten))) saoXauNhe.push(ten); return; }
       if (hopViec((s.ky || []).concat(s.nghia ? [s.nghia] : []), viecId)) saoXau.push(ten);
     });
     if (saoTot.length) tot.push({ t: `Sao tốt hợp việc: ${saoTot.join(", ")}`, trang: "TT tr.9; bảng 12 tháng", muc: "cat" });

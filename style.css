@@ -68,7 +68,8 @@ h3,h4,p{margin:0}
 .dai-viec::-webkit-scrollbar{display:none}
 .viec{white-space:nowrap;border:1px solid var(--vien);background:rgba(255,252,245,.6);border-radius:999px;padding:7px 15px;font-size:13.5px;font-weight:500;color:var(--muc-2);transition:.15s}
 .viec:hover{border-color:var(--vang);color:var(--muc)}
-.viec.chon{background:var(--son);border-color:var(--son);color:var(--chu-sang);font-weight:600;box-shadow:0 4px 12px -6px rgba(140,20,15,.7)}
+/* Việc đang chọn: viên viền màu chính + chữ đậm (luật 3); đỏ chỉ dành cho nghĩa xấu (luật 7) */
+.viec.chon{background:var(--the);border-color:var(--chinh);color:var(--muc);font-weight:700;box-shadow:inset 0 0 0 1px var(--chinh)}
 
 /* ═════════ KHUNG ═════════ */
 .khung{max-width:1240px;margin:0 auto;padding:18px 24px 8px;display:grid;grid-template-columns:400px minmax(0,1fr);gap:22px;align-items:start}
