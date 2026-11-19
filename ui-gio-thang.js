@@ -36,10 +36,13 @@ function vePhanDinh(x) {
     ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
     <div class="pd-ly">
       <div><h4>Điều tốt</h4><ul>${liSach(ls.tot, "cong") || '<li class="rong">Không có</li>'}</ul></div>
-      <div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || '<li class="rong">Không phạm</li>'}</ul></div>
+      ${ls.kyNho ? `<div><h4>Kỵ lớn — nên tránh</h4><ul>${liSach(ls.kyLon, "tru") || '<li class="rong">Không phạm</li>'}</ul>
+        <h4>Kỵ nhỏ — gia chủ cân nhắc</h4><ul>${liSach(ls.kyNho, "nhac") || '<li class="rong">Không có</li>'}</ul></div>`
+        : `<div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || '<li class="rong">Không phạm</li>'}</ul></div>`}
     </div>
+    ${ls.thamKhao && ls.thamKhao.length ? `<div class="pd-tk"><h4>Sách tham khảo</h4><ul>${ls.thamKhao.map(m => `<li class="${/cat/.test(m.muc) ? "cong" : "tru"}">${esc(m.t)} <small>· ${esc(m.nguon)}</small></li>`).join("")}</ul></div>` : ""}
     ${ls.nhac.length ? `<ul class="pd-nhac">${liSach(ls.nhac, "nhac")}</ul>` : ""}
-    <p class="pd-nguon">Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>` : `
+    <p class="pd-nguon">${ls.kyNho ? "Sách chính: Ngọc Hạp Thông Thư; Chánh Tông, bản chữ Hán chỉ để tham khảo. " : ""}Xét theo Ngọc Hạp Thông Thư: sáu ngày đại kỵ → ngày kiêng theo việc → hoàng đạo, trực, sao tốt xấu hợp việc. <button type="button" class="pd-lien" data-gioi-thieu="gt-luan">Cách luận ›</button></p>` : `
     <div class="pd-dau"><div class="pd-nhan">Phán định · ${esc(viec.ten)}</div>${nutKieu()}</div>
     <div class="pd-chinh">
       <div class="pd-bac">${bac.t}</div>

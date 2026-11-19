@@ -79,28 +79,28 @@
     if (!T) return { tot, kieng, nhac, thieu: true };
     nguoi = nguoi || {};
     const nam = am.year, chiN = chiNam(nam), canChiNgay = CAN[(j + 9) % 10] + " " + CHI[(j + 1) % 12];
-    const xung = (y, ai) => { if (y && (T.xungTuoi.bang[ccNamSinh(y)] || []).includes(canChiNgay)) kieng.push({ t: `Ngày ${canChiNgay} xung tuổi ${ai} (${ccNamSinh(y)})`, muc: "hung", trang: T.xungTuoi.trang }); };
+    const xung = (y, ai) => { if (y && (T.xungTuoi.bang[ccNamSinh(y)] || []).includes(canChiNgay)) kieng.push({ t: `Ngày ${canChiNgay} xung tuổi ${ai} (${ccNamSinh(y)})`, muc: "hung", lon: 1, trang: T.xungTuoi.trang }); };
     const tamTai = (y, ai) => { if (y && (T.tamTai[chiNam(y)] || []).includes(chiN)) kieng.push({ t: `Năm ${chiN}: ${ai} tuổi ${chiNam(y)} gặp Tam tai — tránh việc lớn mới khởi`, muc: "hung", trang: T.tamTai.trang }); };
     if (viecId === "cuoihoi") {
       /* Châu đường không cần tuổi: chỉ luận tháng đủ thiếu, không luận tiết khí */
       const cd = chuDuong(j, am, T.chuDuong);
       if (T.chuDuong.tot.includes(cd)) tot.push({ t: `Châu đường ngày cưới rơi chữ ${cd} — tốt`, muc: "cat", nd: 1, trang: T.chuDuong.trang });
-      else if (T.chuDuong.chanhKy.includes(cd)) kieng.push({ t: `Châu đường ngày cưới rơi chữ ${cd} — chánh kỵ`, muc: "hung", trang: T.chuDuong.trang });
+      else if (T.chuDuong.chanhKy.includes(cd)) kieng.push({ t: `Châu đường ngày cưới rơi chữ ${cd} — chánh kỵ`, muc: "hung", lon: 1, trang: T.chuDuong.trang });
       else nhac.push({ t: `Châu đường rơi chữ ${cd} — kỵ nếu còn cha mẹ chồng`, trang: T.chuDuong.trang });
       const { trai, gai } = nguoi || {};
       if (!trai && !gai) return { tot, kieng, nhac, thieu: true };
       if (gai) {
         const tuoi = nam - gai + 1;
-        if (T.kimLauCuoi.donVi.includes(tuoi % 10)) kieng.push({ t: `Cô dâu ${tuoi} tuổi (tuổi mụ) phạm Kim lâu — năm nay không nên cưới`, muc: "hung", trang: T.kimLauCuoi.trang });
-        if (T.hungNien.gai[chiNam(gai)] === chiN) kieng.push({ t: `Năm ${chiN} là năm hung niên của cô dâu tuổi ${chiNam(gai)}`, muc: "hung", trang: T.hungNien.trang });
+        if (T.kimLauCuoi.donVi.includes(tuoi % 10)) kieng.push({ t: `Cô dâu ${tuoi} tuổi (tuổi mụ) phạm Kim lâu — năm nay không nên cưới`, muc: "hung", lon: 1, trang: T.kimLauCuoi.trang });
+        if (T.hungNien.gai[chiNam(gai)] === chiN) kieng.push({ t: `Năm ${chiN} là năm hung niên của cô dâu tuổi ${chiNam(gai)}`, muc: "hung", lon: 1, trang: T.hungNien.trang });
         const dl = T.daiLoi[chiNam(gai)], th = am.month, k = dl ? dl.findIndex(c => c.includes(th)) : -1;
         if (k === 0) tot.push({ t: `Tháng ${th} là tháng Đại lợi của cô dâu tuổi ${chiNam(gai)}`, muc: "cat", nd: 1, trang: T.daiLoi.trang });
-        else if (k >= 4) kieng.push({ t: `Tháng ${th}: ${T.daiLoi.ten[k]}`, muc: "hung", trang: T.daiLoi.trang });
+        else if (k >= 4) kieng.push({ t: `Tháng ${th}: ${T.daiLoi.ten[k]}`, muc: "hung", lon: 1, trang: T.daiLoi.trang });
         else if (k > 0) nhac.push({ t: `Tháng ${th}: ${T.daiLoi.ten[k]}`, trang: T.daiLoi.trang });
         tamTai(gai, "cô dâu"); xung(gai, "cô dâu");
       }
       if (trai) {
-        if (T.hungNien.trai[chiNam(trai)] === chiN) kieng.push({ t: `Năm ${chiN} là năm hung niên của chú rể tuổi ${chiNam(trai)}`, muc: "hung", trang: T.hungNien.trang });
+        if (T.hungNien.trai[chiNam(trai)] === chiN) kieng.push({ t: `Năm ${chiN} là năm hung niên của chú rể tuổi ${chiNam(trai)}`, muc: "hung", lon: 1, trang: T.hungNien.trang });
         tamTai(trai, "chú rể"); xung(trai, "chú rể");
       }
     } else if (viecId === "nhaptrach") {
@@ -124,13 +124,15 @@
     const LG = window.LUAN_GIAI;
     if (!LG) throw new Error("Chưa nạp luan-giai.js");
     const n = thongTinNgay(j, am);
-    const khongCuu = [], kieng = [], tot = [], nhac = [];
-    /* 1. Quy tắc trong chương luận giải */
+    const khongCuu = [], kieng = [], tot = [], nhac = [], thamKhao = [];
+    /* 1. Quy tắc trong chương luận giải. Sách chính là Thông Thư; quy tắc từ sách khác (q.nguon: Chánh Tông, bản chữ Hán)
+       chỉ ghi vào mục "Sách tham khảo", không tính vào mức */
     for (const q of LG.quyTac) {
       if (!q.viec.includes(viecId)) continue;
       const k = khop(q, n);
       if (!k) continue;
       const muc = { t: typeof k === "string" ? k : q.ten, nd: q.nd, trang: trangTT(q.trang), muc: q.muc };
+      if (q.nguon) { thamKhao.push({ ...muc, nguon: q.nguon === "CT" ? "Ngọc Hạp Chánh Tông" : "Ngọc hạp ký (bản chữ Hán)" }); continue; }
       if (LG.khongCuu.ds.includes(q.id)) khongCuu.push(muc);
       else if (/hung/.test(q.muc)) kieng.push(muc);
       else tot.push(muc);
@@ -167,6 +169,22 @@
     }
     /* 4. Xếp mức */
     let bac, ket;
+    /* Lớp nâng cao: kỵ lớn (sáu ngày đại kỵ, luật Thông Thư ghi đại hung, tuổi phạm nặng) quyết định mức — nên tránh;
+       kỵ nhỏ (luật Thông Thư ghi hung, sao xấu kỵ việc, Tam tai) không hạ mức, để gia chủ tùy bối cảnh mà quyết */
+    if (viecId === "cuoihoi" || viecId === "nhaptrach") {
+      const kyLon = kieng.filter(k => !k.sao && (k.muc === "dai_hung" || k.lon)), kyNho = kieng.filter(k => !kyLon.includes(k));
+      const cat = tot.filter(t => t.nd && t.muc && /cat/.test(t.muc)).length;
+      if (khongCuu.length) { bac = 0; ket = "Phạm ngày đại kỵ — sách dạy sao tốt không cứu được"; }
+      else if (kyLon.some(k => k.muc === "dai_hung")) { bac = 0; ket = "Phạm kỵ lớn — sách ghi đại hung cho việc này"; }
+      else if (kyLon.length) { bac = 1; ket = "Phạm kỵ lớn theo tuổi — nên tránh"; }
+      else {
+        const d = (than.hd ? 1 : 0) + (trucTot ? 1 : 0) + Math.min(saoTot.length, 2) + cat;
+        bac = d >= 4 ? 4 : d >= 2 ? 3 : 2;
+        ket = (bac === 4 ? "Không phạm kỵ lớn, nhiều điều tốt" : bac === 3 ? "Không phạm kỵ lớn, có điều tốt" : "Không phạm kỵ lớn, ít điều tốt") +
+          (kyNho.length ? ` · ${kyNho.length} kỵ nhỏ, gia chủ cân nhắc` : "");
+      }
+      return { bac, ket, khongCuu, kieng, kyLon, kyNho, thamKhao, tot, nhac, than, truc, tuoiThieu };
+    }
     const quyTacKieng = kieng.filter(k => !k.sao), daiHung = quyTacKieng.some(k => k.muc === "dai_hung");
     const catTheoViec = tot.filter(t => t.nd && t.muc && /cat/.test(t.muc)).length;
     if (khongCuu.length) { bac = 0; ket = "Phạm ngày đại kỵ — sách dạy sao tốt không cứu được (TT tr.9)"; }

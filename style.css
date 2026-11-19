@@ -205,12 +205,14 @@ h3,h4,p{margin:0}
 .pd-chan{margin-top:12px;background:var(--thu-phap-dam);color:#F6D9A0;border-radius:10px;padding:9px 13px;font-size:13px}
 .pd-chan b{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#E9A79F;margin-bottom:2px}
 .pd-ly{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
-.pd-ly h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muc-3);font-weight:600;margin-bottom:6px}
+.pd-ly h4,.pd-tk h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muc-3);font-weight:600;margin-bottom:6px}
+.pd-ly ul+h4{margin-top:12px}
 .pd-ly ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
 .pd-ly li{font-size:13.5px;padding-left:18px;position:relative;line-height:1.4}
 .pd-ly li::before{position:absolute;left:0;top:0;font-weight:700}
 .pd-ly li.cong::before{content:"+";color:var(--b4)}
 .pd-ly li.tru::before{content:"−";color:var(--b0)}
+.pd-ly li.nhac::before{content:"·";color:var(--b1)}
 .rong{color:var(--muc-3);font-style:italic;padding-left:0!important}
 
 /* ═════════ MẶT GIỜ ═════════ */
@@ -1034,3 +1036,6 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
 .nc-nhap{display:flex;gap:8px;margin:8px 0}
 .nc-nhap input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--vien);border-radius:10px;font:inherit;letter-spacing:.06em;background:transparent;color:inherit}
 .nc-bao{color:#B23A2E;font-size:13px;min-height:1em}
+.pd-tk{margin-top:10px;padding-top:8px;border-top:1px dashed var(--vien);font-size:13px}
+.pd-tk ul{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:3px;color:var(--muc-2)}
+.pd-tk small{color:var(--muc-3)}
