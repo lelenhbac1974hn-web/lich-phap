@@ -16,6 +16,50 @@ function veChonBieu(id) {
 function datBieu(id, k) { $(id).querySelectorAll("[data-bieu]").forEach(b => b.classList.toggle("chon", b.dataset.bieu === (k || ""))); }
 const docBieu = id => ($(id).querySelector(".chon") || { dataset: { bieu: "" } }).dataset.bieu;
 
+/* ═════════ TỜ SOẠN (Nhắc việc, Ngày lặp lại) ═════════
+   Một tờ giấy trượt lên che danh sách; mỗi trường là một dòng kẻ của trang sổ. Ngày, giờ, loại… chọn bằng lịch nhỏ,
+   lưới số và chip của app — không bật bảng chọn ngày/giờ hay hộp chọn của hệ điều hành. Giá trị vẫn nằm trong các ô ẩn
+   (v-ngay, v-gio, v-lap, n-loai, n-ngay, n-thang, n-truoc) để phần hiểu câu và lưu dữ liệu giữ nguyên. */
+function dungSoan() {
+  if ($("sx-nen")) return;
+  const nen = document.createElement("div");
+  nen.className = "sx-nen"; nen.id = "sx-nen";
+  document.body.append(nen, $("f-viec"), $("f-nhac"));
+  nen.addEventListener("click", dongSoanDangMo);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && document.body.classList.contains("dang-soan")) dongSoanDangMo(); });
+}
+function hienSoan(id, mo) {
+  $(id).classList.toggle("mo", mo);
+  document.body.classList.toggle("dang-soan", !!document.querySelector(".tam-soan.mo"));
+  if (mo) $(id).querySelector(".sx-than").scrollTop = 0;
+}
+function dongSoanDangMo() {
+  if ($("f-viec").classList.contains("mo")) { dongFormViec(); veViec(); }
+  if ($("f-nhac").classList.contains("mo")) { xoaForm(); veNhac(); }
+}
+const chip = (chon, attr, chu) => `<button type="button" class="c${chon ? " chon" : ""}" ${attr}>${chu}</button>`;
+/* Lịch nhỏ của app: một tháng, mỗi ô có ngày âm; hôm nay vòng vàng, ngày chọn tô màu chính */
+function lichNho(jdChon, xem) {
+  const dau = jdFromDate(1, xem.mm, xem.yy), soNgay = jdFromDate(1, xem.mm === 12 ? 1 : xem.mm + 1, xem.mm === 12 ? xem.yy + 1 : xem.yy) - dau;
+  const lech = (thuCuaJd(dau) + 6) % 7, hom = jdHomNay();
+  let o = "";
+  for (let k = 0; k < Math.ceil((lech + soNgay) / 7) * 7; k++) {
+    const j = dau - lech + k, t = ttNgay(j), ngoai = t.mm !== xem.mm;
+    const lop = [ngoai ? "ngoai" : "", j === hom ? "hn" : "", j === jdChon ? "chon" : "", thuCuaJd(j) === 0 ? "cn" : ""].filter(Boolean).join(" ");
+    o += `<button type="button" class="${lop}" data-ln-jd="${j}" aria-label="${nhanNgay(j, true)} · ${nhanAm(j)}"><b>${t.dd}</b><small>${t.am.day === 1 ? `1/${t.am.month}` : t.am.day}</small></button>`;
+  }
+  return `<div class="ln-dau"><button type="button" data-ln-thang="-1" aria-label="Tháng trước">‹</button><b>Tháng ${xem.mm} · ${xem.yy}</b><button type="button" data-ln-thang="1" aria-label="Tháng sau">›</button></div>
+    <div class="ln-luoi">${["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((t, i) => `<i${i === 6 ? ' class="cn"' : ""}>${t}</i>`).join("")}${o}</div>`;
+}
+/* Lưới giờ 24 tiếng và phút */
+const PHUT = [0, 10, 15, 20, 30, 45];
+function luoiGio(gio) {
+  const [h, p] = gio ? gio.split(":").map(Number) : [null, null];
+  return `<p>Giờ</p><div class="lg lg-gio">${[...Array(24)].map((_, i) => `<button type="button" class="${i === h ? "chon" : ""}" data-lg-h="${i}">${hai(i)}</button>`).join("")}</div>
+    <p>Phút</p><div class="lg lg-phut">${PHUT.map(x => `<button type="button" class="${x === p ? "chon" : ""}" data-lg-p="${x}">${hai(x)}</button>`).join("")}</div>
+    ${gio ? `<button type="button" class="sx-lien" data-lg-bo>${ic("huy")}Không nhắc giờ</button>` : ""}`;
+}
+
 /* ═════════ NHẮC NGÀY LẶP LẠI ═════════ */
 const KHOA_NHAC = "lichphap:nhac";
 const LOAI = {
@@ -160,12 +204,49 @@ function moTamNhac(n) {
 }
 
 /* ── Khung nhập ── */
+/* Ngày giỗ (ngày mất) và sinh nhật (ngày sinh) là ngày đã xảy ra: có năm thì không được ở tương lai (anh Bắc chốt 19/11/2026).
+   Âm lịch so theo năm – tháng – ngày âm của hôm nay; dương lịch so theo ngày dương. */
+function loiTuongLai(n) {
+  if (n.nam == null || !Number.isInteger(n.nam) || (n.loai !== "gio" && n.loai !== "sinhnhat")) return "";
+  const am = LOAI[n.loai].lich === "am", t = ttNgay(jdHomNay());
+  const nay = am ? [t.am.year, t.am.month, t.am.day] : [t.yy, t.mm, t.dd];
+  const co = [n.nam, n.thang || 1, n.ngay || 1];
+  const sau = co[0] !== nay[0] ? co[0] > nay[0] : co[1] !== nay[1] ? co[1] > nay[1] : co[2] > nay[2];
+  if (!sau) return "";
+  const goc = n.thang && n.ngay ? `${n.ngay}/${n.thang}${am ? " âm" : ""} năm ${n.nam}` : `năm ${n.nam}`;
+  return n.loai === "gio" ? `Ngày mất ${goc} chưa tới. Ngày giỗ phải là ngày đã qua — xem lại năm mất.`
+    : `Ngày sinh ${goc} chưa tới. Sinh nhật phải là ngày đã qua — xem lại năm sinh.`;
+}
+const docSoO = id => { const v = $(id).value.trim(); return v === "" ? null : Number(v); };
+/* Cảnh báo ngay khi gõ năm hoặc đổi ngày, loại */
+function kiemNam() {
+  const n = { loai: $("n-loai").value, ngay: docSoO("n-ngay"), thang: docSoO("n-thang"), nam: docSoO("n-nam") };
+  const tl = loiTuongLai(n);
+  $("n-nam").classList.toggle("loi", !!tl);
+  $("n-loi").textContent = tl;
+  return tl;
+}
 function datNhanForm() {
   const l = LOAI[$("n-loai").value], am = l.lich === "am";
   $("n-nhan-ngay").textContent = am ? "Ngày âm" : "Ngày dương";
-  $("n-nhan-thang").textContent = am ? "Tháng âm" : "Tháng dương";
-  $("n-nhan-nam").innerHTML = `${l.nam}${am ? " âm lịch" : ""} <em>(tuỳ chọn)</em>`;
-  $("n-ngay").max = am ? 30 : 31;
+  $("n-nhan-nam").textContent = `${l.nam}${am ? " (âm)" : ""}`;
+  veSoanLap();
+}
+/* Vẽ lại các chip, dòng ngày tháng và lưới của tờ soạn Ngày lặp lại theo giá trị trong các ô ẩn */
+let luoiLapMo = false;
+function veSoanLap() {
+  const loai = $("n-loai").value, am = LOAI[loai].lich === "am", ngay = docSoO("n-ngay"), thang = docSoO("n-thang");
+  $("n-loai-chon").querySelectorAll("[data-loai]").forEach(b => b.classList.toggle("chon", b.dataset.loai === loai));
+  $("n-truoc-chon").querySelectorAll("[data-truoc]").forEach(b => b.classList.toggle("chon", b.dataset.truoc === $("n-truoc").value));
+  const tenThang = thang ? (am ? THANG_AM[thang - 1] : thang) : "—";
+  $("n-ngay-chon").innerHTML = ngay || thang ? `ngày <u>${ngay || "—"}</u> tháng <u>${tenThang}</u>${am ? "" : " dương"}` : `<span class="mo">Chọn ngày, tháng</span>`;
+  $("n-ngay-chon").classList.toggle("dang-mo", luoiLapMo);
+  $("n-luoi").hidden = !luoiLapMo;
+  if (luoiLapMo) {
+    const toiDa = am ? 30 : thang ? NGAY_TOI_DA[thang - 1] : 31;
+    $("n-luoi").innerHTML = `<p>Ngày</p><div class="lg lg-ngay">${[...Array(toiDa)].map((_, i) => `<button type="button" class="${i + 1 === ngay ? "chon" : ""}" data-nd="${i + 1}">${i + 1}</button>`).join("")}</div>
+      <p>${am ? "Tháng âm" : "Tháng dương"}</p><div class="lg lg-thang">${[...Array(12)].map((_, i) => `<button type="button" class="${i + 1 === thang ? "chon" : ""}" data-nt="${i + 1}">${am ? THANG_AM[i] : `Tháng ${i + 1}`}</button>`).join("")}</div>`;
+  }
 }
 /* Nút Thêm ở đầu thẻ Nhắc: khung nhập đang mở thì thành Đóng */
 function datNutThem(id, mo) {
@@ -173,8 +254,7 @@ function datNutThem(id, mo) {
   $(id).classList.toggle("dang-mo", mo);
 }
 function moForm(mo) {
-  $("nhac").classList.toggle("mo-form", mo);
-  datNutThem("n-mo", mo);
+  hienSoan("f-nhac", mo);
 }
 /* ── Hiểu câu tự nhiên cho Ngày lặp lại: "Giỗ bố 20/10 âm, năm mất 2021", "Kỷ niệm ngày cưới 25/6/2005" ── */
 const SO_THANG = { giêng: 1, gieng: 1, chạp: 12, chap: 12, "mười một": 11, "muoi mot": 11, một: 1, mot: 1, hai: 2, ba: 3, tư: 4, tu: 4, bốn: 4, bon: 4, năm: 5, nam: 5, sáu: 6, bảy: 7, bay: 7, tám: 8, tam: 8, chín: 9, chin: 9, mười: 10, muoi: 10 };
@@ -222,7 +302,7 @@ function phanTichLap(goc) {
 let chamLap = {}, loaiEp = null;
 function hieuNhapLap() {
   const g = $("n-cau").value.trim(), the = [];
-  if (!g) { $("n-hieu").innerHTML = ""; return; }
+  if (!g) { $("n-hieu").innerHTML = ""; veSoanLap(); kiemNam(); return; }
   const k = phanTichLap(g);
   if (loaiEp) k.loai = loaiEp;
   const l = LOAI[k.loai];
@@ -232,7 +312,7 @@ function hieuNhapLap() {
   if (!chamLap.ngay && k.ngay) $("n-ngay").value = k.ngay;
   if (!chamLap.thang && k.thang) $("n-thang").value = k.thang;
   if (!chamLap.nam && k.nam) $("n-nam").value = k.nam;
-  if (!chamLap.truoc && k.truoc != null) { const o = [...$("n-truoc").options].find(x => +x.value >= k.truoc); $("n-truoc").value = o ? o.value : "15"; }
+  if (!chamLap.truoc && k.truoc != null) $("n-truoc").value = String([0, 1, 3, 7, 15].find(x => x >= k.truoc) ?? 15);
   const [bieu, tenLoai] = k.coLoai === "gio" ? [ic("nen"), "Ngày giỗ"] : k.coLoai === "sinhnhat" ? [ic("banh"), "Sinh nhật"] : k.coLoai === "kyniem" ? [ic("nhan"), "Kỷ niệm"] : [ic("ghim"), "Sự kiện"];
   the.push(`<span class="the-le">${bieu}${tenLoai} · ${l.lich === "am" ? "âm lịch" : "dương lịch"}</span>`);
   const loai = $("n-loai").value, ngay = +$("n-ngay").value, thang = +$("n-thang").value, nam = $("n-nam").value ? +$("n-nam").value : null;
@@ -251,6 +331,7 @@ function hieuNhapLap() {
     else if (loai === "sukienam") the.push(`<button type="button" class="goi-y" data-ep-loai="${k.coLoai === "sinhnhat" ? "sinhnhat" : "sukien"}">Tính theo dương lịch</button>`);
   }
   $("n-hieu").innerHTML = the.join("");
+  veSoanLap(); kiemNam();
 }
 
 function xoaForm() {
@@ -259,10 +340,13 @@ function xoaForm() {
   if ($("n-hieu")) $("n-hieu").innerHTML = "";
   moForm(false);
   $("f-nhac").reset();
+  /* Ô ẩn không về giá trị gốc khi reset: đặt lại tay */
+  $("n-loai").value = "gio"; $("n-ngay").value = ""; $("n-thang").value = ""; $("n-truoc").value = "3";
+  luoiLapMo = false;
   datBieu("n-bieu", "");
-  $("n-loi").textContent = "";
+  $("n-loi").textContent = ""; $("n-nam").classList.remove("loi");
+  $("n-td").textContent = "Ngày lặp lại mới";
   $("n-luu").innerHTML = `${ic("them")}<span>Thêm ngày</span>`;
-  $("n-huy").hidden = true;
   datNhanForm();
 }
 function napForm(n) {
@@ -272,16 +356,16 @@ function napForm(n) {
   $("n-ten").value = n.ten; $("n-loai").value = n.loai;
   $("n-ngay").value = n.ngay; $("n-thang").value = n.thang;
   $("n-nam").value = n.nam == null ? "" : n.nam;
-  $("n-truoc").value = String(n.truoc); $("n-ghi").value = n.ghi; datBieu("n-bieu", n.bieu);
-  if ($("n-truoc").value !== String(n.truoc)) $("n-truoc").value = "3";
-  $("n-luu").innerHTML = `${ic("luu")}<span>Lưu thay đổi</span>`;
-  $("n-huy").hidden = false;
+  $("n-truoc").value = [0, 1, 3, 7, 15].includes(n.truoc) ? String(n.truoc) : "3"; $("n-ghi").value = n.ghi; datBieu("n-bieu", n.bieu);
+  $("n-td").textContent = "Sửa ngày lặp lại";
+  $("n-luu").innerHTML = `${ic("luu")}<span>Lưu</span>`;
   $("n-loi").textContent = "";
+  luoiLapMo = false;
   datNhanForm();
-  $("n-ten").focus();
+  kiemNam();
 }
 function docForm() {
-  const so = id => $(id).value.trim() === "" ? null : Number($(id).value);
+  const so = docSoO;
   const n = {
     ten: $("n-ten").value, loai: $("n-loai").value,
     ngay: so("n-ngay"), thang: so("n-thang"), nam: so("n-nam"),
@@ -289,36 +373,50 @@ function docForm() {
   };
   const am = LOAI[n.loai].lich === "am";
   if (!n.ten.trim()) return { loi: "Chưa nhập tên lời nhắc.", o: "n-ten" };
-  if (!soNguyen(n.thang, 1, 12)) return { loi: "Tháng phải từ 1 đến 12.", o: "n-thang" };
+  if (!soNguyen(n.thang, 1, 12)) return { loi: "Chưa chọn tháng.", o: "n-ngay-chon" };
   const toiDa = am ? 30 : NGAY_TOI_DA[n.thang - 1];
-  if (!soNguyen(n.ngay, 1, toiDa)) return { loi: `Ngày phải từ 1 đến ${toiDa}${am ? " (tháng âm dài nhất 30 ngày)" : ` với tháng ${n.thang} dương lịch`}.`, o: "n-ngay" };
+  if (!soNguyen(n.ngay, 1, toiDa)) return { loi: n.ngay == null ? "Chưa chọn ngày." : `Ngày phải từ 1 đến ${toiDa}${am ? " (tháng âm dài nhất 30 ngày)" : ` với tháng ${n.thang} dương lịch`}.`, o: "n-ngay-chon" };
   if (n.nam != null && !soNguyen(n.nam, 1800, 2199)) return { loi: "Năm phải từ 1800 đến 2199, hoặc để trống.", o: "n-nam" };
+  const tl = loiTuongLai(n);
+  if (tl) return { loi: tl, o: "n-nam" };
   return { n };
 }
 
 function ganNhac() {
-  $("n-loai").addEventListener("change", () => { chamLap.loai = 1; datNhanForm(); });
-  [["n-ten", "ten"], ["n-ngay", "ngay"], ["n-thang", "thang"], ["n-nam", "nam"], ["n-truoc", "truoc"]].forEach(([id, k]) =>
-    $(id).addEventListener("change", () => { chamLap[k] = 1; if ($("n-cau").value.trim()) hieuNhapLap(); }));
+  dungSoan();
+  /* Chip loại, nhắc trước; dòng ngày tháng mở lưới số */
+  const doiTay = k => { chamLap[k] = 1; if ($("n-cau").value.trim()) hieuNhapLap(); else { veSoanLap(); kiemNam(); } };
+  $("n-loai-chon").addEventListener("click", e => { const b = e.target.closest("[data-loai]"); if (!b) return; $("n-loai").value = b.dataset.loai; loaiEp = null; chamLap.loai = 1; datNhanForm(); doiTay("loai"); });
+  $("n-truoc-chon").addEventListener("click", e => { const b = e.target.closest("[data-truoc]"); if (!b) return; $("n-truoc").value = b.dataset.truoc; doiTay("truoc"); });
+  $("n-ngay-chon").addEventListener("click", () => { luoiLapMo = !luoiLapMo; veSoanLap(); });
+  $("n-luoi").addEventListener("click", e => {
+    const d = e.target.closest("[data-nd]"), t = e.target.closest("[data-nt]");
+    if (d) { $("n-ngay").value = d.dataset.nd; doiTay("ngay"); }
+    if (t) { $("n-thang").value = t.dataset.nt; doiTay("thang"); }
+    if ((d || t) && docSoO("n-ngay") && docSoO("n-thang")) { luoiLapMo = false; veSoanLap(); }
+  });
+  $("n-ten").addEventListener("change", () => { chamLap.ten = 1; });
+  $("n-nam").addEventListener("input", () => {
+    const v = $("n-nam").value.replace(/\D/g, "").slice(0, 4);
+    if (v !== $("n-nam").value) $("n-nam").value = v;
+    chamLap.nam = 1;
+    if (v.length === 4 || v === "") kiemNam(); else { $("n-loi").textContent = ""; $("n-nam").classList.remove("loi"); }
+  });
   $("n-cau").addEventListener("input", hieuNhapLap);
   $("n-cau").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("f-nhac").requestSubmit(); } });
   $("n-hieu").addEventListener("click", e => {
     const b = e.target.closest("[data-ep-loai]");
     if (b) { loaiEp = b.dataset.epLoai; chamLap.loai = 0; hieuNhapLap(); }
   });
-  $("n-mo").addEventListener("click", () => {
-    if (window.matchMedia("(max-width:760px)").matches) {
-      const mo = !$("nhac").classList.contains("mo-form");
-      if (mo) { xoaForm(); moForm(true); $("n-cau").focus(); } else xoaForm();
-    } else { xoaForm(); $("n-cau").focus(); }
-    veNhac();
-  });
+  $("n-mo").addEventListener("click", () => { xoaForm(); moForm(true); $("n-cau").focus(); veNhac(); });
   $("n-huy").addEventListener("click", () => { xoaForm(); veNhac(); });
   $("n-lay").addEventListener("click", () => {
     const t = ttNgay(st.jd), am = LOAI[$("n-loai").value].lich === "am";
     $("n-ngay").value = am ? t.am.day : t.dd;
     $("n-thang").value = am ? t.am.month : t.mm;
+    chamLap.ngay = chamLap.thang = 1; luoiLapMo = false; veSoanLap();
     $("n-loi").textContent = am && t.am.leap ? "Ngày đang xem thuộc tháng nhuận; lời nhắc sẽ lặp theo tháng thường cùng số." : "";
+    if (!$("n-loi").textContent) kiemNam();
   });
   $("f-nhac").addEventListener("submit", e => {
     e.preventDefault();
@@ -375,7 +473,7 @@ function ganNhac() {
   });
   datNhanForm();
   datNutThem("n-mo", false);
-  $("n-huy").innerHTML = `${ic("huy")}<span>Huỷ sửa</span>`;
+  $("n-huy").innerHTML = `${ic("huy")}<span>Huỷ</span>`;
   $("n-lay").innerHTML = `${ic("homNay")}<span>Lấy ngày đang xem</span>`;
   $("n-luu").innerHTML = `${ic("them")}<span>Thêm ngày</span>`;
 }
@@ -729,24 +827,46 @@ function datUu(n) { document.querySelectorAll("#v-uu [data-uu]").forEach(b => b.
 const docUu = () => +(document.querySelector("#v-uu .chon") || { dataset: { uu: 0 } }).dataset.uu;
 function moFormViec(v) {
   viecSua = v ? v.id : null; chamTay = v ? { ngay: 1, gio: 1, uu: 1, lap: 1 } : {};
-  $("nhac").classList.add("mo-viec");
-  datNutThem("v-mo", true);
+  hienSoan("f-viec", true);
   $("v-go").value = v ? v.ten : "";
   $("v-ngay").value = v ? jdSangO(v.jd) : ""; $("v-gio").value = v && v.gio || "";
   datUu(v ? v.uuTien : 0); $("v-lap").value = v ? v.lap : "khong"; $("v-ghi").value = v ? v.ghi : ""; datBieu("v-bieu", v ? v.bieu : "");
-  $("v-luu").innerHTML = v ? `${ic("luu")}<span>Lưu thay đổi</span>` : `${ic("them")}<span>Thêm việc</span>`; $("v-loi").textContent = "";
+  $("v-td").textContent = v ? "Sửa việc" : "Việc mới";
+  $("v-luu").innerHTML = v ? `${ic("luu")}<span>Lưu</span>` : `${ic("them")}<span>Thêm việc</span>`; $("v-loi").textContent = "";
+  lichViecMo = gioViecMo = false;
   hieuNhap();
   $("v-go").focus();
 }
 function dongFormViec() {
   viecSua = null;
-  $("nhac").classList.remove("mo-viec");
-  datNutThem("v-mo", false);
+  hienSoan("f-viec", false);
+}
+/* Dòng Ngày (chip Hôm nay · Ngày mai · Chọn ngày + lịch nhỏ), dòng Giờ nhắc (lưới giờ), chip Lặp lại */
+let lichViecMo = false, gioViecMo = false, lichViecXem = null;
+function veSoanViec() {
+  const hom = jdHomNay(), j = oSangJd($("v-ngay").value), gio = $("v-gio").value;
+  const khac = j != null && j !== hom && j !== hom + 1;
+  $("v-ngay-chon").innerHTML = chip(j === hom, 'data-vn="0"', "Hôm nay") + chip(j === hom + 1, 'data-vn="1"', "Ngày mai") +
+    chip(khac || lichViecMo, 'data-vn="lich"', `${ic("lich")}${khac ? `${THU_NGAN[thuCuaJd(j)]} ${hai(ttNgay(j).dd)}/${hai(ttNgay(j).mm)}${ttNgay(j).yy !== ttNgay(hom).yy ? "/" + ttNgay(j).yy : ""}` : "Chọn ngày"}`);
+  $("v-lich").hidden = !lichViecMo;
+  if (lichViecMo) {
+    if (!lichViecXem) { const t = ttNgay(j ?? hom); lichViecXem = { mm: t.mm, yy: t.yy }; }
+    $("v-lich").innerHTML = lichNho(j, lichViecXem) + (j != null ? `<button type="button" class="sx-lien" data-ln-bo>${ic("huy")}Chưa đặt ngày</button>` : "");
+  }
+  $("v-gio-chon").innerHTML = `${gio ? `<b>${gio}</b>` : `<span class="mo">Không nhắc giờ</span>`}${j != null ? `<em>${nhanNgay(j)} · ${nhanAm(j)}</em>` : ""}`;
+  $("v-gio-chon").classList.toggle("dang-mo", gioViecMo);
+  $("v-gio-luoi").hidden = !gioViecMo;
+  if (gioViecMo) $("v-gio-luoi").innerHTML = luoiGio(gio);
+  $("v-lap-chon").innerHTML = Object.entries({ khong: "Không", ngay: "Ngày", tuan: "Tuần", thang: "Tháng", nam: "Năm" })
+    .map(([k, t]) => chip($("v-lap").value === k, `data-vl="${k}"`, t)).join("");
+}
+function datNgayViec(j) {
+  $("v-ngay").value = jdSangO(j); chamTay.ngay = 1; hieuNhap();
 }
 /* Gõ câu tự nhiên: hiện nhãn xem trước và tự điền các ô chưa sửa tay */
 function hieuNhap() {
   const g = $("v-go").value.trim();
-  if (!g) { $("v-hieu").innerHTML = ""; return; }
+  if (!g) { $("v-hieu").innerHTML = ""; veSoanViec(); return; }
   const k = phanTichViec(g), the = [];
   if (k.jd != null) the.push(`<span class="the-ngay">${ic("lich")}${nhanNgayViec(k.jd)}${k.jd - jdHomNay() > 1 ? ` · ${ttNgay(k.jd).am.day}/${ttNgay(k.jd).am.month} âm` : ""}</span>`);
   if (k.gio) the.push(`<span class="the-hen">${ic("dongHo")}${k.gio}</span>`);
@@ -770,6 +890,7 @@ function hieuNhap() {
   if (!chamTay.gio && k.gio) $("v-gio").value = k.gio;
   if (!chamTay.lap && k.lap !== "khong") $("v-lap").value = k.lap;
   if (!chamTay.uu && k.uuTien) datUu(k.uuTien);
+  veSoanViec();
 }
 
 /* ── Nhắc đúng giờ (khi ứng dụng đang mở) ── */
@@ -809,17 +930,41 @@ function ganViec() {
   });
   /* Khung nhập */
   $("v-go").addEventListener("input", hieuNhap);
-  $("v-ngay").addEventListener("change", () => { chamTay.ngay = 1; hieuNhap(); });
   $("v-hieu").addEventListener("click", e => {
     const b = e.target.closest("[data-goi-jd]");
     if (!b) return;
-    $("v-ngay").value = jdSangO(+b.dataset.goiJd); chamTay.ngay = 1; hieuNhap();
+    datNgayViec(+b.dataset.goiJd);
   });
-  $("v-gio").addEventListener("change", () => { chamTay.gio = 1; });
-  $("v-lap").addEventListener("change", () => { chamTay.lap = 1; });
+  /* Ngày: chạm lại chip đang chọn thì bỏ ngày; "Chọn ngày" mở lịch nhỏ */
+  $("v-ngay-chon").addEventListener("click", e => {
+    const b = e.target.closest("[data-vn]"); if (!b) return;
+    if (b.dataset.vn === "lich") { lichViecMo = !lichViecMo; lichViecXem = null; gioViecMo = false; veSoanViec(); return; }
+    const j = jdHomNay() + +b.dataset.vn;
+    lichViecMo = false;
+    $("v-ngay").value = oSangJd($("v-ngay").value) === j ? "" : jdSangO(j); chamTay.ngay = 1; hieuNhap();
+  });
+  $("v-lich").addEventListener("click", e => {
+    const t = e.target.closest("[data-ln-thang]"), d = e.target.closest("[data-ln-jd]");
+    if (t) { let { mm, yy } = lichViecXem; mm += +t.dataset.lnThang; if (mm < 1) { mm = 12; yy--; } if (mm > 12) { mm = 1; yy++; } lichViecXem = { mm, yy }; veSoanViec(); }
+    else if (d) { lichViecMo = false; datNgayViec(+d.dataset.lnJd); }
+    else if (e.target.closest("[data-ln-bo]")) { lichViecMo = false; $("v-ngay").value = ""; chamTay.ngay = 1; hieuNhap(); }
+  });
+  $("v-gio-chon").addEventListener("click", () => { gioViecMo = !gioViecMo; lichViecMo = false; veSoanViec(); });
+  $("v-gio-luoi").addEventListener("click", e => {
+    const h = e.target.closest("[data-lg-h]"), p = e.target.closest("[data-lg-p]");
+    const [h0, p0] = ($("v-gio").value || "08:00").split(":");
+    if (h) $("v-gio").value = `${hai(+h.dataset.lgH)}:${p0}`;
+    else if (p) { $("v-gio").value = `${h0}:${hai(+p.dataset.lgP)}`; gioViecMo = false; }
+    else if (e.target.closest("[data-lg-bo]")) { $("v-gio").value = ""; gioViecMo = false; }
+    else return;
+    chamTay.gio = 1;
+    if ($("v-gio").value && !oSangJd($("v-ngay").value)) { $("v-ngay").value = jdSangO(jdHomNay()); chamTay.ngay = 1; }
+    hieuNhap();
+  });
+  $("v-lap-chon").addEventListener("click", e => { const b = e.target.closest("[data-vl]"); if (b) { chamTay.lap = 1; $("v-lap").value = b.dataset.vl; veSoanViec(); } });
   $("v-uu").addEventListener("click", e => { const b = e.target.closest("[data-uu]"); if (b) { chamTay.uu = 1; datUu(+b.dataset.uu); } });
   $("v-huy").addEventListener("click", () => { dongFormViec(); veViec(); });
-  $("v-mo").addEventListener("click", () => { if ($("nhac").classList.contains("mo-viec")) dongFormViec(); else moFormViec(null); veViec(); });
+  $("v-mo").addEventListener("click", () => { moFormViec(null); veViec(); });
   $("f-viec").addEventListener("submit", e => {
     e.preventDefault();
     const g = $("v-go").value.trim();

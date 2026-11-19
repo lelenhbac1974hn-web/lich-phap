@@ -75,23 +75,25 @@
 
     <!-- ═══ NHẮC VIỆC ═══ -->
     <div class="trang-viec">
-      <form class="viec-form" id="f-viec" autocomplete="off" novalidate>
-        <label class="truong rong-4"><span>Việc cần làm</span>
-          <input id="v-go" maxlength="140" enterkeyhint="done" placeholder="vd: Họp giao ban 8h sáng mai" /></label>
-        <div class="go-hieu rong-4" id="v-hieu" aria-live="polite"></div>
-        <label class="truong"><span>Ngày</span><input type="date" id="v-ngay" /></label>
-        <label class="truong"><span>Giờ nhắc</span><input type="time" id="v-gio" /></label>
-        <div class="truong rong-4"><span>Ưu tiên</span><div class="uu-chon" id="v-uu">
-          <button type="button" class="p0 chon" data-uu="0">Không</button><button type="button" class="p1" data-uu="1">Thấp</button><button type="button" class="p2" data-uu="2">Vừa</button><button type="button" class="p3" data-uu="3">Cao</button></div></div>
-        <label class="truong rong-4"><span>Lặp lại</span><select id="v-lap">
-          <option value="khong">Không lặp</option><option value="ngay">Hằng ngày</option><option value="tuan">Hằng tuần</option><option value="thang">Hằng tháng</option><option value="nam">Hằng năm</option></select></label>
-        <div class="truong rong-4"><span>Biểu tượng</span><div class="chon-bieu" id="v-bieu" role="group" aria-label="Chọn biểu tượng"></div></div>
-        <label class="truong rong-4"><span>Ghi chú</span><textarea id="v-ghi" rows="2" maxlength="500"></textarea></label>
-        <p class="nhac-loi rong-4" id="v-loi" role="alert"></p>
-        <div class="nhac-nut rong-4">
-          <button type="button" class="nut" id="v-huy">Huỷ</button>
-          <button type="submit" class="nut nut-chinh" id="v-luu">Thêm việc</button>
+      <!-- Tờ soạn: trượt lên che danh sách; mỗi trường một dòng kẻ của trang sổ; ngày, giờ chọn bằng lịch và lưới của app -->
+      <form class="tam-soan" id="f-viec" autocomplete="off" novalidate role="dialog" aria-modal="true" aria-labelledby="v-td">
+        <div class="sx-dau"><button type="button" class="sx-huy" id="v-huy"></button><b id="v-td">Việc mới</b><span></span></div>
+        <div class="sx-than">
+          <label class="sx-dong"><span>Việc</span><div><input id="v-go" class="sx-go" maxlength="140" enterkeyhint="done" placeholder="vd: Họp giao ban 8h sáng mai" />
+            <div class="go-hieu" id="v-hieu" aria-live="polite"></div></div></label>
+          <div class="sx-dong"><span>Ngày</span><div class="sx-chip" id="v-ngay-chon"></div></div>
+          <div class="sx-mo" id="v-lich" hidden></div>
+          <div class="sx-dong"><span>Giờ nhắc</span><div><button type="button" class="sx-gt" id="v-gio-chon"></button></div></div>
+          <div class="sx-mo" id="v-gio-luoi" hidden></div>
+          <div class="sx-dong"><span>Ưu tiên</span><div class="sx-chip" id="v-uu">
+            <button type="button" class="c chon" data-uu="0">Không</button><button type="button" class="c" data-uu="1">Thấp</button><button type="button" class="c" data-uu="2">Vừa</button><button type="button" class="c" data-uu="3">Cao</button></div></div>
+          <div class="sx-dong"><span>Lặp lại</span><div class="sx-chip" id="v-lap-chon"></div></div>
+          <div class="sx-dong"><span>Biểu tượng</span><div class="chon-bieu" id="v-bieu" role="group" aria-label="Chọn biểu tượng"></div></div>
+          <label class="sx-dong"><span>Ghi chú</span><textarea id="v-ghi" rows="2" maxlength="500" placeholder="Viết thêm nếu cần…"></textarea></label>
+          <p class="nhac-loi" id="v-loi" role="alert"></p>
+          <input type="hidden" id="v-ngay" /><input type="hidden" id="v-gio" /><input type="hidden" id="v-lap" value="khong" />
         </div>
+        <div class="sx-chan"><span></span><button type="submit" class="nut nut-chinh" id="v-luu">Thêm việc</button></div>
       </form>
       <div class="loc-viec" id="loc-viec" role="tablist" aria-label="Danh sách việc"></div>
       <div class="xin-bao" id="xin-bao" hidden></div>
@@ -102,42 +104,25 @@
     <div class="trang-lap">
     <p class="nhac-mo-ta">Ngày giỗ theo âm lịch · sinh nhật, sự kiện theo dương lịch · tự lặp lại hằng năm</p>
     <div class="nhac-khung">
-      <form id="f-nhac" class="nhac-form" autocomplete="off" novalidate>
-        <label class="truong rong-4"><span>Gõ một câu</span>
-          <input id="n-cau" maxlength="160" enterkeyhint="done" placeholder="vd: Giỗ bố 20/10 âm, năm mất 2021" /></label>
-        <div class="go-hieu rong-4" id="n-hieu" aria-live="polite"></div>
-        <label class="truong rong-2"><span>Tên</span>
-          <input id="n-ten" maxlength="80" placeholder="Ví dụ: Giỗ ông nội" /></label>
-        <label class="truong rong-2"><span>Loại</span>
-          <select id="n-loai">
-            <option value="gio">Ngày giỗ — âm lịch</option>
-            <option value="sinhnhat">Sinh nhật — dương lịch</option>
-            <option value="sukien">Sự kiện — dương lịch</option>
-            <option value="sukienam">Sự kiện — âm lịch</option>
-          </select></label>
-        <label class="truong"><span id="n-nhan-ngay">Ngày âm</span>
-          <input id="n-ngay" type="number" min="1" max="31" inputmode="numeric" /></label>
-        <label class="truong"><span id="n-nhan-thang">Tháng âm</span>
-          <input id="n-thang" type="number" min="1" max="12" inputmode="numeric" /></label>
-        <label class="truong"><span id="n-nhan-nam">Năm mất <em>(tuỳ chọn)</em></span>
-          <input id="n-nam" type="number" min="1800" max="2199" inputmode="numeric" placeholder="để đếm số năm" /></label>
-        <label class="truong"><span>Nhắc trước</span>
-          <select id="n-truoc">
-            <option value="0">Đúng ngày</option>
-            <option value="1">1 ngày</option>
-            <option value="3" selected>3 ngày</option>
-            <option value="7">7 ngày</option>
-            <option value="15">15 ngày</option>
-          </select></label>
-        <div class="truong rong-4"><span>Biểu tượng</span><div class="chon-bieu" id="n-bieu" role="group" aria-label="Chọn biểu tượng"></div></div>
-        <label class="truong rong-4"><span>Ghi chú</span>
-          <input id="n-ghi" maxlength="160" placeholder="Ví dụ: cúng tại nhà bác cả" /></label>
-        <p class="nhac-loi rong-4" id="n-loi" role="alert"></p>
-        <div class="nhac-nut rong-4">
-          <button type="button" class="nut" id="n-lay">Lấy ngày đang xem</button>
-          <button type="button" class="nut" id="n-huy" hidden>Huỷ sửa</button>
-          <button type="submit" class="nut nut-chinh" id="n-luu">Thêm nhắc</button>
+      <form id="f-nhac" class="tam-soan" autocomplete="off" novalidate role="dialog" aria-modal="true" aria-labelledby="n-td">
+        <div class="sx-dau"><button type="button" class="sx-huy" id="n-huy"></button><b id="n-td">Ngày lặp lại mới</b><span></span></div>
+        <div class="sx-than">
+          <label class="sx-dong"><span>Gõ nhanh</span><div><input id="n-cau" class="sx-go" maxlength="160" enterkeyhint="done" placeholder="vd: Giỗ bố 20/10 âm, năm mất 2021" />
+            <div class="go-hieu" id="n-hieu" aria-live="polite"></div></div></label>
+          <label class="sx-dong"><span>Tên</span><input id="n-ten" class="sx-o" maxlength="80" placeholder="vd: Giỗ ông nội" /></label>
+          <div class="sx-dong"><span>Loại</span><div class="sx-chip" id="n-loai-chon">
+            <button type="button" class="c" data-loai="gio">Giỗ</button><button type="button" class="c" data-loai="sinhnhat">Sinh nhật</button><button type="button" class="c" data-loai="sukien">Sự kiện</button><button type="button" class="c" data-loai="sukienam">Sự kiện âm</button></div></div>
+          <div class="sx-dong"><span id="n-nhan-ngay">Ngày âm</span><div><button type="button" class="sx-gt" id="n-ngay-chon"></button></div></div>
+          <div class="sx-mo" id="n-luoi" hidden></div>
+          <label class="sx-dong"><span id="n-nhan-nam">Năm mất</span><div class="sx-nam"><input id="n-nam" class="sx-o sx-so" type="text" inputmode="numeric" maxlength="4" placeholder="····" /><em id="n-nam-phu">để đếm số năm · có thể bỏ trống</em></div></label>
+          <div class="sx-dong"><span>Nhắc trước</span><div class="sx-chip" id="n-truoc-chon">
+            <button type="button" class="c" data-truoc="0">Đúng ngày</button><button type="button" class="c" data-truoc="1">1</button><button type="button" class="c" data-truoc="3">3 ngày</button><button type="button" class="c" data-truoc="7">7</button><button type="button" class="c" data-truoc="15">15</button></div></div>
+          <div class="sx-dong"><span>Biểu tượng</span><div class="chon-bieu" id="n-bieu" role="group" aria-label="Chọn biểu tượng"></div></div>
+          <label class="sx-dong"><span>Ghi chú</span><input id="n-ghi" class="sx-o" maxlength="160" placeholder="vd: cúng tại nhà bác cả" /></label>
+          <p class="nhac-loi" id="n-loi" role="alert"></p>
+          <input type="hidden" id="n-loai" value="gio" /><input type="hidden" id="n-ngay" /><input type="hidden" id="n-thang" /><input type="hidden" id="n-truoc" value="3" />
         </div>
+        <div class="sx-chan"><button type="button" class="sx-lien" id="n-lay"></button><button type="submit" class="nut nut-chinh" id="n-luu">Thêm ngày</button></div>
       </form>
       <div class="nhac-phai">
         <div id="ds-nhac"></div>
