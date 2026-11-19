@@ -387,19 +387,26 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
 .nhac-tep{border-top:1px dashed var(--vien);padding-top:12px}
 
 /* ── Trang sổ tay: danh sách Nhắc việc và Ngày lặp lại (luật giao diện 2, 5, 6) ── */
-.to-so,#ds-nhac .ds-so{background:var(--the);border-radius:3px;position:relative;box-shadow:0 1px 0 var(--vien),0 2px 0 -1px var(--giay-2),0 3px 0 -1px var(--vien)}
-.to-so::before,#ds-nhac .ds-so::before{content:"";position:absolute;top:0;bottom:0;left:44px;width:3px;border-left:1px solid var(--le-so);border-right:1px solid var(--le-so);pointer-events:none;z-index:1}
+/* Tờ giấy trải hết bề ngang thẻ (lề đệm --le-the); dòng sáng là một dải phủ kín từ mép này sang mép kia */
+.the-nhac{--le-the:22px}
+#ds-viec,#ds-nhac .ds-so{margin-left:calc(-1 * var(--le-the));margin-right:calc(-1 * var(--le-the))}
+#ds-viec>.viec-trong,#ds-viec>.xoa-xong{margin-left:var(--le-the);margin-right:var(--le-the)}
+.to-so,#ds-nhac .ds-so{background:var(--the);border-radius:0;position:relative;box-shadow:0 1px 0 var(--vien),0 2px 0 -1px var(--giay-2),0 3px 0 -1px var(--vien)}
+.to-so::before,#ds-nhac .ds-so::before{content:"";position:absolute;top:0;bottom:0;left:calc(var(--le-the) + 44px);width:3px;border-left:1px solid var(--le-so);border-right:1px solid var(--le-so);pointer-events:none;z-index:1}
 #ds-viec,#ds-nhac .ds-so{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
 @media (min-width:761px){#ds-viec,#ds-nhac .ds-so{max-height:430px}}
 .ds-so{list-style:none;margin:0;padding:0;display:grid}
-.dong-so{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:0 10px;min-height:56px;padding:0 14px 0 0;border-bottom:1px solid var(--gach-so);
+.dong-so{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:0 10px;min-height:56px;padding:0 calc(var(--le-the) + 2px) 0 var(--le-the);border-bottom:1px solid var(--gach-so);
   position:relative;cursor:pointer;outline:0;-webkit-tap-highlight-color:transparent;transition:background .25s}
 .ds-so>.dong-so:last-child{border-bottom:0}
 .dong-so:active{background:color-mix(in srgb,var(--chinh) 9%,transparent)}
 .dong-so.sang{background:var(--chinh-nhat)}
-.dong-so.sang::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--chinh)}
 .dong-so:focus-visible{box-shadow:inset 0 0 0 2px var(--chinh)}
 .ds-bieu{display:grid;place-items:center;color:#A08460}
+/* Biểu tượng đầu dòng là nút mở chi tiết; dòng đang sáng thì biểu tượng có vòng màu chính để báo chỗ bấm */
+button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius:50%;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s,box-shadow .2s,color .2s}
+.dong-so.sang .ds-mo{background:var(--the);box-shadow:0 0 0 1.5px var(--chinh);color:var(--chinh-dam)}
+.ds-mo:active{transform:scale(.92)}
 .ds-bieu svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .ds-bieu svg .dac{fill:currentColor;stroke:none}
 .ds-bieu svg .dac-nhat{fill:color-mix(in srgb,currentColor 22%,transparent)}
@@ -411,7 +418,7 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
 .ds-dem.qua{color:var(--son);font-weight:700}
 .da-xong .ds-nd b{text-decoration:line-through;text-decoration-color:var(--muc-3);color:var(--muc-3)}
 .da-xong .ds-bieu{opacity:.6}
-.ds-td{margin:0;padding:12px 14px 3px 54px;font-size:13.5px;font-weight:600;color:var(--chu-so);border-top:1px solid var(--gach-so)}
+.ds-td{margin:0;padding:12px var(--le-the) 3px calc(var(--le-the) + 54px);font-size:13.5px;font-weight:600;color:var(--chu-so);border-top:1px solid var(--gach-so)}
 .ds-td:first-child{border-top:0}
 .ds-td em{font-style:normal;font-weight:400;font-size:12px;color:var(--muc-3);margin-left:6px}
 .ds-td .so{font-family:var(--so);font-weight:700;font-size:16px}
@@ -722,6 +729,7 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
   }
 
   .the{padding:14px 16px;border-radius:16px}
+  .the-nhac{--le-the:16px}
   .the-tieu-de{margin-bottom:10px}
 
   /* Mục Ngày: tờ lịch co giãn vừa khít phần màn hình còn lại */

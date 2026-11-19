@@ -91,10 +91,11 @@ function soNam(n, j) {
 const ngayGoc = n => `${n.ngay}/${n.thang} ${LOAI[n.loai].lich === "am" ? "âm lịch" : "dương lịch"}`;
 
 /* ── Khuôn dòng danh sách dùng chung (luật giao diện 5, 6): biểu tượng · tên · dòng phụ · một nhãn phải.
-   Danh sách nằm trên một trang sổ tay; chạm dòng thì dòng sáng lên và mở tấm trượt chi tiết. ── */
+   Danh sách nằm trên một trang sổ tay. Chạm dòng: dòng sáng lên (đánh dấu, không mở gì — tránh lẫn khi vuốt);
+   chạm biểu tượng đầu dòng (hoặc Enter): mở tấm trượt chi tiết. ── */
 function dongSo(o) {
-  return `<li class="dong-so${o.sang ? " sang" : ""}${o.lop ? " " + o.lop : ""}" ${o.attr} tabindex="0" role="button" aria-haspopup="dialog">
-    <span class="ds-bieu" aria-hidden="true">${o.bieu}</span>
+  return `<li class="dong-so${o.sang ? " sang" : ""}${o.lop ? " " + o.lop : ""}" ${o.attr} tabindex="0" aria-selected="${!!o.sang}">
+    <button type="button" class="ds-bieu ds-mo" data-mo aria-label="Mở chi tiết: ${esc(o.ten)}">${o.bieu}</button>
     <span class="ds-nd"><b>${esc(o.ten)}</b>${o.phu ? `<small>${o.phu}</small>` : ""}</span>
     ${o.dem ? `<span class="ds-dem${o.demLop ? " " + o.demLop : ""}">${o.dem}</span>` : ""}</li>`;
 }
@@ -330,16 +331,17 @@ function ganNhac() {
     ve();
     if (!ok) $("n-loi").textContent = "Trình duyệt không cho lưu dữ liệu; lời nhắc sẽ mất khi đóng trang.";
   });
-  /* Chạm một ngày lặp lại: dòng sáng lên (giữ sáng sau khi đóng tấm) và mở tấm chi tiết */
-  const chonNhac = li => {
+  /* Chạm một ngày lặp lại: dòng sáng lên; chạm biểu tượng đầu dòng (hoặc Enter) mới mở tấm chi tiết */
+  const chonNhac = (li, mo) => {
     const n = nhac.find(x => x.id === li.dataset.chon);
     if (!n) return;
-    nhacChon = n.id; veNhac(); moTamNhac(n);
+    nhacChon = n.id; veNhac();
+    if (mo) moTamNhac(n);
   };
-  $("ds-nhac").addEventListener("click", e => { const li = e.target.closest("[data-chon]"); if (li) chonNhac(li); });
+  $("ds-nhac").addEventListener("click", e => { const li = e.target.closest("[data-chon]"); if (li) chonNhac(li, !!e.target.closest("[data-mo]")); });
   $("ds-nhac").addEventListener("keydown", e => {
     const li = e.target.closest("[data-chon]");
-    if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); chonNhac(li); }
+    if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); chonNhac(li, true); }
   });
   $("n-xuat").addEventListener("click", () => {
     const a = document.createElement("a");
@@ -857,13 +859,13 @@ function ganViec() {
       return;
     }
     if (!id) return;
-    /* Chạm một việc: dòng sáng lên (giữ sáng sau khi đóng tấm) và mở tấm chi tiết */
+    /* Chạm một việc: dòng sáng lên; chạm biểu tượng đầu dòng mới mở tấm chi tiết */
     const v = viec.find(x => x.id === id);
-    if (v) { viecChon = id; veViec(); moTamViec(v); }
+    if (v) { viecChon = id; veViec(); if (e.target.closest("[data-mo]")) moTamViec(v); }
   });
   ds.addEventListener("keydown", e => {
     const li = e.target.closest("[data-viec-id]");
-    if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); li.click(); }
+    if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); li.querySelector("[data-mo]").click(); }
   });
   setInterval(soatGio, 20000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { soatGio(); veViec(); } });
