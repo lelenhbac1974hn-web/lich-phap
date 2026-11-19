@@ -58,7 +58,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.18.1";
+const PHIEN_BAN = "1.19.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -199,13 +199,6 @@ function hienHuongDanLanDau() {
 }
 
 /* Bỏ ghi chú nghiên cứu (số trang, nhóm xếp trong sách) khỏi lời giải nghĩa, chỉ giữ ý nghĩa */
-function nghiaGon(n) {
-  if (!n) return "";
-  const g = n.replace(/\s*\([^()]*\btr\.\s*\d+[^()]*\)/gi, "")
-    .replace(/(^|[.;]\s+)Tr\.\s*\d+(?:\s*\([^()]*\))?\s*:\s*/g, "$1")
-    .replace(/\s+([.,;])/g, "$1").replace(/\.{2,}/g, ".").replace(/\s{2,}/g, " ").trim();
-  return g.replace(/(^|[.;]\s+)(\p{Ll})/gu, (m, a, c) => a + c.toUpperCase());
-}
 function moTheSao(s, tuTra) {
   const thangNay = thangAnSao(ttNgay(st.jd).am); // tháng nhuận chia đôi như khi an sao
   const an = s.an && s.an.thang ? Array.from({ length: 12 }, (_, i) => {
@@ -222,7 +215,7 @@ function moTheSao(s, tuTra) {
       ${s.han ? `<p class="ts-han-nho">${esc(s.han)}</p>` : ""}
     </header>
     <div class="ts-than">
-      ${nghiaGon(s.nghia) ? `<p class="ts-nghia">${esc(nghiaGon(s.nghia))}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
+      ${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
       ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
       ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
       <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt === 1 ? "✓ Đã đối chiếu Ngọc Hạp" : s.tt === 2 ? "✓ Theo Ngọc Hạp Thông Thư (một nguồn)" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
@@ -242,7 +235,7 @@ function moTraSao(tim) {
     const q = bo(o.value.trim()); el.dataset.tim = o.value;
     const ds = CSDL.sao.filter(s => !q || bo(s.ten).includes(q) || (s.han || "").includes(o.value.trim()))
       .sort((a, b) => a.ten.localeCompare(b.ten, "vi"));
-    ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><i></i><b>${esc(s.ten)}</b>${s.han ? `<small>${esc(s.han)}</small>` : ""}<span>${(g => esc(g.slice(0, 60)) + (g.length > 60 ? "…" : ""))(nghiaGon(s.nghia))}</span></button></li>`).join("")
+    ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><i></i><b>${esc(s.ten)}</b>${s.han ? `<small>${esc(s.han)}</small>` : ""}<span>${(g => esc(g.slice(0, 60)) + (g.length > 60 ? "…" : ""))(s.nghia)}</span></button></li>`).join("")
       || `<li class="rong">Không tìm thấy sao nào.</li>`;
   };
   o.addEventListener("input", ve2); ve2();

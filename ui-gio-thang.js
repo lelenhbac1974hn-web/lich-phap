@@ -114,7 +114,8 @@ function veMatGio(x) {
     const a = (doGoc - 90) * Math.PI / 180;
     return [C + r * Math.cos(a), C + r * Math.sin(a)];
   };
-  const gio = gioChiTiet(x.j);
+  const jG = jdCanChi(x.j);   // từ 23 giờ hôm nay: mười hai giờ, hướng thần theo ngày can chi mới
+  const gio = gioChiTiet(jG);
   const laHomNay = x.j === jdLich();
   const bay = new Date(), gioNay = gioHienTai();
   if (st.gioChon == null) st.gioChon = laHomNay ? gioNay : gio.find(g => g.hd).i;
@@ -150,9 +151,9 @@ function veMatGio(x) {
   const tot = gio.filter(g => g.hd);
   const tamTren = laHomNay ? `${hai(bay.getHours())}:${hai(bay.getMinutes())}` : tot.length;
   const tamDuoi = laHomNay ? `giờ ${gio[gioNay].chi}` : "giờ tốt";
-  const canNgay = (x.j + 9) % 10, chiNgay = (x.j + 1) % 12;
+  const canNgay = (jG + 9) % 10, chiNgay = (jG + 1) % 12;
   $("mat-gio").innerHTML = `
-    <div class="the-tieu-de"><h3>Giờ trong ngày</h3><span>Ngày ${x.ccNgay} · ${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
+    <div class="the-tieu-de"><h3>Giờ trong ngày</h3><span>${jG !== x.j ? "Từ 23 giờ sang ngày" : "Ngày"} ${ccNgay(jG)} ·${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
     <svg class="dia" viewBox="-6 -6 352 352" role="group" aria-label="Mười hai giờ can chi">
       ${vach}
       ${mang}

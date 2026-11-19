@@ -52,7 +52,7 @@ function veToLich(x) {
           </div>
         </div>
         <dl class="am-phai">
-          <div><dt>Ngày</dt><dd>${x.ccNgay}</dd></div>
+          ${jdCanChi(x.j) !== x.j ? `<div title="Từ 23 giờ đã sang giờ Tý của ngày mới"><dt>Từ 23 giờ</dt><dd>${ccNgay(x.j + 1)}</dd></div>` : `<div><dt>Ngày</dt><dd>${x.ccNgay}</dd></div>`}
           <div><dt>Tháng</dt><dd>${x.ccThang}</dd></div>
           <div><dt>Năm</dt><dd>${x.ccNam}</dd></div>
           <div><dt>Tiết</dt><dd>${x.tiet}</dd></div>

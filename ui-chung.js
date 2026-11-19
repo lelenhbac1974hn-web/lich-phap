@@ -40,9 +40,11 @@ function jdHomNay() {
   const d = new Date();
   return jdFromDate(d.getDate(), d.getMonth() + 1, d.getFullYear());
 }
-/* Ngày để xem lịch: giờ Tý (23 giờ) đã sang ngày mới theo can chi, nên từ 23 giờ lịch hiện ngày hôm sau.
-   Nhắc việc vẫn dùng jdHomNay (ngày dương lịch theo đồng hồ). */
-const jdLich = () => jdHomNay() + (new Date().getHours() >= 23 ? 1 : 0);
+/* Mốc 23 giờ: giờ Tý (23 giờ) đã sang ngày mới theo can chi, nhưng ngày dương, ngày âm và luận ngày vẫn là hôm nay.
+   Chỉ phần can chi (can chi ngày, mười hai giờ, hướng thần, ngày xung) đổi sang ngày mới — jdCanChi. */
+const jdLich = () => jdHomNay();
+const sauGioTy = () => new Date().getHours() >= 23;
+const jdCanChi = j => j + (j === jdHomNay() && sauGioTy() ? 1 : 0);
 const thuCuaJd = j => (j + 1) % 7; // 0 = Chủ Nhật
 
 /* kieu: "sach" = luận theo sách (luan-sach.js, mặc định từ bản 1.16.0), "sao" = cộng sao (thang điểm); nhớ lựa chọn của người dùng */

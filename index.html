@@ -209,6 +209,13 @@
 /* Chạy không cần mạng sau lần mở đầu tiên (chỉ có hiệu lực trên https hoặc localhost) */
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   window.addEventListener("load", function () { navigator.serviceWorker.register("./sw.js").catch(function () {}); });
+  /* App mở từ bộ đệm; khi bản mới cài xong: vừa mở (dưới 15 giây) thì tải lại ngay, đang dùng thì đợi lần quay lại app */
+  var coBanCu = !!navigator.serviceWorker.controller, moLuc = Date.now();
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    if (!coBanCu) { coBanCu = true; return; }
+    if (Date.now() - moLuc < 15000) { location.reload(); return; }
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) location.reload(); });
+  });
 }
 </script>
 </body>

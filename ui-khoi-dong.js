@@ -103,11 +103,13 @@ ganGiuLe();
 ganTab();
 ganChieuCao();
 ve();
-/* Kim đồng hồ chạy theo giờ thật khi đang xem hôm nay; qua 23 giờ (sang giờ Tý) tự lật sang ngày mới */
-let homTruoc = jdLich();
+/* Kim đồng hồ chạy theo giờ thật khi đang xem hôm nay; qua 0 giờ tự lật sang ngày mới.
+   Qua 23 giờ (sang giờ Tý) chỉ vẽ lại phần can chi, ngày dương giữ nguyên */
+let homTruoc = jdLich(), tyTruoc = sauGioTy();
 setInterval(() => {
-  const hom = jdLich();
-  if (hom !== homTruoc) { const dangXemHom = st.jd === homTruoc; homTruoc = hom; if (dangXemHom && !document.hidden) { den(hom); return; } }
+  const hom = jdLich(), ty = sauGioTy();
+  if (hom !== homTruoc) { const dangXemHom = st.jd === homTruoc; homTruoc = hom; tyTruoc = ty; if (dangXemHom && !document.hidden) { den(hom); return; } }
+  if (ty !== tyTruoc && !document.hidden) { tyTruoc = ty; if (st.jd === hom) { st.gioChon = null; ve(); return; } }
   if (document.hidden || st.jd !== hom) return;
   veMatGio(thongTin(st.jd, st.viec));
 }, 30000);
