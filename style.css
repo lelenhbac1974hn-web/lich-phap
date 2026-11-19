@@ -440,6 +440,7 @@ body.dang-soan .sx-nen{opacity:1;pointer-events:auto}
 .ln-luoi button.ngoai{opacity:.35}
 .ln-luoi button.hn{box-shadow:inset 0 0 0 1.5px var(--vang)}
 .ln-luoi button.chon b,.ln-luoi button.chon small{color:var(--tren-chinh)}
+.sx-than>.nhac-loi{margin:8px 12px 8px 86px}
 .sx-chan{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--vien);background:var(--the)}
 .sx-chan .nut-chinh{display:inline-flex;align-items:center;gap:2px;padding:10px 20px;font-size:15px}
 @media (min-width:761px){.tam-soan{bottom:auto;top:50%;border-radius:8px;transform:translateY(-40%) scale(.98);opacity:0;max-height:88vh}
