@@ -31,6 +31,7 @@ function vePhanDinh(x) {
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
     <div class="pd-ket">${esc(boTrang(ls.ket))}</div>
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
+    ${oTuoi()}
     ${dongKieuKhac(true, cd, ls)}
     ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
     <div class="pd-ly">
@@ -45,6 +46,7 @@ function vePhanDinh(x) {
       <div class="pd-diem"><b>${cd.diem > 0 ? "+" : ""}${cd.diem}</b><span>điểm</span></div>
     </div>
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
+    ${oTuoi()}
     ${dongKieuKhac(false, cd, ls)}
     ${cd.chan.length ? `<div class="pd-chan"><b>${cd.daiKy.length ? "Ngày đại kỵ — sao tốt không cứu được" : "Kỵ tuyệt đối cho việc này"}</b>${cd.chan.map(esc).join(" · ")}</div>` : ""}
     <div class="pd-ly">

@@ -58,7 +58,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.17.0";
+const PHIEN_BAN = "1.18.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -66,6 +66,7 @@ const MENU = [
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "can-cu", bieu: "taiLieu", ten: "Căn cứ và tài liệu", phu: () => "Lịch pháp, sao Ngọc Hạp, sách tham khảo" },
+  { id: "nang-cao", bieu: "khoa", ten: "Lớp nâng cao", phu: () => moKhoaNC() ? "Đã mở · cưới hỏi, nhập trạch theo tuổi" : "Mở bằng mã tác giả cấp" },
   { id: "ban-quyen", bieu: "hopDong", ten: "Bản quyền", phu: () => "Tặng miễn phí cho mọi người" }
 ];
 function trangMenu(id) {
@@ -115,6 +116,7 @@ function trangMenu(id) {
         <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.</li>
         <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
         <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>`,
+    "nang-cao": trangNangCao(),
     "ban-quyen": `<section><h4>Bản quyền</h4>
         <p>Lịch Pháp được tặng <b>miễn phí</b> cho mọi người. Bản chính thức duy nhất ở địa chỉ <b>lelenhbac1974hn-web.github.io/lich-phap</b>. Nếu bạn phải trả tiền, hoặc thấy ứng dụng này trên chợ ứng dụng (App Store, Google Play…), đó là bản sao trái phép.</p>
         <p>Mọi người được dùng, chia sẻ đường dẫn và xem mã để học hỏi. Không được đưa lên chợ ứng dụng, bán, gắn quảng cáo hay phát hành lại dưới tên khác khi chưa có đồng ý của tác giả.</p></section>

@@ -1022,3 +1022,15 @@ button.o.ngoai:hover{opacity:.7;box-shadow:none}
 .mn-o{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--vien);transition:.2s}
 .mn-chon.dang{border-color:var(--thu-phap);box-shadow:0 0 0 3px color-mix(in srgb,var(--thu-phap) 14%,transparent)}
 .mn-chon.dang .mn-o{border-color:var(--thu-phap);background:radial-gradient(circle,var(--thu-phap) 0 45%,transparent 50%)}
+
+/* Lớp nâng cao */
+.nc-tuoi{margin-top:12px;padding:10px 12px;border:1px dashed var(--vien);border-radius:10px;display:grid;gap:8px;font-size:13px}
+.nc-tuoi>b{display:flex;align-items:center;gap:6px;color:var(--muc-2)}
+.nc-tuoi .ic{width:16px;height:16px}
+.nc-o{display:grid;grid-template-columns:72px 110px 1fr;align-items:center;gap:8px}
+.nc-o input{width:100%;padding:6px 8px;border:1px solid var(--vien);border-radius:8px;font:inherit;background:transparent;color:inherit}
+.nc-o em{font-style:normal;color:var(--muc-3);font-size:12px}
+.nc-tuoi small{color:var(--muc-3);font-size:12px}
+.nc-nhap{display:flex;gap:8px;margin:8px 0}
+.nc-nhap input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--vien);border-radius:10px;font:inherit;letter-spacing:.06em;background:transparent;color:inherit}
+.nc-bao{color:#B23A2E;font-size:13px;min-height:1em}

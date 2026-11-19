@@ -430,6 +430,19 @@ const VIEC = [{
   ten: "Xuất hành · Đi xa",
   trucHop: ["Kiến", "Mãn", "Thành", "Khai"],
   chan: ["tamnuong"]
+}, {
+  /* Lớp nâng cao (chỉ hiện khi mở khóa): xét cả tuổi người — xem luan-sach.js, xetTuoi */
+  id: "cuoihoi",
+  ten: "Cưới hỏi",
+  nangCao: true,
+  trucHop: ["Định", "Thành", "Chấp", "Bế"],   // Chánh Tông tr.114
+  chan: ["tamnuong"]
+}, {
+  id: "nhaptrach",
+  ten: "Nhập trạch",
+  nangCao: true,
+  trucHop: ["Định", "Khai"],                   // lời trực trong chương trình: Định, Khai hợp nhập trạch
+  chan: ["tamnuong", "nguyetky"]
 }];
 function chamDiem(j, am, viecId = "chung") {
   const truc = trucCuaNgay(j);
@@ -501,6 +514,7 @@ function chamDiem(j, am, viecId = "chung") {
   /* Sáu ngày đại kỵ theo Ngọc Hạp Thông Thư (luan-sach.js): kỵ mọi việc, điểm sao tốt không cứu được */
   const daiKy = typeof ngayDaiKy === "function" ? ngayDaiKy(j, am) : [];
   for (const t of daiKy) if (!chan.some(c => c.startsWith(t))) chan.push(t);
+  if (viec.nangCao && typeof kyTuoi === "function") chan.push(...kyTuoi(j, am, viecId));
   let bac;
   if (chan.length) bac = 0;else if (diem >= 6) bac = 4;else if (diem >= 3) bac = 3;else if (diem >= 0) bac = 2;else if (diem >= -4) bac = 1;else bac = 0;
   return {

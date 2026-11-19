@@ -12,7 +12,8 @@ function capNhatDemTab() {
 }
 
 function veDaiViec() {
-  $("dai-viec").innerHTML = VIEC.map(v =>
+  giuViecHopLe();
+  $("dai-viec").innerHTML = viecHien().map(v =>
     `<button type="button" class="viec${v.id === st.viec ? " chon" : ""}" data-viec="${v.id}">${esc(v.ten)}</button>`).join("");
 }
 

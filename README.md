@@ -18,6 +18,11 @@ sau lần mở đầu tiên. Dữ liệu nhắc việc chỉ lưu trong máy ng�
 | **Luận giải** | Xét ngày theo việc (việc chung, động thổ · khởi công, ký kết hợp đồng, khai trương · bàn giao, xuất hành) bằng hai kiểu: **Cộng sao** (thang điểm) và **Theo sách** (quy tắc Ngọc Hạp Thông Thư: sáu ngày đại kỵ không sao nào cứu, ngày kiêng theo việc, hoàng đạo, trực, sao tốt xấu hợp việc ), trực, sao Ngọc Hạp của ngày, tra cứu 155 sao (nghĩa, nên, kỵ, cách an theo tháng). |
 | **Nhắc** | *Nhắc việc*: gõ câu tự nhiên ("Họp giao ban 8h sáng mai", "Đi lễ chùa rằm tháng tới") — tự hiểu ngày, giờ, lặp lại, ưu tiên; xác nhận trước khi đánh dấu xong việc chưa tới hẹn. *Ngày lặp lại*: giỗ theo âm lịch, sinh nhật, kỷ niệm theo dương lịch ("Giỗ bố 20/10 âm, năm mất 2021"). Mỗi mục có biểu tượng vẽ sẵn (tự chọn theo nội dung hoặc chọn tay), sắp gần nhất lên đầu, chạm để xem ghi chú. |
 
+**Lớp nâng cao** (mở bằng mã tác giả cấp riêng cho từng người, mục *Lớp nâng cao* trong menu): thêm việc **Cưới hỏi**
+(Kim lâu cô dâu, năm hung niên, Tam tai, tháng Đại lợi, ngày xung tuổi, Châu đường, ngày Bất tương, ngày kỵ cưới gả) và
+**Nhập trạch** (Tam tai, ngày xung tuổi gia chủ, ngày tốt nhập trạch; Kim lâu, Hoang ốc chỉ nhắc). Đây là khóa hiển thị:
+mã chỉ lưu dạng băm SHA-256 (`ma-nang-cao.js`), dữ liệu luận vẫn nằm trong mã nguồn công khai.
+
 Bấm logo 曆 ở góc trên để mở **menu**: Giao diện (theo máy · sáng · tối), Hướng dẫn sử dụng, Về chương trình, Căn cứ và tài liệu, Bản quyền. Lần mở đầu có **hướng dẫn 5 bước**
 (xem lại trong menu khi bấm logo 曆). Giao diện **sáng / tối** theo máy hoặc chọn trong menu; ô chọn ngày hiện kiểu
 ngày/tháng/năm kèm ngày âm. Từ 23 giờ (giờ Tý) lịch hiện ngày hôm sau theo can chi.
@@ -96,6 +101,7 @@ tuổi người, theo giờ, cưới hỏi, an táng có trong cơ sở tri th�
 | `ui-gio-thang.js` | Thẻ phán định (Cộng sao / Theo sách), mặt đồng hồ giờ, trực · thần · tú, lịch tháng |
 | `ui-sao.js` | Sao Ngọc Hạp của ngày, thẻ sao, tra cứu, trang Giới thiệu |
 | `ui-nhac.js` | Nhắc việc, Ngày lặp lại, hiểu câu tiếng Việt |
+| `ui-nang-cao.js`, `ma-nang-cao.js` | Lớp nâng cao: mở khóa bằng mã, ô năm sinh, cưới hỏi và nhập trạch theo tuổi |
 | `ui-khoi-dong.js` | Vẽ lại, sự kiện chung, khởi động |
 | `sw.js`, `manifest.json` | Chạy ngoại tuyến, cài như ứng dụng |
 
