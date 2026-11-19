@@ -4,3 +4,5 @@ nguon-csdl/
 _tam_*
 # Tài liệu giới thiệu (Word, PDF, ảnh) — chỉ lưu trên máy
 tai-lieu/
+# Bàn giao cho Claude Code — chỉ lưu trên máy
+CLAUDE.md
