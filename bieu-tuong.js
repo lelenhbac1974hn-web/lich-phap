@@ -81,7 +81,16 @@
   const NET = {
     dongHo: { ve: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4.3l2.8 1.7M5 4.5 3 6.5M19 4.5l2 2"/>' },
     ghiChu: { ve: '<path d="M5 3.5h10l4 4V20.5H5z"/><path d="M15 3.5v4h4M8.5 12h7M8.5 15.5h7M8.5 8.5h3"/>' },
-    sao: { ve: '<path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z" class="dac"/><path d="M18.5 16v4M16.5 18h4"/>' }
+    sao: { ve: '<path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z" class="dac"/><path d="M18.5 16v4M16.5 18h4"/>' },
+    /* Nút thao tác dữ liệu (luật giao diện 4): mỗi việc một biểu tượng, dùng giống nhau ở mọi màn */
+    them: { ve: '<path d="M12 5v14M5 12h14"/>' },
+    xong: { ve: '<path d="M5 12.5l4.5 4.5L19 7.5"/>' },
+    sua: { ve: '<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 8l3 3"/>' },
+    xoa: { ve: '<path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>' },
+    moLai: { ve: '<path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 4v4h4"/>' },
+    luu: { ve: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>' },
+    huy: { ve: '<path d="M6 6l12 12M18 6L6 18"/>' },
+    homNay: { ve: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="12" cy="15" r="1.6" class="dac"/>' }
   };
   const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${(BT[k] || NET[k] || BT.lich).ve}</svg>`;
   window.BieuTuong = { BT, chon, svg, ds: Object.keys(BT) };

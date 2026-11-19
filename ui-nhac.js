@@ -48,7 +48,7 @@ function docNhac() {
     return Array.isArray(a) ? a.filter(hopLe).map(chuanHoa) : [];
   } catch (e) { return []; }
 }
-let nhac = docNhac(), dangSua = null, choXoa = null, nhacChon = null, henXoa = 0;
+let nhac = docNhac(), dangSua = null, nhacChon = null;
 function luuNhac() {
   try { localStorage.setItem(KHOA_NHAC, JSON.stringify(nhac)); return true; } catch (e) { return false; }
 }
@@ -89,7 +89,32 @@ function soNam(n, j) {
   return k > 0 ? LOAI[n.loai].dem(k) : null;
 }
 const ngayGoc = n => `${n.ngay}/${n.thang} ${LOAI[n.loai].lich === "am" ? "âm lịch" : "dương lịch"}`;
-const conLai = k => k === 0 ? "Hôm nay" : k === 1 ? "Ngày mai" : `Còn ${k} ngày`;
+
+/* ── Khuôn dòng danh sách dùng chung (luật giao diện 5, 6): biểu tượng · tên · dòng phụ · một nhãn phải.
+   Danh sách nằm trên một trang sổ tay; chạm dòng thì dòng sáng lên và mở tấm trượt chi tiết. ── */
+function dongSo(o) {
+  return `<li class="dong-so${o.sang ? " sang" : ""}${o.lop ? " " + o.lop : ""}" ${o.attr} tabindex="0" role="button" aria-haspopup="dialog">
+    <span class="ds-bieu" aria-hidden="true">${o.bieu}</span>
+    <span class="ds-nd"><b>${esc(o.ten)}</b>${o.phu ? `<small>${o.phu}</small>` : ""}</span>
+    ${o.dem ? `<span class="ds-dem${o.demLop ? " " + o.demLop : ""}">${o.dem}</span>` : ""}</li>`;
+}
+/* Nút có biểu tượng trước chữ (luật giao diện 4) */
+const nutBt = (bt, chu, them) => `<button type="button" ${them || ""}>${ic(bt)}<span>${chu}</span></button>`;
+/* Tấm trượt chi tiết một mục: tiêu đề, ngày, các dòng, ghi chú, hàng nút */
+function moTamCT(o) {
+  const el = moTam(`<div class="tam-ct">
+    <div class="ct-dau"><span class="ds-bieu" aria-hidden="true">${o.bieu}</span><h3>${esc(o.ten)}</h3></div>
+    ${o.ngay ? `<p class="ct-ngay">${o.ngay}</p>` : ""}
+    ${o.dong.filter(Boolean).map(d => `<p>${d}</p>`).join("")}
+    ${o.ghi ? `<p class="ct-ghi">${ic("ghiChu")}<span>${esc(o.ghi).replace(/\n/g, "<br>")}</span></p>` : `<p class="ct-rong">Chưa có ghi chú</p>`}
+    <div class="ct-nut">${o.nut}</div></div>`, "lop-ct");
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-ct]");
+    if (b) o.lam(b.dataset.ct);
+    else if (e.target.closest("[data-jd]")) dongTam(); // "Xem tờ lịch": bộ xử lý chung mở ngày, ở đây chỉ đóng tấm
+  });
+  return el;
+}
 function sapToi() {
   const hom = jdHomNay();
   return nhac.map(n => { const j = lanToi(n, hom); return { n, j, con: j == null ? 9999 : j - hom }; })
@@ -102,42 +127,35 @@ function veNhac() {
   dem.hidden = !nhac.length; dem.textContent = nhac.length;
   const soGan = ds.filter(x => x.j != null && x.con <= x.n.truoc).length;
   $("dem-lap").hidden = !soGan; $("dem-lap").textContent = soGan;
-  /* Dòng rút gọn: biểu tượng · tên · lần tới · đếm ngày. Chạm để chọn và mở chi tiết (ghi chú). Gần nhất lên đầu. */
-  $("ds-nhac").innerHTML = ds.length ? `<ul class="nhac-ds ds-gon">${ds.map(({ n, j, con }) => {
-    const t = j == null ? null : ttNgay(j), dn = j == null ? null : soNam(n, j), mo = nhacChon === n.id;
-    const lanToiTxt = t ? `${THU_NGAN[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}${t.yy !== ttNgay(jdHomNay()).yy ? "/" + t.yy : ""}` : "—";
-    const dem = con === 0 ? "Hôm nay" : con === 1 ? "Mai" : con > 999 ? "—" : `${con} ngày`;
-    return `<li class="nhac-muc dong-gon l-${n.loai}${con <= n.truoc ? " gan" : ""}${mo ? " duoc-chon mo" : ""}${dangSua === n.id ? " dang-sua" : ""}" data-chon="${esc(n.id)}" tabindex="0" aria-selected="${mo}" aria-expanded="${mo}">
-      <span class="bieu" aria-hidden="true">${chonBieu(n.ten, n.loai, n.bieu)}</span>
-      <div class="gon-nd">
-        <div class="gon-ten">${esc(n.ten)}</div>
-        <div class="gon-phu">${lanToiTxt}${LOAI[n.loai].lich === "am" ? ` · ${n.ngay}/${n.thang} âm` : ""}${dn ? ` · ${dn}` : ""}</div>
-      </div>
-      <span class="gon-dem${con <= n.truoc ? " gap" : ""}">${dem}</span>
-      ${mo ? `<div class="gon-chi-tiet">
-        <p><b>${LOAI[n.loai].ten}</b> · hằng năm ngày ${ngayGoc(n)}</p>
-        ${n.nam != null ? `<p>${LOAI[n.loai].nam}: <b>${n.nam}</b>${dn ? ` · lần tới: <b>${dn.charAt(0).toLowerCase() + dn.slice(1)}</b>` : ""}</p>` : ""}
-        ${t ? `<p>Lần tới: ${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy}${LOAI[n.loai].lich === "duong" ? ` (${t.am.day}/${t.am.month} âm)` : ""} · nhắc trước ${n.truoc} ngày</p>` : ""}
-        ${n.ghi ? `<p class="gon-ghi">${ic("ghiChu")}${esc(n.ghi)}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
-        ${j != null ? `<button type="button" class="nut nho" data-jd="${j}">Xem tờ lịch ngày này</button>` : ""}
-      </div>` : ""}
-    </li>`;
-  }).join("")}</ul>` : `<div class="nhac-trong"><b>Chưa có lời nhắc nào</b>Bấm "＋ Thêm" rồi gõ một câu, ví dụ “Giỗ bố 20/10 âm”. Lời nhắc sẽ hiện trên tờ lịch, lịch tháng và dải báo đầu trang khi sắp đến ngày.</div>`;
-
-  /* Nhóm nút Thêm · Sửa · Xoá: Sửa và Xoá chỉ sáng khi đã chọn một lời nhắc */
   if (nhacChon && !nhac.some(x => x.id === nhacChon)) nhacChon = null;
-  $("n-sua").disabled = !nhacChon;
-  $("n-xoa").disabled = !nhacChon;
-  const chac = !!nhacChon && choXoa === nhacChon;
-  $("n-xoa").classList.toggle("chac", chac);
-  $("n-xoa").textContent = chac ? "Bấm lần nữa để xoá" : "Xoá";
-  $("n-goi-y").textContent = !nhac.length ? "" : nhacChon ? "Đang chọn: bấm Sửa hoặc Xoá ở thanh trên." : "Chạm vào một lời nhắc để xem ghi chú, sửa hoặc xoá.";
-
-  const gan = ds.filter(x => x.j != null && x.con <= x.n.truoc);
-  $("bao-nhac").innerHTML = gan.map(({ n, j, con }) =>
-    `<button type="button" class="bao l-${n.loai}${con === 0 ? " hom-nay" : ""}" data-jd="${j}">
-      <b>${conLai(con)}</b><span>${esc(n.ten)}</span><em>${ngayGoc(n)}</em>
-    </button>`).join("");
+  /* Một dải liền, ngày tới sớm nhất lên đầu; phân loại bằng biểu tượng, không tô nền theo loại */
+  $("ds-nhac").innerHTML = ds.length ? `<ul class="ds-so">${ds.map(({ n, j, con }) => {
+    const dn = j == null ? null : soNam(n, j);
+    const phu = [j == null ? "" : nhanNgay(j), LOAI[n.loai].lich === "am" ? `${n.ngay}/${n.thang} âm` : "", dn ? chuThuong(dn) : ""].filter(Boolean).join(" · ");
+    return dongSo({ attr: `data-chon="${esc(n.id)}"`, sang: nhacChon === n.id, bieu: chonBieu(n.ten, n.loai, n.bieu), ten: n.ten, phu,
+      dem: con > 999 ? "—" : chuDem(con), demLop: con <= n.truoc ? "gan" : "" });
+  }).join("")}</ul>` : `<div class="nhac-trong"><b>Chưa có ngày lặp lại nào</b>Bấm “Thêm” rồi gõ một câu, ví dụ “Giỗ bố 20/10 âm”. Ngày sắp đến sẽ hiện trên tờ lịch và lịch tháng.</div>`;
+}
+/* Tấm chi tiết một ngày lặp lại: Sửa · Xoá (xoá có Hoàn tác) · Xem tờ lịch ngày đó */
+function moTamNhac(n) {
+  const hom = jdHomNay(), j = lanToi(n, hom), dn = j == null ? null : soNam(n, j);
+  moTamCT({
+    bieu: chonBieu(n.ten, n.loai, n.bieu), ten: n.ten, ghi: n.ghi,
+    ngay: j == null ? "" : `${nhanNgay(j, true)} · ${nhanAm(j)}`,
+    dong: [`${LOAI[n.loai].ten} · hằng năm ngày ${ngayGoc(n)}${dn ? ` · ${chuThuong(dn)}` : ""}`,
+      j == null ? "" : `${chuDem(j - hom)} · ${n.truoc ? `nhắc trước ${n.truoc} ngày` : "nhắc đúng ngày"}`],
+    nut: (j == null ? "" : nutBt("homNay", "Xem tờ lịch", `class="ct-chu" data-jd="${j}"`)) +
+      nutBt("sua", "Sửa", `class="ct-chu" data-ct="sua"`) + nutBt("xoa", "Xoá", `class="ct-chu ct-xoa" data-ct="xoa"`),
+    lam: k => {
+      dongTam();
+      if (k === "sua") { napForm(n); veNhac(); return; }
+      const cu = nhac.slice();
+      nhac = nhac.filter(x => x.id !== n.id);
+      if (dangSua === n.id) xoaForm();
+      nhacChon = null; luuNhac(); ve();
+      baoTam(`Đã xoá “${esc(n.ten)}”`, () => { nhac = cu; luuNhac(); ve(); });
+    }
+  });
 }
 
 /* ── Khung nhập ── */
@@ -148,10 +166,14 @@ function datNhanForm() {
   $("n-nhan-nam").innerHTML = `${l.nam}${am ? " âm lịch" : ""} <em>(tuỳ chọn)</em>`;
   $("n-ngay").max = am ? 30 : 31;
 }
+/* Nút Thêm ở đầu thẻ Nhắc: khung nhập đang mở thì thành Đóng */
+function datNutThem(id, mo) {
+  $(id).innerHTML = mo ? `${ic("huy")}<span>Đóng</span>` : `${ic("them")}<span>Thêm</span>`;
+  $(id).classList.toggle("dang-mo", mo);
+}
 function moForm(mo) {
   $("nhac").classList.toggle("mo-form", mo);
-  $("n-mo").textContent = mo ? "Đóng" : "＋ Thêm";
-  $("n-mo").classList.toggle("dang-mo", mo);
+  datNutThem("n-mo", mo);
 }
 /* ── Hiểu câu tự nhiên cho Ngày lặp lại: "Giỗ bố 20/10 âm, năm mất 2021", "Kỷ niệm ngày cưới 25/6/2005" ── */
 const SO_THANG = { giêng: 1, gieng: 1, chạp: 12, chap: 12, "mười một": 11, "muoi mot": 11, một: 1, mot: 1, hai: 2, ba: 3, tư: 4, tu: 4, bốn: 4, bon: 4, năm: 5, nam: 5, sáu: 6, bảy: 7, bay: 7, tám: 8, tam: 8, chín: 9, chin: 9, mười: 10, muoi: 10 };
@@ -238,7 +260,7 @@ function xoaForm() {
   $("f-nhac").reset();
   datBieu("n-bieu", "");
   $("n-loi").textContent = "";
-  $("n-luu").textContent = "Thêm nhắc";
+  $("n-luu").innerHTML = `${ic("them")}<span>Thêm ngày</span>`;
   $("n-huy").hidden = true;
   datNhanForm();
 }
@@ -251,7 +273,7 @@ function napForm(n) {
   $("n-nam").value = n.nam == null ? "" : n.nam;
   $("n-truoc").value = String(n.truoc); $("n-ghi").value = n.ghi; datBieu("n-bieu", n.bieu);
   if ($("n-truoc").value !== String(n.truoc)) $("n-truoc").value = "3";
-  $("n-luu").textContent = "Lưu thay đổi";
+  $("n-luu").innerHTML = `${ic("luu")}<span>Lưu thay đổi</span>`;
   $("n-huy").hidden = false;
   $("n-loi").textContent = "";
   datNhanForm();
@@ -308,37 +330,16 @@ function ganNhac() {
     ve();
     if (!ok) $("n-loi").textContent = "Trình duyệt không cho lưu dữ liệu; lời nhắc sẽ mất khi đóng trang.";
   });
-  /* Chạm một lời nhắc để chọn (chạm lại để bỏ chọn); ô đếm ngày vẫn mở ngày đó */
-  const chonNhac = li => doiMoGon($("ds-nhac"), () => {
-    nhacChon = nhacChon === li.dataset.chon ? null : li.dataset.chon;
-    choXoa = null;
-    veNhac();
-  });
-  $("ds-nhac").addEventListener("click", e => {
-    if (e.target.closest("[data-jd]")) return;
-    const li = e.target.closest("[data-chon]");
-    if (li) chonNhac(li);
-  });
+  /* Chạm một ngày lặp lại: dòng sáng lên (giữ sáng sau khi đóng tấm) và mở tấm chi tiết */
+  const chonNhac = li => {
+    const n = nhac.find(x => x.id === li.dataset.chon);
+    if (!n) return;
+    nhacChon = n.id; veNhac(); moTamNhac(n);
+  };
+  $("ds-nhac").addEventListener("click", e => { const li = e.target.closest("[data-chon]"); if (li) chonNhac(li); });
   $("ds-nhac").addEventListener("keydown", e => {
     const li = e.target.closest("[data-chon]");
     if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); chonNhac(li); }
-  });
-  $("n-sua").addEventListener("click", () => {
-    const n = nhac.find(x => x.id === nhacChon);
-    choXoa = null;
-    if (n) { napForm(n); veNhac(); }
-  });
-  $("n-xoa").addEventListener("click", () => {
-    if (!nhacChon) return;
-    clearTimeout(henXoa);
-    if (choXoa === nhacChon) {
-      nhac = nhac.filter(x => x.id !== nhacChon);
-      if (dangSua === nhacChon) xoaForm();
-      choXoa = null; nhacChon = null; luuNhac(); ve();
-    } else {
-      choXoa = nhacChon; veNhac();
-      henXoa = setTimeout(() => { choXoa = null; veNhac(); }, 4000);
-    }
   });
   $("n-xuat").addEventListener("click", () => {
     const a = document.createElement("a");
@@ -371,6 +372,10 @@ function ganNhac() {
     }
   });
   datNhanForm();
+  datNutThem("n-mo", false);
+  $("n-huy").innerHTML = `${ic("huy")}<span>Huỷ sửa</span>`;
+  $("n-lay").innerHTML = `${ic("homNay")}<span>Lấy ngày đang xem</span>`;
+  $("n-luu").innerHTML = `${ic("them")}<span>Thêm ngày</span>`;
 }
 
 /* ═════════ NHẮC VIỆC ═════════
@@ -398,7 +403,7 @@ let viec = (() => {
   try { const a = JSON.parse(docKhoa(KHOA_VIEC, "[]")); return Array.isArray(a) ? a.filter(v => v && v.ten).map(chuanViec) : []; }
   catch (e) { return []; }
 })();
-let locViec = "homnay", viecChon = null, viecSua = null, choXoaViec = null, henXoaViec = 0, choXongViec = null, henXongViec = 0;
+let locViec = "homnay", viecChon = null, viecSua = null;
 const luuViec = () => ghiKhoa(KHOA_VIEC, JSON.stringify(viec));
 
 /* ── Hiểu câu tiếng Việt: ngày, giờ, lặp, ưu tiên ── */
@@ -591,42 +596,6 @@ function ngayLapTiep(v) {
   return jdFromDate(Math.min(t.dd, dai), mo, y);
 }
 
-/* ── Mở / thu chi tiết một mục (Nhắc việc, Ngày lặp lại): phần chi tiết trượt mở và thu lại mềm,
-   chữ hiện dần — thay cho bật tắt đột ngột. Máy đặt "giảm chuyển động" thì đổi ngay, không hiệu ứng. ── */
-const itChuyenDong = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-let dangDoiMo = false;
-function doiMoGon(vung, doi) {
-  if (dangDoiMo) return;
-  const cu = vung.querySelector(".gon-chi-tiet");
-  const xong = () => {
-    doi();
-    const moi = vung.querySelector(".gon-chi-tiet");
-    if (moi && !itChuyenDong()) {
-      const cs = getComputedStyle(moi), cao = moi.scrollHeight;
-      moi.style.overflow = "hidden";
-      const am = moi.animate([
-        { height: "0px", opacity: 0, paddingTop: "0px", marginBottom: "0px", transform: "translateY(-6px)" },
-        { height: cao + "px", opacity: 1, paddingTop: cs.paddingTop, marginBottom: cs.marginBottom, transform: "none" }
-      ], { duration: 380, easing: "cubic-bezier(.22,1,.36,1)" });
-      am.onfinish = am.oncancel = () => { moi.style.overflow = ""; };
-      setTimeout(() => am.playState === "running" && am.finish(), 500); // máy tạm dừng hiệu ứng thì vẫn mở hẳn
-      const li = moi.closest("li");
-      setTimeout(() => li && li.scrollIntoView({ block: "nearest", behavior: "smooth" }), 120);
-    }
-  };
-  if (!cu || itChuyenDong()) { xong(); return; }
-  dangDoiMo = true;
-  const cs = getComputedStyle(cu);
-  cu.style.overflow = "hidden";
-  const a = cu.animate([
-    { height: cu.offsetHeight + "px", opacity: 1, paddingTop: cs.paddingTop, marginBottom: cs.marginBottom },
-    { height: "0px", opacity: 0, paddingTop: "0px", marginBottom: "0px" }
-  ], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
-  let daXong = false;
-  a.onfinish = a.oncancel = () => { if (daXong) return; daXong = true; dangDoiMo = false; xong(); };
-  setTimeout(() => a.onfinish(), 340); // chốt an toàn: hiệu ứng không chạy (máy tạm dừng) vẫn đổi được
-}
-
 /* ── Thông báo tạm có nút Hoàn tác ── */
 let henBao = 0;
 function baoTam(noiDung, hoanTac, giuLau) {
@@ -638,28 +607,41 @@ function baoTam(noiDung, hoanTac, giuLau) {
   henBao = setTimeout(() => el.classList.remove("hien"), giuLau ? 9000 : 4500);
 }
 
-function veMucViec(v) {
-  const hom = jdHomNay(), qh = quaHan(v);
-  const ngay = v.jd == null ? "" : `<span class="vm-ngay${qh ? " qua-han" : v.jd === hom ? " hom-nay" : ""}">${nhanNgayViec(v.jd)}${v.gio ? ` · ${v.gio}` : ""}</span>`;
-  const lap = v.lap !== "khong" ? `<span class="vm-lap" title="${LAP[v.lap]}">↻ ${LAP[v.lap]}</span>` : "";
-  const ghi = v.ghi ? `<span class="vm-ghi">${esc(v.ghi.split("\n")[0])}</span>` : "";
-  const chon = viecChon === v.id;
-  const uu = v.uuTien ? `<span class="vm-uu p${v.uuTien}">${ic("co")}${UU[v.uuTien]}</span>` : "";
-  const conNgay = v.jd == null ? null : v.jd - hom;
-  const dem = v.xong ? "✓ Xong" : conNgay == null ? "" : qh ? "Quá hạn" : conNgay === 0 ? (v.gio || "Hôm nay") : conNgay === 1 ? "Mai" : `${conNgay} ngày`;
-  return `<li class="viec-muc dong-gon p${v.uuTien}${v.xong ? " da-xong" : ""}${chon ? " duoc-chon mo" : ""}${viecSua === v.id ? " dang-sua" : ""}${qh ? " qua-han" : ""}"
-      data-viec-id="${esc(v.id)}" tabindex="0" role="option" aria-selected="${chon}" aria-expanded="${chon}">
-    <span class="bieu" aria-hidden="true">${chonBieu(v.ten, "viec", v.bieu)}${v.uuTien ? `<i class="bieu-uu p${v.uuTien}"></i>` : ""}</span>
-    <div class="gon-nd">
-      <div class="gon-ten">${esc(v.ten)}</div>
-      ${ngay || lap ? `<div class="gon-phu">${ngay}${lap}</div>` : ""}
-    </div>
-    <span class="gon-dem${qh ? " gap" : conNgay === 0 && !v.xong ? " nay" : ""}">${dem}</span>
-    ${chon ? `<div class="gon-chi-tiet">
-      ${v.ghi ? `<p class="gon-ghi">${ic("ghiChu")}${esc(v.ghi).replace(/\n/g, "<br>")}</p>` : `<p class="gon-ghi rong">Chưa có ghi chú — bấm Sửa để thêm.</p>`}
-      <p>${uu || "Ưu tiên: không"}${v.lap !== "khong" ? ` · ↻ ${LAP[v.lap]}` : ""}${v.xong && v.xongLuc ? ` · xong lúc ${new Date(v.xongLuc).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}` : ""}</p>
-    </div>` : ""}
-  </li>`;
+/* Một dòng việc. coNgay: ghi ngày ở dòng phụ khi nhóm không theo một ngày (Quá hạn, Đã xong) */
+function veMucViec(v, coNgay) {
+  const hom = jdHomNay(), qh = quaHan(v), k = v.jd == null ? null : v.jd - hom;
+  const phu = [coNgay && v.jd != null ? nhanNgayViec(v.jd) : "", v.gio || "", v.lap !== "khong" ? `↻ ${chuThuong(LAP[v.lap])}` : "",
+    v.uuTien ? `ưu tiên ${UU[v.uuTien].toLowerCase()}` : ""].filter(Boolean).join(" · ");
+  const dem = v.xong ? "Đã xong" : k == null ? "" : qh ? (k < 0 ? chuDem(k) : "Quá giờ") : k === 0 ? (v.gio || "Hôm nay") : chuDem(k);
+  return dongSo({ attr: `data-viec-id="${esc(v.id)}"`, sang: viecChon === v.id, lop: v.xong ? "da-xong" : "",
+    bieu: chonBieu(v.ten, "viec", v.bieu), ten: v.ten, phu, dem, demLop: qh ? "qua" : k === 0 && !v.xong ? "nay" : "" });
+}
+/* Tấm chi tiết một việc: Xong (hoặc Mở lại) · Sửa · Xoá — Xong và Xoá đều có Hoàn tác */
+function moTamViec(v) {
+  const xongLuc = v.xong && v.xongLuc ? `Xong lúc ${new Date(v.xongLuc).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}` : "";
+  moTamCT({
+    bieu: chonBieu(v.ten, "viec", v.bieu), ten: v.ten, ghi: v.ghi,
+    ngay: v.jd == null ? "Chưa đặt ngày" : `${nhanNgay(v.jd, true)}${v.gio ? ` · ${v.gio}` : ""} · ${nhanAm(v.jd)}`,
+    dong: [[v.uuTien ? `Ưu tiên ${UU[v.uuTien].toLowerCase()}` : "Không ưu tiên", LAP[v.lap].toLowerCase()].join(" · "), xongLuc],
+    nut: nutBt(v.xong ? "moLai" : "xong", v.xong ? "Mở lại" : "Xong", `class="ct-chinh" data-ct="xong"`) +
+      nutBt("sua", "Sửa", `class="ct-chu" data-ct="sua"`) + nutBt("xoa", "Xoá", `class="ct-chu ct-xoa" data-ct="xoa"`),
+    lam: k => {
+      dongTam();
+      if (k === "xong") { if (!v.xong && v.lap === "khong") viecChon = null; tichViec(v.id); return; }
+      if (k === "sua") { moFormViec(v); veViec(); $("khung").scrollTop = 0; return; }
+      const cu = viec.slice();
+      viec = viec.filter(x => x.id !== v.id);
+      if (viecSua === v.id) dongFormViec();
+      viecChon = null; luuViec(); ve();
+      baoTam(`Đã xoá “${esc(v.ten)}”`, () => { viec = cu; luuViec(); ve(); });
+    }
+  });
+}
+/* Tiêu đề nhóm ngày trên trang sổ: chữ thường, con số viết Bodoni như tờ lịch */
+function tieuDeNgay(j) {
+  const k = j - jdHomNay(), t = ttNgay(j), so = `<span class="so">${hai(t.dd)}/${hai(t.mm)}${t.yy !== ttNgay(jdHomNay()).yy ? "/" + t.yy : ""}</span>`;
+  return k === 0 || k === 1 ? `${k ? "Ngày mai" : "Hôm nay"}<em>${THU[thuCuaJd(j)]} ${hai(t.dd)}/${hai(t.mm)} · ${nhanAm(j)}</em>`
+    : `${THU[thuCuaJd(j)]} ${so}<em>${nhanAm(j)}</em>`;
 }
 
 function veViec() {
@@ -677,9 +659,12 @@ function veViec() {
 
   const sap = ds => ds.slice().sort((a, b) => hanCua(a) - hanCua(b) || b.uuTien - a.uuTien || a.taoLuc - b.taoLuc);
   let html = "";
+  if (!viec.some(v => v.id === viecChon)) viecChon = null;
+  /* Cả danh sách nằm trên một trang sổ; mỗi nhóm ngày có một dòng tiêu đề */
+  const nhomDs = (td, ds, coNgay, lop) => `<h4 class="ds-td${lop ? " " + lop : ""}">${td}</h4><ul class="ds-so">${ds.map(v => veMucViec(v, coNgay)).join("")}</ul>`;
   if (locViec === "xong") {
     const ds = nhom.xong.slice().sort((a, b) => (b.xongLuc || 0) - (a.xongLuc || 0)).slice(0, 60);
-    html = ds.length ? `<section class="cum-viec cum-xong"><h4>Đã hoàn thành<i>${ds.length}</i></h4><ul class="ds-viec">${ds.map(veMucViec).join("")}</ul></section><button type="button" class="nut nho xoa-xong" data-xoa-xong>Xoá hết việc đã xong</button>` : "";
+    html = ds.length ? `<div class="to-so">${nhomDs("Đã hoàn thành", ds, true)}</div>${nutBt("xoa", "Xoá hết việc đã xong", `class="nut nho xoa-xong" data-xoa-xong`)}` : "";
   } else {
     const ds = sap(nhom[locViec]), cum = new Map();
     ds.forEach(v => {
@@ -687,34 +672,18 @@ function veViec() {
       if (!cum.has(k)) cum.set(k, []);
       cum.get(k).push(v);
     });
-    const tieuDe = k => k === "khong" ? "Chưa đặt ngày" : k === "qua" ? "Quá hạn" :
-      (j => `${nhanNgayViec(j, false) === "Hôm nay" || nhanNgayViec(j, false) === "Ngày mai" ? nhanNgayViec(j) + " · " : ""}${THU[thuCuaJd(j)]} ${hai(ttNgay(j).dd)}/${hai(ttNgay(j).mm)} <em>${ttNgay(j).am.day}/${ttNgay(j).am.month} âm</em>`)(+k);
     const thuTu = [...cum.keys()].sort((a, b) => (a === "qua" ? -1 : b === "qua" ? 1 : a === "khong" ? 1 : b === "khong" ? -1 : +a - +b));
-    html = thuTu.map(k => `<section class="cum-viec${k === "qua" ? " cum-qua" : ""}"><h4>${tieuDe(k)}<i>${cum.get(k).length}</i></h4><ul class="ds-viec">${cum.get(k).map(veMucViec).join("")}</ul></section>`).join("");
+    html = thuTu.length ? `<div class="to-so">${thuTu.map(k => k === "qua" ? nhomDs("Quá hạn", cum.get(k), true, "qua")
+      : k === "khong" ? nhomDs("Chưa đặt ngày", cum.get(k), false) : nhomDs(tieuDeNgay(+k), cum.get(k), false)).join("")}</div>` : "";
   }
   if (!html) {
-    const loi = { homnay: ["Hôm nay rảnh việc", "Bấm “＋ Thêm”, gõ một câu như “Gọi anh Tuấn 9h sáng mai” — ứng dụng tự điền ngày, giờ."],
+    const loi = { homnay: ["Hôm nay rảnh việc", "Bấm “Thêm”, gõ một câu như “Gọi anh Tuấn 9h sáng mai” — ứng dụng tự điền ngày, giờ."],
       saptoi: ["Chưa có việc sắp tới", "Thêm việc có ngày, ví dụ “Họp giao ban thứ 2 hằng tuần”, “Đi lễ chùa rằm”."],
-      tatca: ["Chưa có việc nào", "Bấm “＋ Thêm” để thêm việc đầu tiên."],
-      xong: ["Chưa hoàn thành việc nào", "Chạm chọn một việc rồi bấm “✓ Xong”."] }[locViec];
+      tatca: ["Chưa có việc nào", "Bấm “Thêm” để thêm việc đầu tiên."],
+      xong: ["Chưa hoàn thành việc nào", "Chạm một việc rồi bấm “Xong”."] }[locViec];
     html = `<div class="viec-trong"><b>${loi[0]}</b>${loi[1]}</div>`;
   }
   $("ds-viec").innerHTML = html;
-
-  /* Nhóm nút: Xong · Sửa · Xoá chỉ sáng khi đã chọn một việc */
-  const vc = viec.find(v => v.id === viecChon);
-  if (!vc) viecChon = null;
-  $("v-xong").disabled = $("v-sua").disabled = $("v-xoa").disabled = !vc;
-  const hoiXong = !!vc && choXongViec === vc.id;
-  $("v-xong").textContent = vc && vc.xong ? "↺ Mở lại" : hoiXong ? "Chưa tới hẹn · bấm lại" : "✓ Xong";
-  $("v-xong").classList.toggle("chac", hoiXong);
-  const chac = !!vc && choXoaViec === vc.id;
-  $("v-xoa").classList.toggle("chac", chac);
-  $("v-xoa").textContent = chac ? "Bấm lần nữa" : "Xoá";
-  const coViec = locViec === "xong" ? nhom.xong.length : nhom[locViec].length;
-  $("v-goi-y").textContent = hoiXong ? `Việc này hẹn ${nhanNgayViec(vc.jd)}${vc.gio ? " " + vc.gio : ""}, chưa tới. Đã làm xong thật thì bấm “Xong” lần nữa.`
-    : !coViec ? "" : vc ? "Đang chọn: bấm Xong, Sửa hoặc Xoá ở thanh trên." : "Chạm vào một việc để xem ghi chú, rồi bấm Xong, Sửa hoặc Xoá.";
-  $("v-goi-y").classList.toggle("canh-bao", hoiXong);
 
   const can = soViecCan();
   $("dem-viec").hidden = !can; $("dem-viec").textContent = can;
@@ -759,18 +728,18 @@ const docUu = () => +(document.querySelector("#v-uu .chon") || { dataset: { uu: 
 function moFormViec(v) {
   viecSua = v ? v.id : null; chamTay = v ? { ngay: 1, gio: 1, uu: 1, lap: 1 } : {};
   $("nhac").classList.add("mo-viec");
-  $("v-mo").textContent = "Đóng"; $("v-mo").classList.add("dang-mo");
+  datNutThem("v-mo", true);
   $("v-go").value = v ? v.ten : "";
   $("v-ngay").value = v ? jdSangO(v.jd) : ""; $("v-gio").value = v && v.gio || "";
   datUu(v ? v.uuTien : 0); $("v-lap").value = v ? v.lap : "khong"; $("v-ghi").value = v ? v.ghi : ""; datBieu("v-bieu", v ? v.bieu : "");
-  $("v-luu").textContent = v ? "Lưu thay đổi" : "Thêm việc"; $("v-loi").textContent = "";
+  $("v-luu").innerHTML = v ? `${ic("luu")}<span>Lưu thay đổi</span>` : `${ic("them")}<span>Thêm việc</span>`; $("v-loi").textContent = "";
   hieuNhap();
   $("v-go").focus();
 }
 function dongFormViec() {
   viecSua = null;
   $("nhac").classList.remove("mo-viec");
-  $("v-mo").textContent = "＋ Thêm"; $("v-mo").classList.remove("dang-mo");
+  datNutThem("v-mo", false);
 }
 /* Gõ câu tự nhiên: hiện nhãn xem trước và tự điền các ô chưa sửa tay */
 function hieuNhap() {
@@ -830,6 +799,8 @@ function ganViec() {
     ghiKhoa(KHOA_TRANG, t);
   };
   datTrang(trang === "lap" ? "lap" : "viec");
+  $("v-huy").innerHTML = `${ic("huy")}<span>Huỷ</span>`;
+  datNutThem("v-mo", false);
   $("nhac").addEventListener("click", e => {
     const b = e.target.closest("[data-nhac-trang]");
     if (b) datTrang(b.dataset.nhacTrang);
@@ -868,44 +839,9 @@ function ganViec() {
     const moi = document.querySelector(`[data-viec-id="${id}"]`);
     if (moi) { moi.classList.add("vua-them"); moi.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
   });
-  /* Nhóm nút Xong · Sửa · Xoá */
-  $("v-xong").addEventListener("click", () => {
-    if (!viecChon) return;
-    const id = viecChon, v = viec.find(x => x.id === id);
-    if (!v) return;
-    /* Việc chưa tới hẹn: bấm Xong lần đầu chỉ hỏi lại, tránh bấm nhầm */
-    const chuaToi = !v.xong && v.jd != null && hanCua(v) > bayGio() && (v.jd > jdHomNay() || v.gio);
-    if (chuaToi && choXongViec !== id) {
-      clearTimeout(henXongViec);
-      choXongViec = id; veViec();
-      henXongViec = setTimeout(() => { choXongViec = null; veViec(); }, 5000);
-      return;
-    }
-    clearTimeout(henXongViec); choXongViec = null;
-    if (!v.xong && v.lap === "khong") viecChon = null; // việc xong rời khỏi danh sách đang xem
-    tichViec(id);
-  });
-  $("v-sua").addEventListener("click", () => {
-    const v = viec.find(x => x.id === viecChon);
-    if (v) { choXoaViec = null; moFormViec(v); veViec(); $("khung").scrollTop = 0; }
-  });
-  $("v-xoa").addEventListener("click", () => {
-    if (!viecChon) return;
-    clearTimeout(henXoaViec);
-    if (choXoaViec === viecChon) {
-      const cu = viec.slice(), v = viec.find(x => x.id === viecChon);
-      viec = viec.filter(x => x.id !== viecChon);
-      if (viecSua === viecChon) dongFormViec();
-      viecChon = null; choXoaViec = null; luuViec(); ve();
-      baoTam(`Đã xoá “${esc(v.ten)}”`, () => { viec = cu; luuViec(); ve(); });
-    } else {
-      choXoaViec = viecChon; veViec();
-      henXoaViec = setTimeout(() => { choXoaViec = null; veViec(); }, 4000);
-    }
-  });
   $("loc-viec").addEventListener("click", e => {
     const b = e.target.closest("[data-loc]");
-    if (b) { locViec = b.dataset.loc; viecChon = null; choXoaViec = null; veViec(); }
+    if (b) { locViec = b.dataset.loc; viecChon = null; veViec(); }
   });
   $("xin-bao").addEventListener("click", e => {
     if (!e.target.closest("[data-xin-bao]")) return;
@@ -921,12 +857,9 @@ function ganViec() {
       return;
     }
     if (!id) return;
-    /* Chạm một việc để chọn và mở chi tiết; chạm lại để thu gọn */
-    doiMoGon(ds, () => {
-      viecChon = viecChon === id ? null : id;
-      choXoaViec = null; choXongViec = null;
-      veViec();
-    });
+    /* Chạm một việc: dòng sáng lên (giữ sáng sau khi đóng tấm) và mở tấm chi tiết */
+    const v = viec.find(x => x.id === id);
+    if (v) { viecChon = id; veViec(); moTamViec(v); }
   });
   ds.addEventListener("keydown", e => {
     const li = e.target.closest("[data-viec-id]");

@@ -17,12 +17,16 @@ function veToLich(x) {
     : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${esc(l.ten)}</span>`).join("");
   const khoaLon = khoaLe.find(k => T && T.laLeLon(k));
   const ruy = khoaLon ? `<button type="button" class="tl-ruy" data-thiep="${khoaLon}" aria-label="Nhấn giữ để xem về ngày lễ">${T.layThiep(khoaLon).bieu}</button>` : "";
-  const nhacHom = nhacCuaNgay(x.j).map(n => {
-    const dn = soNam(n, x.j);
-    return `<span class="le le-nhac l-${n.loai}">${esc(n.ten)}${dn ? ` · ${dn}` : ""}</span>`;
-  }).join("");
-  const vh = viecCuaNgay(x.j);
-  const chipViec = vh.length ? `<button type="button" class="le le-viec" data-tab="nhac" data-nhac-trang="viec">✓ ${vh.length} việc${vh.length === 1 ? `: ${esc(vh[0].ten.length > 22 ? vh[0].ten.slice(0, 21) + "…" : vh[0].ten)}` : ""}</button>` : "";
+  /* Việc và ngày nhắc hiện thành nhãn ghi tên trên tờ lịch, cùng một kiểu (luật giao diện 7).
+     Tờ hôm nay còn gom cả ngày nhắc sắp đến và việc quá hạn — thay cho dải báo riêng đầu trang. */
+  const hom = jdHomNay(), laHom = x.j === hom, catTen = t => t.length > 24 ? t.slice(0, 23) + "…" : t;
+  const nhanNhac = (ten, phu) => `<button type="button" class="le le-viec" data-tab="nhac" data-nhac-trang="lap">${esc(catTen(ten))}${phu ? ` · ${phu}` : ""}</button>`;
+  const nhanViec = (ten, phu, qua) => `<button type="button" class="le le-viec${qua ? " le-qua" : ""}" data-tab="nhac" data-nhac-trang="viec">${esc(catTen(ten))}${phu ? ` · ${phu}` : ""}</button>`;
+  const nhacHom = viec.filter(v => !v.xong && v.jd != null && laHom && v.jd < hom).map(v => nhanViec(v.ten, chuThuong(chuDem(v.jd - hom)), 1))
+    .concat(viecCuaNgay(x.j).map(v => nhanViec(v.ten, v.gio || "")))
+    .concat(nhacCuaNgay(x.j).map(n => nhanNhac(n.ten, chuThuong(soNam(n, x.j) || ""))))
+    .concat(laHom ? sapToi().filter(o => o.j != null && o.con > 0 && o.con <= o.n.truoc).map(o => nhanNhac(o.n.ten, chuThuong(chuDem(o.con)))) : [])
+    .join("");
   const lo = Array.from({ length: 9 }, () => "<i></i>").join("");
   $("to-lich").innerHTML = `
     <article class="to-lich${nghi ? " nghi" : ""}">
@@ -37,7 +41,7 @@ function veToLich(x) {
         ${ruy}
         <div class="tl-so">${x.dd}</div>
         <div class="tl-thu">${THU[x.thu]}</div>
-        ${chipViec || nhacHom || le ? `<div class="tl-nhan">${chipViec}${nhacHom}${le}</div>` : ""}
+        ${nhacHom || le ? `<div class="tl-nhan">${nhacHom}${le}</div>` : ""}
         <blockquote class="tl-cau">
           <p>${esc(cau).replace(/\n/g, "<br>")}</p>
           <cite>${esc(loai)} Việt Nam</cite>

@@ -45,6 +45,17 @@ function jdHomNay() {
 const jdLich = () => jdHomNay();
 const sauGioTy = () => new Date().getHours() >= 23;
 const jdCanChi = j => j + (j === jdHomNay() && sauGioTy() ? 1 : 0);
+/* Một cách viết ngày và đếm ngày cho cả app (luật giao diện 8):
+   dòng "T2 23/11" (thêm năm khi khác năm nay) · tiêu đề, chi tiết "Thứ Hai 23/11/2026" · âm "15/10 âm" ·
+   đếm Hôm nay · Ngày mai · Còn N ngày · Quá N ngày */
+function nhanNgay(j, du) {
+  const [d, m, y] = jdToDate(j);
+  return du ? `${THU[thuCuaJd(j)]} ${hai(d)}/${hai(m)}/${y}`
+    : `${THU_NGAN[thuCuaJd(j)]} ${hai(d)}/${hai(m)}${y !== jdToDate(jdHomNay())[2] ? "/" + y : ""}`;
+}
+const nhanAm = j => { const a = amCuaJd(j); return `${a.day}/${a.month}${a.leap ? " nhuận" : ""} âm`; };
+const chuDem = k => k < 0 ? `Quá ${-k} ngày` : k === 0 ? "Hôm nay" : k === 1 ? "Ngày mai" : `Còn ${k} ngày`;
+const chuThuong = s => s ? s.charAt(0).toLowerCase() + s.slice(1) : s;
 const thuCuaJd = j => (j + 1) % 7; // 0 = Chủ Nhật
 
 /* kieu: "sach" = luận theo sách (luan-sach.js, mặc định từ bản 1.16.0), "sao" = cộng sao (thang điểm); nhớ lựa chọn của người dùng */

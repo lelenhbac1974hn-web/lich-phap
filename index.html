@@ -40,7 +40,6 @@
 
 <nav class="dai-viec" id="dai-viec" aria-label="Chọn loại việc cần xem"></nav>
 
-<div class="bao-nhac" id="bao-nhac" aria-live="polite"></div>
 <div class="chan-doan" id="chan-doan" hidden></div>
 <div class="xoay-doc" aria-hidden="true">
   <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="20" y="8" width="24" height="44" rx="5"/><path d="M28 46h8"/><path d="M50 22a18 18 0 0 1 0 20" class="mui-ten"/><path d="M50 42l-4-1m4 1l1-4" class="mui-ten"/></svg>
@@ -71,17 +70,12 @@
         <button type="button" role="tab" data-nhac-trang="viec" aria-selected="true">Nhắc việc <i id="dem-viec" hidden></i></button>
         <button type="button" role="tab" data-nhac-trang="lap" aria-selected="false">Ngày lặp lại <i id="dem-lap" hidden></i></button>
       </div>
+      <button type="button" class="nut-them" id="v-mo"></button>
+      <button type="button" class="nut-them" id="n-mo"></button>
     </div>
 
     <!-- ═══ NHẮC VIỆC ═══ -->
     <div class="trang-viec">
-      <div class="nhac-nhom nhom-4" role="toolbar" aria-label="Thao tác việc">
-        <button type="button" class="nhom-nut them" id="v-mo">＋ Thêm</button>
-        <button type="button" class="nhom-nut xong" id="v-xong" disabled>✓ Xong</button>
-        <button type="button" class="nhom-nut" id="v-sua" disabled>Sửa</button>
-        <button type="button" class="nhom-nut xoa" id="v-xoa" disabled>Xoá</button>
-      </div>
-      <p class="nhac-goi-y" id="v-goi-y"></p>
       <form class="viec-form" id="f-viec" autocomplete="off" novalidate>
         <label class="truong rong-4"><span>Việc cần làm</span>
           <input id="v-go" maxlength="140" enterkeyhint="done" placeholder="vd: Họp giao ban 8h sáng mai" /></label>
@@ -109,12 +103,6 @@
     <div class="trang-lap">
     <p class="nhac-mo-ta">Ngày giỗ theo âm lịch · sinh nhật, sự kiện theo dương lịch · tự lặp lại hằng năm</p>
     <div class="nhac-khung">
-      <div class="nhac-nhom" role="toolbar" aria-label="Thao tác lời nhắc">
-        <button type="button" class="nhom-nut them" id="n-mo">＋ Thêm</button>
-        <button type="button" class="nhom-nut" id="n-sua" disabled>Sửa</button>
-        <button type="button" class="nhom-nut xoa" id="n-xoa" disabled>Xoá</button>
-      </div>
-      <p class="nhac-goi-y" id="n-goi-y"></p>
       <form id="f-nhac" class="nhac-form" autocomplete="off" novalidate>
         <label class="truong rong-4"><span>Gõ một câu</span>
           <input id="n-cau" maxlength="160" enterkeyhint="done" placeholder="vd: Giỗ bố 20/10 âm, năm mất 2021" /></label>
