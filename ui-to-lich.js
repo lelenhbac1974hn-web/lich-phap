@@ -55,6 +55,7 @@ function veToLich(x) {
             <div class="am-thang">Tháng ${THANG_AM[x.am.month - 1]}${x.am.leap ? " nhuận" : ""} <em>${x.du ? "đủ" : "thiếu"}</em></div>
           </div>
         </div>
+        ${trienToLich(x)}
         <dl class="am-phai">
           ${jdCanChi(x.j) !== x.j ? `<div title="Từ 23 giờ đã sang giờ Tý của ngày mới"><dt>Từ 23 giờ</dt><dd>${ccNgay(x.j + 1)}</dd></div>` : `<div><dt>Ngày</dt><dd>${x.ccNgay}</dd></div>`}
           <div><dt>Tháng</dt><dd>${x.ccThang}</dd></div>
@@ -67,6 +68,14 @@ function veToLich(x) {
     </article>`;
   mua = MUA[Math.floor(((TIET_KHI.indexOf(x.tiet) + 3) % 24) / 6)];
   xepNhan();
+}
+
+/* Triện tốt xấu ở chân tờ, giữa ngày âm và lưới can chi (mẫu E, anh Bắc chọn 19/11/2026):
+   kết quả của việc đang chọn theo kiểu luận đang chọn; chạm để sang Luận giải.
+   Menu Giao diện → Tờ lịch → "Tờ lịch gốc" thì ẩn triện, hiện lại dải tóm tắt riêng dưới tờ lịch. */
+function trienToLich(x) {
+  const bac = BAC_UI[st.kieu === "sach" ? x.ls.bac : x.cd.bac], viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
+  return `<button type="button" class="tl-trien ${bac.lop}" data-tab="luan" aria-label="${esc(viec.ten)}: ${bac.t} — xem luận giải">${bac.t.split(" ").join("<br>")}</button>`;
 }
 
 /* Ngày có nhiều nhắc / lễ: tờ lịch giữ nguyên cỡ, nhãn không được đè lên ca dao.

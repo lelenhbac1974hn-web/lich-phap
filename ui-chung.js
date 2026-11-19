@@ -33,6 +33,14 @@ function datGiaoDien(g) {
 }
 mayToi.addEventListener("change", apGiaoDien);
 apGiaoDien();
+/* Kiểu tờ lịch: "trien" (mặc định) — triện tốt xấu ở chân tờ; "goc" — tờ lịch gốc, dải tốt xấu riêng bên dưới */
+const KHOA_TO = "lichphap:to-lich";
+function layToLich() { try { return localStorage.getItem(KHOA_TO) === "goc" ? "goc" : "trien"; } catch (e) { return "trien"; } }
+function datToLich(k) {
+  try { if (k === "goc") localStorage.setItem(KHOA_TO, "goc"); else localStorage.removeItem(KHOA_TO); } catch (e) { /* không lưu được: chỉ đổi trong phiên */ }
+  document.body.dataset.kieuTo = k === "goc" ? "goc" : "trien";
+}
+document.body.dataset.kieuTo = layToLich();
 /* Biểu tượng nét nhỏ đi kèm chữ (thay emoji màu) — cùng bộ với biểu tượng Nhắc việc */
 const ic = k => window.BieuTuong ? `<i class="ic">${window.BieuTuong.svg(k)}</i>` : "";
 

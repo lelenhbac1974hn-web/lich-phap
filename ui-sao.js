@@ -58,7 +58,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.20.1";
+const PHIEN_BAN = "1.20.2";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -74,11 +74,17 @@ function trangMenu(id) {
   const g = layGiaoDien();
   const chonGD = (k, ten, mo) => `<button type="button" class="mn-chon${g === k ? " dang" : ""}" data-giao-dien="${k}" aria-pressed="${g === k}">
       <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
+  const to = layToLich();
+  const chonTo = (k, ten, mo) => `<button type="button" class="mn-chon${to === k ? " dang" : ""}" data-to-lich="${k}" aria-pressed="${to === k}">
+      <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
   return {
     "giao-dien": `<section><h4>Sáng hay tối</h4>
         ${chonGD("tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại")}
         ${chonGD("sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày")}
-        ${chonGD("toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối")}</section>`,
+        ${chonGD("toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối")}</section>
+      <section><h4>Tờ lịch</h4>
+        ${chonTo("trien", "Triện tốt xấu trên tờ lịch", "Tốt xấu của việc đang chọn đóng thành triện ở chân tờ, cạnh ngày âm")}
+        ${chonTo("goc", "Tờ lịch gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới")}</section>`,
     "huong-dan": `<section><h4>Dùng nhanh</h4><ol>
         <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
         <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng, chọn kiểu luận ở mục Luận giải, mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
@@ -149,6 +155,7 @@ function moGioiThieu(muc) {
     if (m) veTrang(m.dataset.mn, 40);
     else if (lui) veMenu(-40);
     else if (gd) { datGiaoDien(gd.dataset.giaoDien); veTrang("giao-dien"); }
+    else if (e.target.closest("[data-to-lich]")) { datToLich(e.target.closest("[data-to-lich]").dataset.toLich); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
   });
   const trangCua = { "gt-luan": "ve", "gt-can-cu": "can-cu" };
   if (muc && (MENU.some(x => x.id === muc) || trangCua[muc])) {
