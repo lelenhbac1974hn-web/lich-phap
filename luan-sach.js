@@ -33,7 +33,7 @@
     const b = q.bang;
     switch (q.kieu) {
       case "thang": return (b[n.thang] || []).some(v => khopSao(v, n.can, n.chi));
-      case "ngayam": return (b[n.thang] || []).some(v => Number(v) === n.ngay);
+      case "ngayam": return (b[n.thangSo] || []).some(v => Number(v) === n.ngay);
       case "canchi": return b.includes(n.canChi);
       case "nam": return (b[n.canNam] || []).some(x => x.thang === n.thang && x.ngay === n.canChi);
       case "tiet": {
@@ -47,10 +47,11 @@
   }
   const trangTT = tr => "TT tr." + (tr || []).join(", ");
 
-  /* Thông tin ngày để khớp quy tắc. Tháng nhuận tạm dùng số tháng chính — chờ đối sách (kế hoạch nâng cấp, đợt 2) */
+  /* Thông tin ngày để khớp quy tắc. thang = tháng tra bảng theo địa chi (tháng nhuận chia đôi, thangAnSao — Chánh Tông tr.90);
+     thangSo = số tháng âm, dùng cho quy tắc tính theo mùng (Dương công, con nước…) */
   function thongTinNgay(j, am) {
     const can = CAN[(j + 9) % 10], chi = CHI[(j + 1) % 12];
-    return { thang: am.month, ngay: am.day, can, chi, canChi: can + " " + chi,
+    return { thang: thangAnSao(am), thangSo: am.month, ngay: am.day, can, chi, canChi: can + " " + chi,
       canNam: CAN[(am.year + 6) % 10], tiet: tietKhi(j), tietMai: tietKhi(j + 1) };
   }
   /* Sáu ngày đại kỵ (Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, con nước): sách dạy sao tốt không cứu được.
@@ -75,13 +76,13 @@
       else tot.push(muc);
     }
     /* 2. Thần ngày hoàng đạo – hắc đạo (TT tr.45–47) và trực (TT tr.153–154) */
-    const than = thanCuaNgay(j, am.month), truc = trucCuaNgay(j);
+    const than = thanCuaNgay(j, thangAnSao(am)), truc = trucCuaNgay(j);
     if (than.hd) tot.push({ t: `Ngày hoàng đạo (${than.t})`, trang: "TT tr.45–47", muc: "cat" });
     else nhac.push({ t: `Ngày hắc đạo (${than.t})`, trang: "TT tr.45–47" });
     const trucTot = LG.trucTot.ds.includes(truc.t);
     if (trucTot) tot.push({ t: `Trực ${truc.t}`, trang: trangTT(LG.trucTot.trang), muc: "cat" });
     /* 3. Sao Ngọc Hạp của ngày, đọc "nên / kỵ" theo việc */
-    const nh = saoNgocHap(j, am.month), m = saoCSDL();
+    const nh = saoNgocHap(j, thangAnSao(am)), m = saoCSDL();
     const giai = nh.tot.some(s => s[0] === "Giải thần");
     const nhe = new Set(LG.saoXauNhe.ds);
     const laNhe = ten => ten.split(" · ").some(t => nhe.has(t)) || [...nhe].some(t => ten.startsWith(t));

@@ -263,6 +263,10 @@ function bangDuongCong() {
   for (let m = 1; m <= 12; m++) DUONG_CONG[m] = (s.an.thang[m] || []).map(Number);
   return DUONG_CONG;
 }
+/* Tháng dùng để tra bảng theo địa chi tháng (sao Ngọc Hạp, thần ngày, Thập ác…).
+   Tháng nhuận: "15 ngày trên thuộc về Địa Chi của tháng trước, còn 15 ngày dưới thuộc về Địa Chi của tháng sau"
+   (Ngọc Hạp Chánh Tông tr.90). Tháng nhuận N nằm sau tháng N, nên ngày 1–15 dùng tháng N, ngày 16 trở đi dùng tháng N+1. */
+const thangAnSao = am => am.leap && am.day > 15 ? am.month % 12 + 1 : am.month;
 const laTamNuong = am => TAM_NUONG.includes(am.day);
 const laNguyetKy = am => NGUYET_KY.includes(am.day);
 const laDuongCong = am => !am.leap && (bangDuongCong()[am.month] || []).includes(am.day);
@@ -429,7 +433,7 @@ const VIEC = [{
 }];
 function chamDiem(j, am, viecId = "chung") {
   const truc = trucCuaNgay(j);
-  const than = thanCuaNgay(j, am.month);
+  const than = thanCuaNgay(j, thangAnSao(am));
   const [saoTen, saoTot] = saoCuaNgay(j);
   const tn = laTamNuong(am),
     nk = laNguyetKy(am),
@@ -471,7 +475,7 @@ function chamDiem(j, am, viecId = "chung") {
     diem -= 4;
     tru.push("Dương công kỵ nhật");
   }
-  const nh = saoNgocHap(j, am.month);
+  const nh = saoNgocHap(j, thangAnSao(am));
   const dTot = Math.min(nh.tot.length, 4),
     dXau = Math.min(nh.xau.length, 4);
   diem += dTot - dXau;

@@ -60,13 +60,17 @@ tuổi người, theo giờ, cưới hỏi, an táng có trong cơ sở tri th�
   với hệ xem ngày khác. Mỗi sao trong ứng dụng ghi *Đã đối chiếu Ngọc Hạp* (hai sách trở lên khớp
   nhau; khi các sách khác nhau thì theo đa số) hoặc *Theo Ngọc Hạp Thông Thư (một nguồn)*.
 - Sao không có bảng an hay quy tắc tính trong sách nào thì loại khỏi chương trình; ô sách để trống thì không an.
+- **Tháng an sao:** sao Ngọc Hạp và thần ngày tra theo tháng âm; trực, Tứ ly, Tứ tuyệt theo tiết khí. Tháng nhuận:
+  15 ngày đầu theo tháng trước, từ ngày 16 theo tháng sau (*Ngọc Hạp Chánh Tông* tr.90).
+- **Dương công kỵ** (tháng 2 ngày 11, tháng 7 ngày 1 và 29) và **Thập ác đại bại** theo bản chữ Hán và *Chánh Tông*,
+  nơi bản dịch Thông Thư in lệch.
 - Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán **Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký** và bản Hán Nôm **"Ngọc hạp toản yếu thông dụng"** (1926); ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.
 
 ## Tài liệu tham khảo
 
 1. *Ngọc Hạp Thông Thư* — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.
 2. *Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký* (bản khắc chữ Hán) — bảng sao 12 tháng.
-3. *Ngọc Hạp Chánh Tông* — tài liệu đối chiếu bổ sung.
+3. *Ngọc Hạp Chánh Tông* (Viên Tài Hà Tấn Phát) — cưới gả, làm nhà, quy tắc tháng nhuận.
 4. *Ngọc hạp toản yếu thông dụng* (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.
 5. Hồ Ngọc Đức, *Thuật toán tính âm lịch* — phần lịch pháp.
 6. Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.
