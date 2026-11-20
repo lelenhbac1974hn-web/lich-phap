@@ -21,8 +21,8 @@ function veToLich(x) {
      tên, phần phụ nhạt; gạch chân chấm báo chạm được để sang thẻ Nhắc; việc quá hạn mực đỏ. Lễ tết là chữ vàng nâu, không gạch.
      Tờ hôm nay còn gom cả ngày nhắc sắp đến và việc quá hạn — thay cho dải báo riêng đầu trang. */
   const hom = jdHomNay(), laHom = x.j === hom, catTen = t => t.length > 24 ? t.slice(0, 23) + "…" : t;
-  const nhanNhac = (n, phu) => `<button type="button" class="tl-ghi" data-tab="nhac" data-nhac-trang="lap"><i class="ic">${chonBieu(n.ten, n.loai, n.bieu)}</i><b>${esc(catTen(n.ten))}</b>${phu ? `<em>· ${phu}</em>` : ""}</button>`;
-  const nhanViec = (v, phu, qua) => `<button type="button" class="tl-ghi${qua ? " qua" : ""}" data-tab="nhac" data-nhac-trang="viec"><i class="ic">${chonBieu(v.ten, "viec", v.bieu)}</i><b>${esc(catTen(v.ten))}</b>${phu ? `<em>· ${phu}</em>` : ""}</button>`;
+  const nhanNhac = (n, phu) => `<button type="button" class="tl-ghi" data-tab="nhac" data-nhac-trang="lap" data-muc-id="${esc(n.id)}"><i class="ic">${chonBieu(n.ten, n.loai, n.bieu)}</i><b>${esc(catTen(n.ten))}</b>${phu ? `<em>· ${phu}</em>` : ""}</button>`;
+  const nhanViec = (v, phu, qua) => `<button type="button" class="tl-ghi${qua ? " qua" : ""}" data-tab="nhac" data-nhac-trang="viec" data-muc-id="${esc(v.id)}"><i class="ic">${chonBieu(v.ten, "viec", v.bieu)}</i><b>${esc(catTen(v.ten))}</b>${phu ? `<em>· ${phu}</em>` : ""}</button>`;
   const nhacHom = viec.filter(v => !v.xong && v.jd != null && laHom && v.jd < hom).map(v => nhanViec(v, chuThuong(chuDem(v.jd - hom)), 1))
     .concat(viecCuaNgay(x.j).map(v => nhanViec(v, v.gio || "")))
     .concat(nhacCuaNgay(x.j).map(n => nhanNhac(n, chuThuong(soNam(n, x.j) || ""))))

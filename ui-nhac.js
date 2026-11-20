@@ -895,6 +895,34 @@ function hieuNhap() {
   veSoanViec();
 }
 
+/* Chạm một dòng ghi trên tờ lịch: mở đúng mục trong thẻ Nhắc — đổi bộ lọc việc nếu mục nằm ở nhóm khác,
+   làm sáng dòng đó và cuộn danh sách tới nó */
+function chiToiMuc(trang, id) {
+  if (trang === "viec") {
+    const v = viec.find(x => x.id === id);
+    if (!v) return;
+    const hom = jdHomNay(), can = v.xong ? "xong" : v.jd == null ? "tatca" : v.jd > hom ? "saptoi" : "homnay";
+    if (locViec !== can && !(locViec === "tatca" && !v.xong)) locViec = can;
+    viecChon = id; veViec();
+  } else {
+    if (!nhac.some(x => x.id === id)) return;
+    nhacChon = id; veNhac();
+  }
+  const toi = () => {
+    const li = document.querySelector(trang === "viec" ? `#ds-viec [data-viec-id="${id}"]` : `#ds-nhac [data-chon="${id}"]`);
+    if (!li) return;
+    /* Đặt thẳng chỗ cuộn của khung danh sách (cuộn mềm bị hiệu ứng chuyển thẻ cắt ngang, không tới nơi); mục nằm giữa khung */
+    const khung = li.closest("#ds-viec, #ds-nhac .ds-so");
+    if (khung && khung.scrollHeight > khung.clientHeight) {
+      const a = li.getBoundingClientRect(), b = khung.getBoundingClientRect();
+      khung.scrollTop += a.top - b.top - (khung.clientHeight - a.height) / 2;
+    } else li.scrollIntoView({ block: "center" });
+    li.classList.remove("vua-them"); void li.offsetWidth; li.classList.add("vua-them");
+  };
+  /* Cuộn ngay (bố cục đã có sau veViec), cuộn lại một nhịp sau phòng thẻ Nhắc vừa hiện còn đổi kích thước */
+  toi(); setTimeout(toi, 120);
+}
+
 /* ── Nhắc đúng giờ (khi ứng dụng đang mở) ── */
 function soatGio() {
   const bay = bayGio();

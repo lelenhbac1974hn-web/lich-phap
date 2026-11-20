@@ -72,6 +72,8 @@ document.addEventListener("click", e => {
       const nut = document.querySelector(`#nhac [role="tab"][data-nhac-trang="${b.dataset.nhacTrang}"]`);
       if (nut) nut.click();
       if (!window.matchMedia("(max-width:760px)").matches) $("nhac").scrollIntoView({ behavior: "smooth", block: "start" });
+      /* Dòng ghi trên tờ lịch mang mã mục: làm sáng đúng mục đó và cuộn tới nó (không giữ chỗ cuộn của lần trước) */
+      if (b.dataset.mucId) chiToiMuc(b.dataset.nhacTrang, b.dataset.mucId);
     }
   }
   else if (b.dataset.buoc) den(st.jd + Number(b.dataset.buoc));
