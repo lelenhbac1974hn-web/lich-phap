@@ -240,7 +240,8 @@ function veLichThang(x) {
       <span class="o-cham"></span>
     </button>`;
   }
-  for (let i = 0; (lech + soNgay + i) % 7; i++) o += oNgoai(dau + soNgay + i);
+  /* Luôn đủ 6 tuần (42 ô) để tờ lịch tháng cao như nhau, không nhảy khi tháng có 5 hay 6 tuần */
+  for (let i = 0; lech + soNgay + i < 42; i++) o += oNgoai(dau + soNgay + i);
   const amDau = amCuaJd(dau), amCuoi = amCuaJd(dau + soNgay - 1);
   /* Chú thích đủ mọi dấu trong ô */
   const chuThich = `<div>${BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("")}</div>

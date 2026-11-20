@@ -52,6 +52,27 @@ function doiThang(buoc) {
   if (mm < 1) { mm = 12; yy--; } else if (mm > 12) { mm = 1; yy++; }
   const dai = jdFromDate(1, mm === 12 ? 1 : mm + 1, mm === 12 ? yy + 1 : yy) - jdFromDate(1, mm, yy);
   den(jdFromDate(Math.min(dd, dai), mm, yy));
+  /* Lưới ngày trượt vào theo hướng đổi tháng (sang tháng sau: từ phải; về tháng trước: từ trái) */
+  const luoi = document.querySelector("#lich-thang .luoi:not(.dau-thu)");
+  if (luoi && !giamDong.matches) luoi.animate([{ transform: `translateX(${buoc > 0 ? 28 : -28}px)`, opacity: 0.2 }, { transform: "none", opacity: 1 }], { duration: 260, easing: "cubic-bezier(.22,1,.36,1)" });
+}
+/* Vuốt ngang trên lịch tháng để đổi tháng, giống vuốt tờ lịch: vuốt sang trái = tháng sau, sang phải = tháng trước.
+   Vuốt dọc vẫn để cuộn trang; ngay sau một lần vuốt thì bỏ cú chạm vào ô ngày (tránh nhảy sang tờ lịch ngoài ý). */
+function ganVuotThang() {
+  const vung = $("lich-thang");
+  let x0 = null, y0 = 0, t0 = 0, vuaVuot = 0;
+  vung.addEventListener("touchstart", e => {
+    if (e.touches.length !== 1) { x0 = null; return; }
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+  }, { passive: true });
+  vung.addEventListener("touchend", e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    x0 = null;
+    const ax = Math.abs(dx), ay = Math.abs(dy), nguong = Date.now() - t0 < 600 ? 36 : 60;
+    if (ax > nguong && ax > ay * 1.2) { vuaVuot = Date.now(); doiThang(dx < 0 ? 1 : -1); }
+  }, { passive: true });
+  vung.addEventListener("click", e => { if (Date.now() - vuaVuot < 450) { e.stopPropagation(); e.preventDefault(); } }, true);
 }
 
 /* ── Sự kiện ── */
@@ -116,6 +137,7 @@ setInterval(() => {
 }, 30000);
 ganNghieng();
 ganVuot();
+ganVuotThang();
 hienHuongDanLanDau();
 requestAnimationFrame(khungHinh);
 

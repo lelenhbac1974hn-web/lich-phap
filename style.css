@@ -804,7 +804,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   body[data-tab="ngay"] #tom-tat{display:grid}
   /* Mục Giờ: tờ giấy phủ hết phần màn hình còn lại, nội dung bám mép trên để mặt giờ không xê dịch khi đổi giờ */
   body[data-tab="gio"] #mat-gio{display:flex;flex:1 0 auto;justify-content:flex-start}
-  body[data-tab="thang"] #lich-thang{display:block}
+  body[data-tab="thang"] #lich-thang{display:block;touch-action:pan-y}
   body[data-tab="luan"] #phan-dinh,body[data-tab="luan"] #ngoc-hap{display:block}
   /* Mục Nhắc gói trong một màn hình: phần đầu cố định, chỉ danh sách cuộn (gần nhất ở trên) */
   body[data-tab="nhac"] #nhac{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:hidden}
