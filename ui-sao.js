@@ -59,11 +59,11 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.21.2";
+const PHIEN_BAN = "1.22.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
-  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()] },
+  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}` },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "can-cu", bieu: "taiLieu", ten: "Căn cứ và tài liệu", phu: () => "Lịch pháp, sao Ngọc Hạp, sách tham khảo" },
@@ -139,7 +139,7 @@ function moGioiThieu(muc) {
       <h3>Lịch Pháp</h3><p>Lịch âm dương · xem ngày theo Ngọc Hạp · nhắc việc</p></header>
     <div class="mn-vung"></div>`, "lop-gt");
   const vung = el.querySelector(".mn-vung");
-  const truot = tu => { if (tu && !itChuyenDong()) vung.animate([{ transform: `translateX(${tu}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 300, easing: "cubic-bezier(.22,1,.36,1)" }); };
+  const truot = tu => { if (tu && !giamDong.matches) vung.animate([{ transform: `translateX(${tu}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 300, easing: "cubic-bezier(.22,1,.36,1)" }); };
   const veMenu = tu => {
     vung.innerHTML = `<ul class="mn-ds">${MENU.map(m => `<li><button type="button" class="mn-muc" data-mn="${m.id}">
         <span class="mn-bieu">${ic(m.bieu)}</span><span class="mn-chu"><b>${m.ten}</b><small>${m.phu()}</small></span><span class="mn-toi" aria-hidden="true">›</span></button></li>`).join("")}</ul>
@@ -234,20 +234,29 @@ function moTheSao(s, tuTra) {
   if (cu) el.dataset.tim = cu;
 }
 
+/* Tra cứu: danh sách trên trang sổ (cùng khuôn dòng thẻ Nhắc — luật 6), ô tìm là một dòng gạch chân,
+   ba tab gạch chân Tất cả · Cát tinh · Hung tinh (luật 3). Bộ lọc nhớ trong lúc tấm còn mở. */
+let locSao = "tat";
 function moTraSao(tim) {
   const el = moTam(`
     <header class="tra-dau"><h3>Tra cứu sao Ngọc Hạp</h3><p>${CSDL.sao.length} sao · theo Ngọc Hạp Thông Thư</p>
-      <input type="search" class="tra-o" placeholder="Gõ tên sao, ví dụ: thiên đức" aria-label="Tìm sao" value="${esc(tim || "")}" /></header>
+      <label class="tra-tim">${ic("tim")}<input type="search" class="tra-o" placeholder="Gõ tên sao, ví dụ: thiên đức" aria-label="Tìm sao" value="${esc(tim || "")}" /></label>
+      <div class="tra-loc" role="tablist" aria-label="Lọc sao"></div></header>
     <ul class="tra-ds"></ul>`, "lop-tra");
-  const o = el.querySelector(".tra-o"), ul = el.querySelector(".tra-ds");
+  const o = el.querySelector(".tra-o"), ul = el.querySelector(".tra-ds"), loc = el.querySelector(".tra-loc");
   const bo = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
   const ve2 = () => {
     const q = bo(o.value.trim()); el.dataset.tim = o.value;
-    const ds = CSDL.sao.filter(s => !q || bo(s.ten).includes(q) || (s.han || "").includes(o.value.trim()))
-      .sort((a, b) => a.ten.localeCompare(b.ten, "vi"));
-    ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><i></i><b>${esc(s.ten)}</b>${s.han ? `<small>${esc(s.han)}</small>` : ""}<span>${(g => esc(g.slice(0, 60)) + (g.length > 60 ? "…" : ""))(s.nghia)}</span></button></li>`).join("")
+    const hop = CSDL.sao.filter(s => !q || bo(s.ten).includes(q) || (s.han || "").includes(o.value.trim()));
+    const dem = { tat: hop.length, tot: hop.filter(s => s.loai === "tot").length, xau: hop.filter(s => s.loai === "xau").length };
+    loc.innerHTML = Object.entries({ tat: "Tất cả", tot: "Cát tinh", xau: "Hung tinh" }).map(([k, t]) =>
+      `<button type="button" role="tab" data-loc-sao="${k}" aria-selected="${locSao === k}">${t} <em>${dem[k]}</em></button>`).join("");
+    const ds = hop.filter(s => locSao === "tat" || s.loai === locSao).sort((a, b) => a.ten.localeCompare(b.ten, "vi"));
+    ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><span class="td-dau"><i></i></span>
+      <span class="td-nd"><b>${esc(s.ten)}${s.han ? `<small>${esc(s.han)}</small>` : ""}</b>${s.nghia ? `<em>${esc(s.nghia)}</em>` : ""}</span><span class="td-mui">›</span></button></li>`).join("")
       || `<li class="rong">Không tìm thấy sao nào.</li>`;
   };
+  loc.addEventListener("click", e => { const b = e.target.closest("[data-loc-sao]"); if (b) { locSao = b.dataset.locSao; ve2(); } });
   o.addEventListener("input", ve2); ve2();
 }
 

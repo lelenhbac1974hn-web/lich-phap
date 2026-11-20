@@ -230,24 +230,21 @@ function veLichThang(x) {
     const nh = nhacCuaNgay(j);
     const vh = viecCuaNgay(j);
     const ten = nh.map(n => n.ten).concat(vh.map(v => v.ten), le.length ? [le[0].ten] : []).join(" · ");
-    if (nh.length) lop.push("co-nhac");
+    /* Luật giao diện 9: tối đa 3 dấu, không dấu nào đè số — vạch tốt xấu ở đáy; góc phải trên tối đa hai chấm:
+       vàng = lễ tết, xanh dương = việc hoặc ngày nhắc người dùng ghi. Biểu tượng lễ lớn chỉ hiện trên tờ lịch ngày đó. */
+    const cham = (le.length ? '<i class="c-le"></i>' : "") + (nh.length || vh.length ? '<i class="c-ta"></i>' : "");
     o += `<button type="button" class="${lop.join(" ")}" data-jd="${j}" title="${esc(`${BAC_UI[bacNgay].t} · ${ccNgay(j)}${ten ? " · " + ten : ""}`)}">
-      ${nh.length ? '<span class="o-nhac"></span>' : ""}
-      ${vh.length ? `<span class="o-viec">${vh.length}</span>` : ""}
+      ${cham ? `<span class="o-goc" aria-hidden="true">${cham}</span>` : ""}
       <span class="o-duong">${n + 1}</span>
       <span class="o-am${am.day === 1 || am.day === 15 ? " moc" : ""}">${amTxt}</span>
       <span class="o-cham"></span>
-      ${(() => {
-        const T = window.ThiepLe;
-        const kl = T && le.map(l => T.khoaCuaLe(l, am, n + 1, x.mm)).find(k => T.laLeLon(k));
-        if (kl) return `<span class="o-bieu" aria-hidden="true">${T.layThiep(kl).bieu}</span>`;
-        return le.length ? '<span class="o-le"></span>' : "";
-      })()}
     </button>`;
   }
   for (let i = 0; (lech + soNgay + i) % 7; i++) o += oNgoai(dau + soNgay + i);
   const amDau = amCuaJd(dau), amCuoi = amCuaJd(dau + soNgay - 1);
-  const chuThich = BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("");
+  /* Chú thích đủ mọi dấu trong ô */
+  const chuThich = `<div>${BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("")}</div>
+    <div><span class="ct-le"><i></i>Lễ tết</span><span class="ct-ta"><i></i>Việc, ngày nhắc của bạn</span><span class="ct-hn"><i></i>Hôm nay</span><span class="ct-chon"><i></i>Ngày đang xem</span></div>`;
   $("lich-thang").innerHTML = `
     <div class="the-tieu-de">
       <h3>Tháng ${x.mm} <small>${x.yy}</small></h3>
