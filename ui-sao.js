@@ -39,12 +39,13 @@ function veNgocHap(x) {
 
 /* ── Thẻ sao và bảng tra cứu (dạng tấm trượt lên từ đáy) ── */
 let tamSao = null;
-function moTam(html, lop) {
+/* Tấm trượt: nút đóng và phần đầu (dau, nếu có) đứng yên; chỉ thân cuộn khi nội dung dài hơn màn hình */
+function moTam(html, lop, dau) {
   dongTam();
   tamSao = document.createElement("div");
   tamSao.className = `tam-lop ${lop || ""}`;
   tamSao.setAttribute("role", "dialog"); tamSao.setAttribute("aria-modal", "true");
-  tamSao.innerHTML = `<div class="tam"><button type="button" class="tam-dong" aria-label="Đóng">✕</button>${html}</div>`;
+  tamSao.innerHTML = `<div class="tam"><button type="button" class="tam-dong" aria-label="Đóng">✕</button>${dau ? `<div class="tam-dau">${dau}</div>` : ""}<div class="tam-cuon">${html}</div></div>`;
   document.body.appendChild(tamSao);
   requestAnimationFrame(() => tamSao && tamSao.classList.add("hien"));
   tamSao.addEventListener("click", e => {
@@ -59,7 +60,7 @@ function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.cla
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.22.0";
+const PHIEN_BAN = "1.22.1";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -134,26 +135,28 @@ function trangMenu(id) {
 }
 /* muc: id trang con ("can-cu", "ve"…) hoặc id một đoạn trong trang con ("gt-luan", "gt-can-cu") — mở thẳng tới đó */
 function moGioiThieu(muc) {
-  const el = moTam(`
+  /* Đầu menu (tên app + thanh "‹ Menu" của trang con) đứng yên; chỉ phần dưới cuộn */
+  const el = moTam(`<div class="mn-vung"></div>`, "lop-gt", `
     <header class="gt-dau"><div class="gt-an" aria-hidden="true">曆</div>
       <h3>Lịch Pháp</h3><p>Lịch âm dương · xem ngày theo Ngọc Hạp · nhắc việc</p></header>
-    <div class="mn-vung"></div>`, "lop-gt");
-  const vung = el.querySelector(".mn-vung");
+    <div class="mn-thanh"></div>`);
+  const vung = el.querySelector(".mn-vung"), thanh = el.querySelector(".mn-thanh");
   const truot = tu => { if (tu && !giamDong.matches) vung.animate([{ transform: `translateX(${tu}px)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 300, easing: "cubic-bezier(.22,1,.36,1)" }); };
   const veMenu = tu => {
     vung.innerHTML = `<ul class="mn-ds">${MENU.map(m => `<li><button type="button" class="mn-muc" data-mn="${m.id}">
         <span class="mn-bieu">${ic(m.bieu)}</span><span class="mn-chu"><b>${m.ten}</b><small>${m.phu()}</small></span><span class="mn-toi" aria-hidden="true">›</span></button></li>`).join("")}</ul>
       <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc</p>`;
+    thanh.innerHTML = "";
     truot(tu);
   };
   const veTrang = (id, tu) => {
     const m = MENU.find(x => x.id === id);
-    vung.innerHTML = `<div class="mn-dau"><button type="button" class="mn-lui" data-mn-lui>‹ Menu</button><h4>${m.ten}</h4></div>
-      <div class="gt-than">${trangMenu(id)}</div>`;
+    thanh.innerHTML = `<div class="mn-dau"><button type="button" class="mn-lui" data-mn-lui>‹ Menu</button><h4>${m.ten}</h4></div>`;
+    vung.innerHTML = `<div class="gt-than">${trangMenu(id)}</div>`;
     truot(tu);
-    el.querySelector(".tam").scrollTop = 0;
+    el.querySelector(".tam-cuon").scrollTop = 0;
   };
-  vung.addEventListener("click", e => {
+  el.querySelector(".tam").addEventListener("click", e => {
     const m = e.target.closest("[data-mn]"), lui = e.target.closest("[data-mn-lui]"), gd = e.target.closest("[data-giao-dien]");
     if (m) veTrang(m.dataset.mn, 40);
     else if (lui) veMenu(-40);
@@ -217,20 +220,19 @@ function moTheSao(s, tuTra) {
   }).join("") : "";
   const ds = (tieu, arr, lop) => arr && arr.length ? `<div class="ts-viec ${lop}"><h4>${tieu}</h4><p>${arr.map(esc).join(" · ")}</p></div>` : "";
   const cu = tamSao && tamSao.dataset.tim;
-  const el = moTam(`
+  const el = moTam(`<div class="ts-than">
+      ${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
+      ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
+      ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
+      <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt === 1 ? "✓ Đã đối chiếu Ngọc Hạp" : s.tt === 2 ? "✓ Theo Ngọc Hạp Thông Thư (một nguồn)" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
+    </div>`, "lop-sao", `
     <header class="ts-dau ${s.loai}">
       ${s.han ? `<div class="ts-han" aria-hidden="true">${esc(s.han)}</div>` : ""}
       <span class="ts-loai">${s.loai === "tot" ? "Cát tinh · sao tốt" : "Hung tinh · sao xấu"}</span>
       <h3>${esc(s.ten)}</h3>
       ${s.han ? `<p class="ts-han-nho">${esc(s.han)}</p>` : ""}
     </header>
-    <div class="ts-than">
-      ${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
-      ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
-      ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
-      <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt === 1 ? "✓ Đã đối chiếu Ngọc Hạp" : s.tt === 2 ? "✓ Theo Ngọc Hạp Thông Thư (một nguồn)" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
-      ${tuTra ? `<button type="button" class="nut nho" data-tra-lai>‹ Về danh sách</button>` : ""}
-    </div>`, "lop-sao");
+    ${tuTra ? `<div class="mn-dau"><button type="button" class="mn-lui" data-tra-lai>‹ Danh sách sao</button></div>` : ""}`);
   if (cu) el.dataset.tim = cu;
 }
 
@@ -238,11 +240,10 @@ function moTheSao(s, tuTra) {
    ba tab gạch chân Tất cả · Cát tinh · Hung tinh (luật 3). Bộ lọc nhớ trong lúc tấm còn mở. */
 let locSao = "tat";
 function moTraSao(tim) {
-  const el = moTam(`
+  const el = moTam(`<ul class="tra-ds"></ul>`, "lop-tra", `
     <header class="tra-dau"><h3>Tra cứu sao Ngọc Hạp</h3><p>${CSDL.sao.length} sao · theo Ngọc Hạp Thông Thư</p>
       <label class="tra-tim">${ic("tim")}<input type="search" class="tra-o" placeholder="Gõ tên sao, ví dụ: thiên đức" aria-label="Tìm sao" value="${esc(tim || "")}" /></label>
-      <div class="tra-loc" role="tablist" aria-label="Lọc sao"></div></header>
-    <ul class="tra-ds"></ul>`, "lop-tra");
+      <div class="tra-loc" role="tablist" aria-label="Lọc sao"></div></header>`);
   const o = el.querySelector(".tra-o"), ul = el.querySelector(".tra-ds"), loc = el.querySelector(".tra-loc");
   const bo = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
   const ve2 = () => {
