@@ -21,9 +21,21 @@ const hai = n => String(n).padStart(2, "0");
 const KHOA_GD = "lichphap:giao-dien";
 const mayToi = window.matchMedia("(prefers-color-scheme: dark)");
 function layGiaoDien() { try { return localStorage.getItem(KHOA_GD) || "tu-dong"; } catch (e) { return "tu-dong"; } }
-function apGiaoDien() {
-  const g = layGiaoDien(), toi = g === "toi" || (g !== "sang" && mayToi.matches);
+/* Bộ áo: "co-dien" (mặc định, giấy kem gáy đỏ) · "tre" (Trẻ trung: bạc hà, kem, chữ tròn) · "hien-dai" (xanh thẫm, tím, vàng — luôn tối).
+   Chỉ đổi biến màu và phông; màu mang nghĩa (đỏ xấu, xanh tốt, 5 bậc) giữ nguyên nghĩa. */
+const KHOA_AO = "lichphap:bo-ao", BO_AO = ["co-dien", "tre", "hien-dai"];
+function layAo() { try { const a = localStorage.getItem(KHOA_AO); return BO_AO.includes(a) ? a : "co-dien"; } catch (e) { return "co-dien"; } }
+function datAo(a) {
+  a = BO_AO.includes(a) ? a : "co-dien";
+  try { if (a === "co-dien") localStorage.removeItem(KHOA_AO); else localStorage.setItem(KHOA_AO, a); } catch (e) { /* chỉ đổi trong phiên */ }
+  apGiaoDien(a);
+}
+function apGiaoDien(aoTam) {
+  const ao = aoTam || layAo(), g = layGiaoDien(), toi = ao === "hien-dai" || g === "toi" || (g !== "sang" && mayToi.matches);
+  if (ao === "co-dien") delete document.documentElement.dataset.ao; else document.documentElement.dataset.ao = ao;
   document.documentElement.toggleAttribute("data-toi", toi);
+  const mau = document.querySelector('meta[name="theme-color"]');
+  if (mau) mau.content = ao === "tre" ? "#3F9688" : ao === "hien-dai" ? "#0E1726" : "#B3261E";
   const m = document.querySelector('meta[name="color-scheme"]');
   if (m) m.content = toi ? "dark" : "light";
 }
@@ -31,7 +43,7 @@ function datGiaoDien(g) {
   try { if (g === "tu-dong") localStorage.removeItem(KHOA_GD); else localStorage.setItem(KHOA_GD, g); } catch (e) { /* không lưu được: chỉ đổi trong phiên */ document.documentElement.toggleAttribute("data-toi", g === "toi"); return; }
   apGiaoDien();
 }
-mayToi.addEventListener("change", apGiaoDien);
+mayToi.addEventListener("change", () => apGiaoDien());
 apGiaoDien();
 /* Kiểu tờ lịch — tốt xấu ở chân tờ: "g" (mặc định) hàng mỏng có lý do · "e" triện · "f" thang 5 bậc dưới tháng âm ·
    "goc" tờ lịch gốc, dải tốt xấu riêng bên dưới */

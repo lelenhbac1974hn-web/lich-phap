@@ -67,11 +67,11 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.24.0";
+const PHIEN_BAN = "1.25.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
-  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}` },
+  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "hien-dai": "Hiện đại" })[layAo()]} · ${layAo() === "hien-dai" ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}` },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "can-cu", bieu: "taiLieu", ten: "Căn cứ và tài liệu", phu: () => "Lịch pháp, sao Ngọc Hạp, sách tham khảo" },
@@ -81,13 +81,20 @@ const MENU = [
 function trangMenu(id) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
   const g = layGiaoDien();
+  const ao = layAo();
+  const chonAo = (k, ten, mo, mau) => `<button type="button" class="mn-chon${ao === k ? " dang" : ""}" data-bo-ao="${k}" aria-pressed="${ao === k}">
+      <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span><span class="mn-mau" aria-hidden="true">${mau.map(m => `<i style="background:${m}"></i>`).join("")}</span></button>`;
   const chonGD = (k, ten, mo) => `<button type="button" class="mn-chon${g === k ? " dang" : ""}" data-giao-dien="${k}" aria-pressed="${g === k}">
       <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
   const to = layToLich();
   const chonTo = (k, ten, mo) => `<button type="button" class="mn-chon${to === k ? " dang" : ""}" data-to-lich="${k}" aria-pressed="${to === k}">
       <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
   return {
-    "giao-dien": `<section><h4>Sáng hay tối</h4>
+    "giao-dien": `<section><h4>Bộ áo</h4>
+        ${chonAo("co-dien", "Cổ điển", "Giấy kem, gáy đỏ son · mặc định", ["#F3ECDD", "#A61E17", "#E19279"])}
+        ${chonAo("tre", "Trẻ trung", "Xanh bạc hà, kem nhạt, chữ tròn", ["#E4F1EE", "#5DB3A5", "#F2B48C"])}
+        ${chonAo("hien-dai", "Hiện đại", "Xanh thẫm, tím, vàng · luôn tối", ["#0E1726", "#7C6CF0", "#F2C14E"])}</section>
+      <section><h4>Sáng hay tối</h4>${ao === "hien-dai" ? `<p class="mn-ghi">Bộ áo Hiện đại luôn tối; chọn dưới đây áp dụng khi đổi về bộ áo khác.</p>` : ""}
         ${chonGD("tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại")}
         ${chonGD("sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày")}
         ${chonGD("toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối")}</section>
@@ -168,6 +175,7 @@ function moGioiThieu(muc) {
     if (m) veTrang(m.dataset.mn, 40);
     else if (lui) veMenu(-40);
     else if (gd) { datGiaoDien(gd.dataset.giaoDien); veTrang("giao-dien"); }
+    else if (e.target.closest("[data-bo-ao]")) { datAo(e.target.closest("[data-bo-ao]").dataset.boAo); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
     else if (e.target.closest("[data-to-lich]")) { datToLich(e.target.closest("[data-to-lich]").dataset.toLich); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
   });
   const trangCua = { "gt-luan": "ve", "gt-can-cu": "can-cu" };

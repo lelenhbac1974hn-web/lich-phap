@@ -15,7 +15,7 @@
 <link rel="manifest" href="./manifest.json" />
 <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 <link rel="icon" href="./icon-192.png" />
-<script>/* Đặt sáng/tối trước khi vẽ để không nháy màu; ui-chung.js lo phần còn lại */(function(){try{var g=localStorage.getItem("lichphap:giao-dien");if(g==="toi"||(g!=="sang"&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.setAttribute("data-toi","")}catch(e){}})();</script>
+<script>/* Đặt bộ áo, sáng/tối trước khi vẽ để không nháy màu; ui-chung.js lo phần còn lại */(function(){try{var a=localStorage.getItem("lichphap:bo-ao"),g=localStorage.getItem("lichphap:giao-dien"),h=document.documentElement;if(a==="tre"||a==="hien-dai")h.setAttribute("data-ao",a);if(a==="hien-dai"||g==="toi"||(g!=="sang"&&matchMedia("(prefers-color-scheme: dark)").matches))h.setAttribute("data-toi","")}catch(e){}})();</script>
 <link rel="stylesheet" href="./style.css" />
 </head>
 <body data-tab="ngay">

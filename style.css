@@ -58,8 +58,8 @@ h3,h4,p{margin:0}
 /* ═════════ ĐẦU TRANG ═════════ */
 .dau-trang{max-width:1240px;margin:0 auto;padding:22px 24px 10px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .thuong-hieu{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
-.trien{width:46px;height:46px;border-radius:10px;background:var(--son);color:var(--chu-sang);display:grid;place-items:center;
-  font:700 26px/1 "Songti SC","SimSun","Noto Serif CJK SC",serif;box-shadow:inset 0 0 0 2px var(--son),inset 0 0 0 3.5px rgba(255,235,200,.55),0 4px 10px -4px rgba(140,20,15,.6);transform:rotate(-3deg)}
+.trien{width:46px;height:46px;border-radius:10px;background:var(--an-mau,var(--son));color:var(--chu-sang);display:grid;place-items:center;
+  font:700 26px/1 "Songti SC","SimSun","Noto Serif CJK SC",serif;box-shadow:inset 0 0 0 2px var(--an-mau,var(--son)),inset 0 0 0 3.5px rgba(255,235,200,.55),0 4px 10px -4px rgba(140,20,15,.6);transform:rotate(-3deg)}
 .ten b{display:block;font-size:21px;font-weight:700;letter-spacing:.01em;line-height:1.1}
 .ten small{font-size:12px;color:var(--muc-3);letter-spacing:.14em;text-transform:uppercase}
 .cong-cu{display:flex;align-items:center;gap:10px}
@@ -1105,3 +1105,84 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .pd-tk{margin-top:10px;padding-top:8px;border-top:1px dashed var(--vien);font-size:13px}
 .pd-tk ul{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:3px;color:var(--muc-2)}
 .pd-tk small{color:var(--muc-3)}
+
+/* ═════════ BỘ ÁO (1.25.0) — Menu → Giao diện → Bộ áo ═════════
+   Chỉ đổi biến màu vật liệu và phông; màu mang nghĩa (đỏ xấu, xanh tốt, 5 bậc b0–b4) giữ nguyên nghĩa.
+   Phông lấy từ Fontsource 5.3.0 (giấy phép SIL OFL 1.1), để trong thư mục phong/; chỉ tải khi bộ áo được chọn. */
+@font-face{font-family:"Nunito";font-weight:400;font-style:normal;font-display:swap;src:url(phong/nunito-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Nunito";font-weight:400;font-style:normal;font-display:swap;src:url(phong/nunito-vietnamese-400-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Nunito";font-weight:600;font-style:normal;font-display:swap;src:url(phong/nunito-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Nunito";font-weight:600;font-style:normal;font-display:swap;src:url(phong/nunito-vietnamese-600-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Nunito";font-weight:700;font-style:normal;font-display:swap;src:url(phong/nunito-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Nunito";font-weight:700;font-style:normal;font-display:swap;src:url(phong/nunito-vietnamese-700-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Nunito";font-weight:900;font-style:normal;font-display:swap;src:url(phong/nunito-latin-900-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Nunito";font-weight:900;font-style:normal;font-display:swap;src:url(phong/nunito-vietnamese-900-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Nunito";font-weight:300;font-style:italic;font-display:swap;src:url(phong/nunito-latin-300-italic.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Nunito";font-weight:300;font-style:italic;font-display:swap;src:url(phong/nunito-vietnamese-300-italic.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Lexend";font-weight:300;font-style:normal;font-display:swap;src:url(phong/lexend-latin-300-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Lexend";font-weight:300;font-style:normal;font-display:swap;src:url(phong/lexend-vietnamese-300-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Lexend";font-weight:400;font-style:normal;font-display:swap;src:url(phong/lexend-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Lexend";font-weight:400;font-style:normal;font-display:swap;src:url(phong/lexend-vietnamese-400-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Lexend";font-weight:500;font-style:normal;font-display:swap;src:url(phong/lexend-latin-500-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Lexend";font-weight:500;font-style:normal;font-display:swap;src:url(phong/lexend-vietnamese-500-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Lexend";font-weight:600;font-style:normal;font-display:swap;src:url(phong/lexend-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Lexend";font-weight:600;font-style:normal;font-display:swap;src:url(phong/lexend-vietnamese-600-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Lexend";font-weight:700;font-style:normal;font-display:swap;src:url(phong/lexend-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Lexend";font-weight:700;font-style:normal;font-display:swap;src:url(phong/lexend-vietnamese-700-normal.woff2) format("woff2");unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"SpaceG";font-weight:700;font-display:swap;src:url(phong/space-grotesk-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* Trẻ trung — sáng: nền bạc hà nhạt, tờ kem nhạt, gáy xanh ngọc, nút chính cam đào, chữ Nunito tròn */
+html[data-ao="tre"]:not([data-toi]){
+  --giay:#E4F1EE; --giay-2:#D3E8E2; --the:#FFFDF7; --vien:#CFE3DE;
+  --muc:#22403C; --muc-2:#4E6A66; --muc-3:#86A09B;
+  --thu-phap:#3F9688; --chu-sang:#FFFFFF;
+  --chinh:#F2B48C; --tren-chinh:#5A2E14; --chinh-dam:#D9804E; --chinh-nhat:#FDEBDD;
+  --le-so:#F2C9AE; --gach-so:rgba(78,106,102,.16); --chu-so:#3F7F75;
+  --nen-hao-1:rgba(93,179,165,.20); --nen-hao-2:rgba(242,180,140,.16); --nen-ke:rgba(63,150,136,.03);
+  --tt-1:#3F9688; --tt-2:#5DB3A5; --gay-1:#4FA597; --gay-2:#5DB3A5; --gay-3:#3F9688;
+  --to-sang:#fff; --to-lop-1:#D7E9E4; --to-lop-2:#FBFDF9; --to-lop-3:#CFE3DE; --to-lop-4:#C3DAD4; --to-bong:rgba(30,80,70,.30);
+  --so-1:#7FD0C1; --so-2:#45A898; --so-3:#2C8577; --so-loc:drop-shadow(0 1px 0 rgba(255,255,255,.7)) drop-shadow(0 6px 10px rgba(30,110,95,.18)); /* số ngày xanh ngọc, không đen */
+  --do-nghi:#E0665A; --so-nghi-1:#F08A7E; --so-nghi-2:#E0665A; --so-nghi-3:#C94C41;
+  --am-1:#FFF6E8; --am-2:#FCEBD5; --am-gach:#E8CFAF; --am-vien:#E8CFAF;
+}
+/* Trẻ trung — tối: xanh rêu thẫm, cùng gáy xanh ngọc, nút cam đào */
+html[data-ao="tre"][data-toi]{
+  --giay:#0F1F1D; --giay-2:#142826; --the:#1A2E2B; --vien:#2C4743;
+  --muc:#E8F3F0; --muc-2:#B5CCC7; --muc-3:#7F9A95;
+  --thu-phap:#4FA597; --chu-sang:#FFFFFF;
+  --chinh:#F2B48C; --tren-chinh:#3A1E0E; --chinh-dam:#F4BE9B; --chinh-nhat:#3A2A22;
+  --le-so:#4C6A60; --gach-so:rgba(232,243,240,.09); --chu-so:#9FD3C8;
+  --nen-hao-1:rgba(93,179,165,.12); --nen-hao-2:rgba(242,180,140,.07);
+  --tt-1:#2E7469; --tt-2:#3F9688; --gay-1:#3F9688; --gay-2:#4FA597; --gay-3:#2E7469;
+  --to-lop-1:#2A423E; --to-lop-2:#1E3431; --to-lop-3:#2A423E; --to-lop-4:#253C38;
+  --so-1:#F2FAF7; --so-2:#D6ECE6; --so-3:#B3D5CC;
+  --am-1:#1F3633; --am-2:#1A2E2B; --am-gach:#35524D; --am-vien:#35524D;
+}
+html[data-ao="tre"],html[data-ao="hien-dai"]{--an-mau:var(--thu-phap)}
+/* Nền thẫm: đỏ mang nghĩa xấu sáng lên cho đọc được (nghĩa giữ nguyên) */
+html[data-ao][data-toi]{--son:#F0605A}
+html[data-ao][data-toi] .gct-xung b{color:var(--son)}
+/* Tâm mặt giờ theo màu bộ áo */
+html[data-ao] .tam-gio{fill:var(--thu-phap)}
+html[data-ao="tre"]{--chu:"Nunito",system-ui,"Segoe UI",sans-serif; --so:"Nunito",system-ui,sans-serif}
+/* Hiện đại — luôn tối: nền xanh thẫm, gáy tím, nút chính và điểm nhấn vàng, chữ Lexend, số Space Grotesk */
+html[data-ao="hien-dai"][data-toi]{
+  --giay:#0E1726; --giay-2:#121E31; --the:#16233A; --vien:#2A3A56;
+  --muc:#EEF2FA; --muc-2:#B6C2D6; --muc-3:#7F8DA6;
+  --thu-phap:#7C6CF0; --chu-sang:#FFFFFF;
+  --chinh:#F2C14E; --tren-chinh:#2A1F00; --chinh-dam:#F2C14E; --chinh-nhat:#2B2A45;
+  --vang:#F2C14E; --vang-dam:#F6D27A; --vang-nhat:#2E2A1A; --vang-vien:#5A4A1E; --vang-nen:#2E2A1A;
+  --nhac:#7FB8FF; --nhac-dam:#9CC8FF; --nhac-nhat:#17304F; --nhac-vien:#2B4C78;
+  --le-so:#4B4A7A; --gach-so:rgba(200,210,235,.10); --chu-so:#C9C2FF;
+  --nen-hao-1:rgba(124,108,240,.20); --nen-hao-2:rgba(242,193,78,.08);
+  --tt-1:#0E1726; --tt-2:#16233A; --gay-1:#5A4BD1; --gay-2:#7C6CF0; --gay-3:#6A5AE0;
+  --to-lop-1:#22324D; --to-lop-2:#1A2740; --to-lop-3:#22324D; --to-lop-4:#1E2C46;
+  --so-1:#FFFFFF; --so-2:#DCE2FA; --so-3:#B9C4F5;
+  --do-nghi:#FF7A8A; --so-nghi-1:#FF9AA6; --so-nghi-2:#FF7A8A; --so-nghi-3:#E0566A;
+  --am-1:#1B2A44; --am-2:#172540; --am-gach:#2F4366; --am-vien:#2F4366;
+  --chu:"Lexend",system-ui,"Segoe UI",sans-serif; --so:"SpaceG","Lexend",sans-serif;
+}
+/* Chọn bộ áo trong menu: ba chấm màu chính của bộ */
+.mn-mau{margin-left:auto;display:flex;gap:3px;flex:none}
+.mn-mau i{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
+.mn-ghi{font-size:12.5px!important;color:var(--muc-3)!important;margin:0 0 6px!important}
