@@ -188,6 +188,14 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
     if (Date.now() - moLuc < 15000) { location.reload(); return; }
     document.addEventListener("visibilitychange", function () { if (!document.hidden) location.reload(); });
   });
+  /* App cài ra màn hình chính (iPhone) thường chỉ được đưa từ nền lên, không mở lại trang, nên trình duyệt không tự hỏi bản mới.
+     Mỗi lần quay lại app (cách lần hỏi trước trên 1 phút): hỏi máy chủ có sw.js mới không; có thì cài và tải lại ngay. */
+  var hoiLuc = 0;
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden || Date.now() - hoiLuc < 60000) return;
+    hoiLuc = moLuc = Date.now();
+    navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.update(); }).catch(function () {});
+  });
 }
 </script>
 </body>
