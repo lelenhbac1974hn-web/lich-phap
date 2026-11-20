@@ -167,7 +167,19 @@ h3,h4,p{margin:0}
 }
 .tl-thu{font-size:19px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;margin-top:4px;padding-left:.3em}
 .nghi .tl-thu{color:var(--son)}
-.tl-nhan{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+/* Dòng ghi trên tờ lịch (mẫu A, 20/11/2026): việc, ngày nhắc là chữ mực xanh có biểu tượng, gạch chân chấm = chạm sang thẻ Nhắc;
+   quá hạn mực đỏ; lễ tết chữ vàng nâu có sao, không gạch (nhấn giữ lễ lớn vẫn mở thiệp). Không viên thuốc. */
+.tl-nhan{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:12px;max-width:100%}
+.tl-ghi{display:inline-flex;align-items:center;gap:6px;max-width:100%;border:0;border-bottom:1.5px dotted color-mix(in srgb,var(--nhac) 55%,transparent);background:none;padding:2px 0;
+  font:600 14.5px var(--chu);color:var(--nhac);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tl-ghi .ic{margin:0;flex:none}
+.tl-ghi b{font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-ghi em{font-style:normal;font-weight:400;opacity:.85;white-space:nowrap}
+.tl-ghi.qua{color:var(--son);border-bottom-color:color-mix(in srgb,var(--son) 45%,transparent)}
+.tl-ghi.le-them{color:var(--muc-3);border-bottom-color:var(--vien);font-size:13px}
+.tl-nhan .le{display:inline-flex;align-items:center;gap:6px;background:none;border:0;border-radius:0;padding:2px 0;font-size:13.5px;font-weight:600;color:var(--vang-dam)}
+.tl-nhan .le .ic{margin:0;font-size:inherit}
+.tl-nhan .le-nghi,.tl-nhan .le-am{color:var(--son-dam)}
 .an-cau .tl-cau{display:none}
 .le-them{background:var(--the);border-color:var(--vien);color:var(--muc-2);cursor:pointer}
 .le,.kieng{font-size:12px;font-weight:600;border-radius:999px;padding:4px 11px;border:1px solid}
@@ -586,8 +598,6 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 @media (min-width:761px){.bao-tam{bottom:28px}}
 
 /* ── Đánh dấu việc trên tờ lịch và lịch tháng ── */
-.le-viec{background:var(--nhac-nhat);border-color:var(--nhac-vien);color:var(--nhac-dam);font-family:var(--chu)}
-.le-viec.le-qua{color:var(--son);border-color:color-mix(in srgb,var(--son) 35%,transparent)}
 
 /* ═════════ SAO NGỌC HẠP: NÚT SAO, THẺ SAO, TRA CỨU ═════════ */
 .sao-nut{display:grid;gap:1px;width:100%;text-align:left;border:0;background:transparent;padding:0;cursor:pointer;color:inherit;font:inherit;-webkit-tap-highlight-color:transparent}
@@ -1004,6 +1014,9 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   html[data-toi] .tl-trien{--nen-tr:#28201A}
   html[data-toi] .tl-hang{border-top-color:#4A3D2C}
   html[data-toi] .tl-bong{opacity:.4}
+  html[data-toi] .tl-ghi{color:var(--nhac-dam)}
+  html[data-toi] .tl-ghi.qua{color:#F5B3A8}
+  html[data-toi] .tl-nhan .le-nghi,html[data-toi] .tl-nhan .le-am{background:none}
   html[data-toi] .le-nghi,html[data-toi] .le-am{background:var(--son-nhat);border-color:#7A3A31;color:#F5B3A8}
   html[data-toi] .the-uu,html[data-toi] .sao-ds .xau b,html[data-toi] .ts-viec.ky h4,html[data-toi] .le-nghi{color:#F5B3A8}
   html[data-toi] .the-le{background:linear-gradient(120deg,#4A3A1A,#4A2420);color:#F5D3A0}

@@ -13,19 +13,20 @@ function veToLich(x) {
   if (laNgayThanhMinh(x.j)) leDs.push({ ten: "Tiết Thanh minh — tảo mộ", loai: "tiet", nghi: false, khoa: "dac:thanhminh" });
   const khoaLe = leDs.map(l => l.khoa || (T ? T.khoaCuaLe(l, x.am, x.dd, x.mm) : null));
   const le = leDs.map((l, i) => khoaLe[i]
-    ? `<button type="button" class="le le-${l.loai}${l.nghi ? " le-nghi" : ""} co-thiep" data-thiep="${khoaLe[i]}" title="Nhấn giữ để xem">${esc(l.ten)}<i aria-hidden="true">✦</i></button>`
-    : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${esc(l.ten)}</span>`).join("");
+    ? `<button type="button" class="le le-${l.loai}${l.nghi ? " le-nghi" : ""} co-thiep" data-thiep="${khoaLe[i]}" title="Nhấn giữ để xem">${ic("sao")}${esc(l.ten)}</button>`
+    : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${ic("sao")}${esc(l.ten)}</span>`).join("");
   const khoaLon = khoaLe.find(k => T && T.laLeLon(k));
   const ruy = khoaLon ? `<button type="button" class="tl-ruy" data-thiep="${khoaLon}" aria-label="Nhấn giữ để xem về ngày lễ">${T.layThiep(khoaLon).bieu}</button>` : "";
-  /* Việc và ngày nhắc hiện thành nhãn ghi tên trên tờ lịch, cùng một kiểu (luật giao diện 7).
+  /* Việc và ngày nhắc viết như dòng ghi tay mực xanh trên tờ lịch (anh Bắc chọn mẫu A, 20/11/2026): biểu tượng theo loại,
+     tên, phần phụ nhạt; gạch chân chấm báo chạm được để sang thẻ Nhắc; việc quá hạn mực đỏ. Lễ tết là chữ vàng nâu, không gạch.
      Tờ hôm nay còn gom cả ngày nhắc sắp đến và việc quá hạn — thay cho dải báo riêng đầu trang. */
   const hom = jdHomNay(), laHom = x.j === hom, catTen = t => t.length > 24 ? t.slice(0, 23) + "…" : t;
-  const nhanNhac = (ten, phu) => `<button type="button" class="le le-viec" data-tab="nhac" data-nhac-trang="lap">${esc(catTen(ten))}${phu ? ` · ${phu}` : ""}</button>`;
-  const nhanViec = (ten, phu, qua) => `<button type="button" class="le le-viec${qua ? " le-qua" : ""}" data-tab="nhac" data-nhac-trang="viec">${esc(catTen(ten))}${phu ? ` · ${phu}` : ""}</button>`;
-  const nhacHom = viec.filter(v => !v.xong && v.jd != null && laHom && v.jd < hom).map(v => nhanViec(v.ten, chuThuong(chuDem(v.jd - hom)), 1))
-    .concat(viecCuaNgay(x.j).map(v => nhanViec(v.ten, v.gio || "")))
-    .concat(nhacCuaNgay(x.j).map(n => nhanNhac(n.ten, chuThuong(soNam(n, x.j) || ""))))
-    .concat(laHom ? sapToi().filter(o => o.j != null && o.con > 0 && o.con <= o.n.truoc).map(o => nhanNhac(o.n.ten, chuThuong(chuDem(o.con)))) : [])
+  const nhanNhac = (n, phu) => `<button type="button" class="tl-ghi" data-tab="nhac" data-nhac-trang="lap"><i class="ic">${chonBieu(n.ten, n.loai, n.bieu)}</i><b>${esc(catTen(n.ten))}</b>${phu ? `<em>· ${phu}</em>` : ""}</button>`;
+  const nhanViec = (v, phu, qua) => `<button type="button" class="tl-ghi${qua ? " qua" : ""}" data-tab="nhac" data-nhac-trang="viec"><i class="ic">${chonBieu(v.ten, "viec", v.bieu)}</i><b>${esc(catTen(v.ten))}</b>${phu ? `<em>· ${phu}</em>` : ""}</button>`;
+  const nhacHom = viec.filter(v => !v.xong && v.jd != null && laHom && v.jd < hom).map(v => nhanViec(v, chuThuong(chuDem(v.jd - hom)), 1))
+    .concat(viecCuaNgay(x.j).map(v => nhanViec(v, v.gio || "")))
+    .concat(nhacCuaNgay(x.j).map(n => nhanNhac(n, chuThuong(soNam(n, x.j) || ""))))
+    .concat(laHom ? sapToi().filter(o => o.j != null && o.con > 0 && o.con <= o.n.truoc).map(o => nhanNhac(o.n, chuThuong(chuDem(o.con)))) : [])
     .join("");
   const lo = Array.from({ length: 9 }, () => "<i></i>").join("");
   const totXau = totXauChanTo(x);
@@ -106,7 +107,7 @@ function xepNhan() {
     let them = nhan.querySelector(".le-them");
     if (!them) {
       them = document.createElement("button");
-      them.type = "button"; them.className = "le le-them"; them.dataset.tab = "nhac";
+      them.type = "button"; them.className = "tl-ghi le-them"; them.dataset.tab = "nhac";
       nhan.append(them);
     }
     them.textContent = `+${an} mục khác`;
