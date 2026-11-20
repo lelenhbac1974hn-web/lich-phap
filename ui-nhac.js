@@ -474,6 +474,8 @@ function ganNhac() {
   datNhanForm();
   datNutThem("n-mo", false);
   $("n-huy").innerHTML = `${ic("huy")}<span>Huỷ</span>`;
+  $("n-xuat").innerHTML = `${ic("xuat")}<span>Xuất ra tệp</span>`;
+  $("n-nhap").innerHTML = `${ic("nhap")}<span>Nhập từ tệp</span>`;
   $("n-lay").innerHTML = `${ic("homNay")}<span>Lấy ngày đang xem</span>`;
   $("n-luu").innerHTML = `${ic("them")}<span>Thêm ngày</span>`;
 }

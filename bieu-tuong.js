@@ -90,6 +90,8 @@
     moLai: { ve: '<path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 4v4h4"/>' },
     luu: { ve: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>' },
     huy: { ve: '<path d="M6 6l12 12M18 6L6 18"/>' },
+    xuat: { ve: '<path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 13v6h14v-6"/>' },
+    nhap: { ve: '<path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 13v6h14v-6"/>' },
     homNay: { ve: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="12" cy="15" r="1.6" class="dac"/>' }
   };
   const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${(BT[k] || NET[k] || BT.lich).ve}</svg>`;

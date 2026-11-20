@@ -449,7 +449,9 @@ body.dang-soan .sx-nen{opacity:1;pointer-events:auto}
 .nhac-trong{border:1.5px dashed var(--vien);border-radius:14px;padding:26px 22px;text-align:center;color:var(--muc-2);font-size:13.5px}
 .nhac-trong b{display:block;font-size:16px;color:var(--muc);margin-bottom:4px}
 .nhac-tep{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
-.nhac-tep span{font-size:12px;color:var(--muc-3);flex:1 1 220px}
+.nhac-tep>span{font-size:12px;color:var(--muc-3);flex:1 1 220px}
+/* Xuất, Nhập là nút phụ: chữ có biểu tượng, không viên thuốc (luật giao diện 3, 4) */
+.nhac-tep .nut{border:0;background:none;box-shadow:none;padding:6px 4px;font:600 13.5px var(--chu);color:var(--muc-2);display:inline-flex;align-items:center}
 .o-nhac{position:absolute;top:5px;left:6px;width:7px;height:7px;border-radius:2px;background:var(--son);transform:rotate(45deg)}
 @media (max-width:640px){
   .cong-cu{flex-wrap:wrap}
@@ -780,7 +782,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   body[data-tab="nhac"] #nhac{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:hidden}
   #nhac .nhac-dau,#nhac .nhac-tep{flex:none}
   #nhac .nhac-tep{margin-top:10px;padding-top:8px;gap:6px}
-  #nhac .nhac-tep span{display:none}
+  #nhac .nhac-tep>span{display:none}
   #nhac[data-trang="viec"] .trang-viec,#nhac[data-trang="lap"] .trang-lap{display:flex;flex-direction:column;flex:1 1 0;min-height:0}
   .trang-viec>*,.trang-lap>*{flex:none}
   .trang-lap .nhac-khung{display:flex;flex-direction:column;align-items:stretch;flex:1 1 0;min-height:0}
@@ -983,22 +985,22 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   html[data-toi] .tl-trien{--nen-tr:#28201A}
   html[data-toi] .tl-hang{border-top-color:#4A3D2C}
   html[data-toi] .tl-bong{opacity:.4}
-  html[data-toi] .le-nghi,html[data-toi] .le-am{background:#46221D;border-color:#7A3A31;color:#F5B3A8}
+  html[data-toi] .le-nghi,html[data-toi] .le-am{background:var(--son-nhat);border-color:#7A3A31;color:#F5B3A8}
   html[data-toi] .the-uu,html[data-toi] .sao-ds .xau b,html[data-toi] .ts-viec.ky h4,html[data-toi] .le-nghi{color:#F5B3A8}
   html[data-toi] .the-le{background:linear-gradient(120deg,#4A3A1A,#4A2420);color:#F5D3A0}
   /* Mặt giờ */
   html[data-toi] .mui.hd path{fill:#1F3A2C}html[data-toi] .mui.hac path{fill:#3D2421}
   html[data-toi] .mui.hd.chon path{fill:#2A5640}html[data-toi] .mui.hac.chon path{fill:#5A3029}
-  html[data-toi] .mui.chon path{stroke:#D3A84A}
+  html[data-toi] .mui.chon path{stroke:var(--b2)}
   html[data-toi] .mui .chi{fill:#A8E0C1}html[data-toi] .mui .khung{fill:#7FB89A}
   html[data-toi] .mui.hac .chi{fill:#F2B2A7}html[data-toi] .mui.hac .khung{fill:#C98C82}
   html[data-toi] .mui.hd.dang path{fill:#2E8A5E;animation-name:sang-hd-toi}html[data-toi] .mui.hac.dang path{fill:#A9483B;animation-name:sang-hac-toi}
   @keyframes sang-hd-toi{50%{fill:#3FA472}}
   @keyframes sang-hac-toi{50%{fill:#C25A4C}}
-  html[data-toi] .mui.dang path{stroke:#26201A}
+  html[data-toi] .mui.dang path{stroke:var(--the)}
   html[data-toi] .mui.dang .chi,html[data-toi] .mui.dang .khung,html[data-toi] .mui.hac.dang .chi,html[data-toi] .mui.hac.dang .khung{fill:#FFF6E6}
   html[data-toi] .vach{stroke:#4A3D2C}html[data-toi] .vach.dam{stroke:#7A6440}
-  html[data-toi] .chu-gio i{background:#1F3A2C;border-color:#2E8A5E}html[data-toi] .chu-gio .hac i{background:#3D2421;border-color:#A9483B}html[data-toi] .chu-gio .dang i{background:#2E8A5E;border-color:#8ED4B0}
+  html[data-toi] .chu-gio i{background:#1F3A2C;border-color:#2E8A5E}html[data-toi] .chu-gio .hac i{background:#3D2421;border-color:#A9483B}html[data-toi] .chu-gio .dang i{background:#2E8A5E;border-color:var(--ngoc-dam)}
   html[data-toi] .nhac-loi,html[data-toi] .sx-so.loi{color:#F5B3A8}
   html[data-toi] .tra-o{background:#1F1A15}
   html[data-toi] .to-giay{box-shadow:0 1px 0 #3A3027,0 2px 0 -1px #2A231C,0 3px 0 -1px #3A3027,0 10px 20px -12px rgba(0,0,0,.7)}
@@ -1012,7 +1014,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   html[data-toi] .sao-ds li:has(.sao-nut):hover{background:#2E261F}
   html[data-toi] .chon-bieu button{color:#E3CBA7}
   /* Menu dưới, thẻ nổi */
-  html[data-toi] .bao-tam{background:#F0E6D6;color:#211A15}
+  html[data-toi] .bao-tam{background:var(--muc);color:#211A15}
   html[data-toi] .the-gio{background:var(--the)}
   html[data-toi] .to-lich{box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 0 -1px #3A3027,0 4px 0 -2px #2A231C,0 6px 0 -3px #3A3027,0 8px 0 -4px #2A231C,0 10px 0 -5px #342A21,0 26px 40px -18px rgba(0,0,0,.7)}
 /* Hướng dẫn lần mở đầu */
