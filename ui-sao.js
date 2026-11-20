@@ -49,18 +49,25 @@ function moTam(html, lop, dau) {
   document.body.appendChild(tamSao);
   requestAnimationFrame(() => tamSao && tamSao.classList.add("hien"));
   tamSao.addEventListener("click", e => {
-    if (e.target === tamSao || e.target.closest(".tam-dong")) dongTam();
+    if (e.target === tamSao || e.target.closest(".tam-dong")) { dongTam(true); return; }
     const b = e.target.closest("[data-sao-id]");
-    if (b) { const s = CSDL.sao.find(z => z.id === b.dataset.saoId); if (s) moTheSao(s, true); }
-    if (e.target.closest("[data-tra-lai]")) moTraSao(tamSao && tamSao.dataset.tim);
+    /* Mở một sao từ bảng tra cứu: nhớ chữ đang tìm và chỗ đang cuộn để đóng thẻ thì về đúng chỗ đó */
+    if (b) { const s = CSDL.sao.find(z => z.id === b.dataset.saoId); if (s) moTheSao(s, true, tamSao.querySelector(".tam-cuon").scrollTop); }
+    if (e.target.closest("[data-tra-lai]")) dongTam(true);
   });
   return tamSao;
 }
-function dongTam() { if (!tamSao) return; const t = tamSao; tamSao = null; t.classList.remove("hien"); setTimeout(() => t.remove(), 320); }
-document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(); });
+/* nguoiDung: người dùng bấm ✕, chạm nền hoặc Esc. Thẻ sao mở từ bảng tra cứu thì đóng là quay về bảng tra cứu
+   (giữ chữ tìm, bộ lọc, chỗ cuộn), không thoát hẳn ra ngoài. */
+function dongTam(nguoiDung) {
+  if (!tamSao) return;
+  const t = tamSao; tamSao = null; t.classList.remove("hien"); setTimeout(() => t.remove(), 320);
+  if (nguoiDung && t.dataset.veTra != null) moTraSao(t.dataset.tim || "", +t.dataset.veTra);
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.22.1";
+const PHIEN_BAN = "1.22.2";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -212,7 +219,7 @@ function hienHuongDanLanDau() {
 }
 
 /* Bỏ ghi chú nghiên cứu (số trang, nhóm xếp trong sách) khỏi lời giải nghĩa, chỉ giữ ý nghĩa */
-function moTheSao(s, tuTra) {
+function moTheSao(s, tuTra, cuonTra) {
   const thangNay = thangAnSao(ttNgay(st.jd).am); // tháng nhuận chia đôi như khi an sao
   const an = s.an && s.an.thang ? Array.from({ length: 12 }, (_, i) => {
     const v = (s.an.thang[String(i + 1)] || []).join(", ") || "—";
@@ -234,12 +241,13 @@ function moTheSao(s, tuTra) {
     </header>
     ${tuTra ? `<div class="mn-dau"><button type="button" class="mn-lui" data-tra-lai>‹ Danh sách sao</button></div>` : ""}`);
   if (cu) el.dataset.tim = cu;
+  if (tuTra) el.dataset.veTra = cuonTra || 0;
 }
 
 /* Tra cứu: danh sách trên trang sổ (cùng khuôn dòng thẻ Nhắc — luật 6), ô tìm là một dòng gạch chân,
    ba tab gạch chân Tất cả · Cát tinh · Hung tinh (luật 3). Bộ lọc nhớ trong lúc tấm còn mở. */
 let locSao = "tat";
-function moTraSao(tim) {
+function moTraSao(tim, cuon) {
   const el = moTam(`<ul class="tra-ds"></ul>`, "lop-tra", `
     <header class="tra-dau"><h3>Tra cứu sao Ngọc Hạp</h3><p>${CSDL.sao.length} sao · theo Ngọc Hạp Thông Thư</p>
       <label class="tra-tim">${ic("tim")}<input type="search" class="tra-o" placeholder="Gõ tên sao, ví dụ: thiên đức" aria-label="Tìm sao" value="${esc(tim || "")}" /></label>
@@ -259,6 +267,7 @@ function moTraSao(tim) {
   };
   loc.addEventListener("click", e => { const b = e.target.closest("[data-loc-sao]"); if (b) { locSao = b.dataset.locSao; ve2(); } });
   o.addEventListener("input", ve2); ve2();
+  if (cuon) el.querySelector(".tam-cuon").scrollTop = cuon;
 }
 
 document.addEventListener("click", e => {
