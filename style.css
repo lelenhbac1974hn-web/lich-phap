@@ -813,7 +813,13 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   /* Mục Giờ: tờ giấy phủ hết phần màn hình còn lại, nội dung bám mép trên để mặt giờ không xê dịch khi đổi giờ */
   body[data-tab="luan"][data-trang-luan="gio"] #mat-gio{display:flex;flex:1 0 auto;justify-content:flex-start}
   body[data-tab="luan"] #luan-tab{display:flex}
-  body[data-tab="tim"] #tim-ngay{display:block}
+  /* Dữ liệu dài chỉ cuộn phần dữ liệu (luật đã chốt): đầu tờ, bộ lọc, dòng tổng đứng yên; chỉ danh sách ngày cuộn */
+  body[data-tab="tim"] #tim-ngay{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:hidden}
+  #tim-ngay>*{flex:none}
+  #tim-ngay>.tn-ds{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  /* Luận giải: tab Luận ngày · Giờ và xuất hành dính trên cùng khi cuộn */
+  body[data-tab="luan"] #luan-tab{position:sticky;top:-2px;z-index:5;background:var(--giay);padding-top:2px}
+  body[data-tab="luan"] #phan-dinh>.tg-dau{position:sticky;top:38px;z-index:4;background:var(--the)}
   body[data-tab="thang"] #lich-thang{display:block;touch-action:pan-y}
   body[data-tab="luan"]:not([data-trang-luan="gio"]) #phan-dinh,body[data-tab="luan"]:not([data-trang-luan="gio"]) #ngoc-hap{display:block}
   /* Mục Nhắc gói trong một màn hình: phần đầu cố định, chỉ danh sách cuộn (gần nhất ở trên) */
@@ -1210,8 +1216,8 @@ html[data-ao="hien-dai"][data-toi]{
 .tn-goi u{text-decoration:none;color:var(--chinh-dam);font-weight:600}
 .tn-rong{margin:0 16px 16px;font-size:13px;color:var(--muc-3)}
 /* Danh sách ngày: trang sổ, nhóm theo tháng; chạm một dòng mở tờ lịch ngày đó */
-.tn-ds{list-style:none;margin:0;padding:0;position:relative;border-top:1px solid var(--vien)}
-.tn-ds::before{content:"";position:absolute;top:0;bottom:0;left:66px;width:3px;border-left:1px solid var(--le-so);border-right:1px solid var(--le-so);pointer-events:none}
+.tn-ds{list-style:none;margin:0;padding:0;position:relative;border-top:1px solid var(--vien);
+  background:linear-gradient(to right,transparent 66px,var(--le-so) 66px 67px,transparent 67px 68px,var(--le-so) 68px 69px,transparent 69px) local}
 .tn-td{padding:10px 16px 3px 80px;font-size:13px;font-weight:600;color:var(--chu-so);border-bottom:1px solid var(--gach-so)}
 .tn-dong{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:0 12px;align-items:center;min-height:60px;padding:8px 14px 8px 12px;border-bottom:1px solid var(--gach-so);cursor:pointer;-webkit-tap-highlight-color:transparent;outline:0}
 .tn-dong:active{background:color-mix(in srgb,var(--chinh) 9%,transparent)}
