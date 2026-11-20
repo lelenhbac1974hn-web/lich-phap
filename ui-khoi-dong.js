@@ -26,6 +26,8 @@ function ve() {
   veMatGio(x);
   veLichThang(x);
   veNgocHap(x);
+  /* Tìm ngày: tính khi đang mở thẻ đó (điện thoại) hoặc trên màn rộng (mọi mục cùng hiện) */
+  if (document.body.dataset.tab === "tim" || window.matchMedia("(min-width:761px)").matches) veTimNgay();
   veNhac();
   veViec();
   capNhatDemTab();
@@ -76,7 +78,19 @@ function ganVuotThang() {
 }
 
 /* ── Sự kiện ── */
+document.addEventListener("keydown", e => { const d = e.target.closest && e.target.closest(".tn-dong"); if (d && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); d.click(); } });
+/* Luận giải có hai trang: Luận ngày · Giờ và xuất hành */
+function doiLuan(t) {
+  document.body.dataset.trangLuan = t === "gio" ? "gio" : "ngay";
+  document.querySelectorAll("#luan-tab [data-luan]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.luan === document.body.dataset.trangLuan)));
+  $("khung").scrollTop = 0;
+}
+doiLuan("ngay");
 document.addEventListener("click", e => {
+  const lt = e.target.closest("[data-luan]");
+  if (lt) { doiLuan(lt.dataset.luan); return; }
+  const tk = e.target.closest("[data-tim-khoang],[data-tim-muc]");
+  if (tk) { if (tk.dataset.timKhoang) st.timKhoang = +tk.dataset.timKhoang; if (tk.dataset.timMuc) st.timMuc = +tk.dataset.timMuc; veTimNgay(); return; }
   const k = e.target.closest("[data-kieu]");
   if (k) {
     st.kieu = k.dataset.kieu === "sao" ? "sao" : "sach";

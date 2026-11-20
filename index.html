@@ -52,6 +52,11 @@
   <button class="tom-tat" id="tom-tat" type="button" data-tab="luan" aria-label="Xem luận giải chi tiết"></button>
 
   <section class="cot-phai">
+    <!-- Luận giải có hai trang: Luận ngày (hai tờ) · Giờ và xuất hành (mặt giờ) -->
+    <nav class="luan-tab" id="luan-tab" role="tablist" aria-label="Luận giải">
+      <button type="button" role="tab" data-luan="ngay" aria-selected="true">Luận ngày</button>
+      <button type="button" role="tab" data-luan="gio" aria-selected="false">Giờ và xuất hành</button>
+    </nav>
     <div class="hang-doi">
       <div class="the to-giay the-phan-dinh" id="phan-dinh"></div>
       <div class="the to-giay the-gio" id="mat-gio"></div>
@@ -62,6 +67,8 @@
     <section class="the the-thang" id="lich-thang"></section>
     <section class="the to-giay the-sao" id="ngoc-hap"></section>
   </div>
+
+  <section class="the to-giay the-tim" id="tim-ngay" aria-label="Tìm ngày tốt"></section>
 
   <section class="the the-nhac" id="nhac" data-trang="viec">
     <div class="nhac-dau">
@@ -149,12 +156,12 @@
   <button class="tab" type="button" role="tab" data-tab="ngay" aria-selected="true">
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/><path d="M10.5 13.2l1.7-1v5"/></svg>
     <span>Ngày</span></button>
-  <button class="tab" type="button" role="tab" data-tab="gio" aria-selected="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
-    <span>Giờ</span></button>
   <button class="tab" type="button" role="tab" data-tab="thang" aria-selected="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/></svg>
     <span>Tháng</span></button>
+  <button class="tab" type="button" role="tab" data-tab="tim" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="13" height="13" rx="2"/><path d="M3.5 9h13M7 3v4M13 3v4"/><circle cx="16.5" cy="16.5" r="3.6"/><path d="M19.2 19.2l2.3 2.3"/></svg>
+    <span>Tìm ngày</span></button>
   <button class="tab" type="button" role="tab" data-tab="luan" aria-selected="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.5 6.9 19.3 8 13.5l-4.3-4 5.8-.7z"/></svg>
     <span>Luận giải</span></button>

@@ -807,13 +807,15 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
     display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:2px 14px 10px;scrollbar-width:none}
   .khung::-webkit-scrollbar{display:none}
   .cot-phai,.hang-doi,.hang-duoi{display:contents}
-  #to-lich,#tom-tat,#phan-dinh,#mat-gio,#lich-thang,#ngoc-hap,#nhac{display:none;flex:none}
+  #to-lich,#tom-tat,#phan-dinh,#mat-gio,#lich-thang,#ngoc-hap,#nhac,#tim-ngay,#luan-tab{display:none;flex:none}
   body[data-tab="ngay"] #to-lich{display:flex;flex:1 1 0;min-height:330px}
   body[data-tab="ngay"] #tom-tat{display:grid}
   /* Mục Giờ: tờ giấy phủ hết phần màn hình còn lại, nội dung bám mép trên để mặt giờ không xê dịch khi đổi giờ */
-  body[data-tab="gio"] #mat-gio{display:flex;flex:1 0 auto;justify-content:flex-start}
+  body[data-tab="luan"][data-trang-luan="gio"] #mat-gio{display:flex;flex:1 0 auto;justify-content:flex-start}
+  body[data-tab="luan"] #luan-tab{display:flex}
+  body[data-tab="tim"] #tim-ngay{display:block}
   body[data-tab="thang"] #lich-thang{display:block;touch-action:pan-y}
-  body[data-tab="luan"] #phan-dinh,body[data-tab="luan"] #ngoc-hap{display:block}
+  body[data-tab="luan"]:not([data-trang-luan="gio"]) #phan-dinh,body[data-tab="luan"]:not([data-trang-luan="gio"]) #ngoc-hap{display:block}
   /* Mục Nhắc gói trong một màn hình: phần đầu cố định, chỉ danh sách cuộn (gần nhất ở trên) */
   body[data-tab="nhac"] #nhac{display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:hidden}
   #nhac .nhac-dau,#nhac .nhac-tep{flex:none}
@@ -829,7 +831,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   .trang-lap .nhac-mo-ta{display:none}
 
   /* Nội dung tràn vào mềm như nước */
-  #to-lich,#tom-tat,#phan-dinh,#mat-gio,#lich-thang,#ngoc-hap,#nhac{animation:nuoc-vao .5s cubic-bezier(.22,1,.36,1) both}
+  #to-lich,#tom-tat,#phan-dinh,#mat-gio,#lich-thang,#ngoc-hap,#nhac,#tim-ngay{animation:nuoc-vao .5s cubic-bezier(.22,1,.36,1) both}
   #tom-tat{animation-delay:.06s}
   #ngoc-hap{animation-delay:.12s}
   @keyframes nuoc-vao{
@@ -892,7 +894,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   .tom-tat .pd-thang i.dang{height:7px;margin-top:-1px}
 
   /* Mục Giờ */
-  .the-gio .dia{max-width:min(320px,calc(var(--cao,100vh) - 485px))}
+  .the-gio .dia{max-width:min(320px,calc(var(--cao,100vh) - 560px))}
   .gio-chi-tiet{margin-top:10px;padding-top:8px}
   .gio-chi-tiet p{margin-top:4px;font-size:12.5px}
   .the-gio .pd-ba{margin-top:10px;padding-top:8px}
@@ -1186,3 +1188,44 @@ html[data-ao="hien-dai"][data-toi]{
 .mn-mau{margin-left:auto;display:flex;gap:3px;flex:none}
 .mn-mau i{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
 .mn-ghi{font-size:12.5px!important;color:var(--muc-3)!important;margin:0 0 6px!important}
+
+/* ═════════ LUẬN GIẢI: HAI TRANG (1.26.0) ═════════ */
+/* Tab gạch chân trên đầu Luận giải (chỉ điện thoại; màn rộng hiện cả hai) */
+.luan-tab{display:none;gap:22px;border-bottom:1px solid var(--vien);margin:0 2px}
+.luan-tab button{position:relative;border:0;background:none;padding:6px 0 9px;font:500 15px var(--chu);color:var(--muc-3);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.luan-tab button[aria-selected="true"]{color:var(--muc);font-weight:700}
+.luan-tab button[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--chinh)}
+/* Khởi giờ: giờ Tý đầu ngày theo can ngày (Thông Thư tr.82) */
+.gio-khoi{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 10px;margin:10px 0 0;padding-top:8px;border-top:1px dashed var(--vien);font-size:12.5px;color:var(--muc-3)}
+.gio-khoi b{font-size:15px;color:var(--muc)}
+.gio-khoi em{font-style:normal}
+
+/* ═════════ TÌM NGÀY TỐT (1.26.0) ═════════ */
+.the-tim{grid-column:1/-1}
+.tn-ten{font-size:16px;font-weight:700;margin:0 auto 0 0;padding-bottom:9px;white-space:nowrap}
+.tn-loc{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px 6px;align-items:center;padding:12px 16px 4px;font-size:12px;color:var(--muc-3)}
+.tn-tom{margin:8px 16px 0;padding:8px 0;border-top:1px dashed var(--vien);font-size:13px;color:var(--muc-2)}
+.tn-tom b{color:var(--muc)}
+.tn-goi{display:block;width:calc(100% - 32px);margin:0 16px 10px;padding:7px 10px;border:0;border-left:3px solid var(--vang);background:var(--vang-nen);text-align:left;font:500 12.5px/1.45 var(--chu);color:var(--vang-dam);cursor:pointer}
+.tn-goi u{text-decoration:none;color:var(--chinh-dam);font-weight:600}
+.tn-rong{margin:0 16px 16px;font-size:13px;color:var(--muc-3)}
+/* Danh sách ngày: trang sổ, nhóm theo tháng; chạm một dòng mở tờ lịch ngày đó */
+.tn-ds{list-style:none;margin:0;padding:0;position:relative;border-top:1px solid var(--vien)}
+.tn-ds::before{content:"";position:absolute;top:0;bottom:0;left:66px;width:3px;border-left:1px solid var(--le-so);border-right:1px solid var(--le-so);pointer-events:none}
+.tn-td{padding:10px 16px 3px 80px;font-size:13px;font-weight:600;color:var(--chu-so);border-bottom:1px solid var(--gach-so)}
+.tn-dong{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:0 12px;align-items:center;min-height:60px;padding:8px 14px 8px 12px;border-bottom:1px solid var(--gach-so);cursor:pointer;-webkit-tap-highlight-color:transparent;outline:0}
+.tn-dong:active{background:color-mix(in srgb,var(--chinh) 9%,transparent)}
+.tn-dong.sang{background:var(--chinh-nhat)}
+.tn-dong:focus-visible{box-shadow:inset 0 0 0 2px var(--chinh)}
+.tn-so{text-align:center;line-height:1}
+.tn-so b{display:block;font:700 26px/1 var(--so)}
+.tn-so small{font-size:12px;color:var(--muc-3)}
+.tn-so.cn b{color:var(--do-nghi)}
+.tn-nd{min-width:0}
+.tn-nd b{display:block;font-size:14px;font-weight:600}
+.tn-nd span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12.5px;color:var(--muc-2);line-height:1.35;margin-top:1px}
+.tn-nd em{display:block;font-style:normal;font-size:12px;color:var(--vang-dam);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tn-muc{--m:var(--b3);font-size:12.5px;font-weight:700;color:var(--m);text-align:right;white-space:nowrap}
+.tn-muc.b4{--m:var(--b4)}.tn-muc.b2{--m:var(--b2)}
+.tn-muc i{display:block;width:44px;height:4px;border-radius:2px;background:var(--m);margin:4px 0 0 auto}
+@media (max-width:760px){.tn-loc{padding:10px 16px 2px}}

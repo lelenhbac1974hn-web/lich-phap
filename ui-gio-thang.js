@@ -193,6 +193,7 @@ function veMatGio(x) {
       <div><small>Tài thần</small><b>${TAI_THAN[canNgay]}</b></div>
       <div><small>Ngày xung</small><b>${CHI[(chiNgay + 6) % 12]}</b></div>
     </div>
+    <p class="gio-khoi"><span>Khởi giờ</span><b>${CAN[(canNgay * 2) % 10]} Tý</b><em>ngày ${CAN[canNgay % 5]}, ${CAN[canNgay % 5 + 5]} khởi giờ ${CAN[(canNgay * 2) % 10]} Tý</em></p>
     <div class="gio-chi-tiet ${chon.hd ? "hd" : "hac"}">
       <div class="gct-dau">
         <b>Giờ ${chon.can} ${chon.chi}</b><em>${chon.hd ? "Hoàng đạo" : "Hắc đạo"}</em>
@@ -203,6 +204,63 @@ function veMatGio(x) {
       ${laHomNay && chon.i !== gioNay ? `<button type="button" class="gct-bay" data-gio="${gioNay}">${ic("dongHo")}Về giờ hiện tại · ${hai(bay.getHours())}:${hai(bay.getMinutes())} giờ ${gio[gioNay].chi}</button>` : ""}
     </div>
     </div>`;
+}
+
+/* Khởi giờ (giờ Tý đầu ngày) theo can ngày — Thông Thư tr.82 "Định can giờ":
+   Giáp Kỷ khởi Giáp Tý · Ất Canh khởi Bính Tý · Bính Tân khởi Mậu Tý · Đinh Nhâm khởi Canh Tý · Mậu Quý khởi Nhâm Tý
+   (cùng công thức can giờ trong gioChiTiet: CAN[(canNgay*2 + i) % 10]). */
+
+/* ── Tìm ngày tốt (thẻ Tìm ngày, anh Bắc duyệt mẫu 21/11/2026) ──
+   Từ hôm nay, trong khoảng chọn; mức theo kiểu luận đang chọn (Theo sách / Cộng sao) và việc đang chọn ở dải trên cùng. */
+const KHOANG_TIM = [[31, "1 tháng"], [92, "3 tháng"], [183, "6 tháng"], [365, "1 năm"]];
+function locNgayTot(tu, soNgay, viec, muc) {
+  const r = [];
+  for (let j = tu; j < tu + soNgay; j++) { const a = amCuaJd(j), b = bacTheoKieu(j, a, viec); if (b >= muc) r.push({ j, a, b }); }
+  return r;
+}
+const gonLy = s => boTrang(s).replace(/\s*\([^)]*\)/g, "").replace(/^Sao tốt hợp việc:\s*/, "").trim();
+/* Điều tốt chính và lưu ý (điều kiêng còn lại) của một ngày đạt mức */
+function lyDoTim(j, a, viec) {
+  if (st.kieu === "sach") {
+    const ls = luanTheoSach(j, a, viec);
+    const luu = ls.kieng.map(m => m.sao ? gonLy(m.t).replace(/^Sao xấu kỵ việc này:\s*/, "sao ") + " kỵ việc này" : gonLy(m.t));
+    return { tot: [...new Set(ls.tot.map(m => gonLy(m.t)))].join(" · "), luu: [...new Set(luu)].join(" · ") };
+  }
+  const cd = chamDiem(j, a, viec);
+  return { tot: [...new Set(cd.cong)].join(" · "), luu: [...new Set(cd.tru)].join(" · ") };
+}
+function veTimNgay() {
+  const el = $("tim-ngay");
+  if (!el) return;
+  const viec = VIEC.find(v => v.id === st.viec) || VIEC[0], hom = jdHomNay();
+  const kh = st.timKhoang || 92, muc = st.timMuc || 3;
+  const ds = locNgayTot(hom, kh, viec.id, muc);
+  const ngayVN = j => { const [d, m, y] = jdToDate(j); return `${hai(d)}/${hai(m)}/${y}`; };
+  const chip = (attr, gt, hien, chu) => `<button type="button" class="c${gt === hien ? " chon" : ""}" ${attr}="${gt}">${chu}</button>`;
+  /* Ít hơn 3 ngày: gợi ý khoảng dài hơn kế tiếp có thêm ngày */
+  let goiY = "";
+  if (ds.length < 3) {
+    const sau = KHOANG_TIM.find(([n]) => n > kh);
+    if (sau) { const so = locNgayTot(hom, sau[0], viec.id, muc).length; if (so > ds.length) goiY = `<button type="button" class="tn-goi" data-tim-khoang="${sau[0]}">${esc(viec.ten)} ít ngày hợp. <u>Xem ${sau[1]} tới: ${so} ngày ›</u></button>`; }
+  }
+  let thangTruoc = "", dong = "";
+  ds.forEach(({ j, a, b }) => {
+    const [d, m, y] = jdToDate(j), k = j - hom, thu = thuCuaJd(j), ld = lyDoTim(j, a, viec.id);
+    if (`${m}/${y}` !== thangTruoc) { thangTruoc = `${m}/${y}`; dong += `<li class="tn-td">Tháng ${m} · ${y}</li>`; }
+    dong += `<li class="tn-dong${j === st.jd ? " sang" : ""}" data-jd="${j}" tabindex="0" title="Mở tờ lịch ngày ${ngayVN(j)}">
+      <span class="tn-so${thu === 0 ? " cn" : ""}"><b>${d}</b><small>${THU_NGAN[thu]}</small></span>
+      <span class="tn-nd"><b>${k === 0 ? "Hôm nay · " : k === 1 ? "Ngày mai · " : ""}${a.day}/${a.month}${a.leap ? " nhuận" : ""} âm</b>${ld.tot ? `<span>${esc(ld.tot)}</span>` : ""}${ld.luu ? `<em>Lưu ý: ${esc(ld.luu)}</em>` : ""}</span>
+      <span class="tn-muc ${BAC_UI[b].lop}">${BAC_UI[b].t}<i></i></span></li>`;
+  });
+  el.innerHTML = `
+    <div class="tg-dau pd-dau"><h3 class="tn-ten">Tìm ngày tốt</h3>${nutKieu()}</div>
+    <div class="tn-loc">
+      <span>Trong</span><div class="sx-chip">${KHOANG_TIM.map(([n, t]) => chip("data-tim-khoang", n, kh, t)).join("")}</div>
+      <span>Mức</span><div class="sx-chip">${chip("data-tim-muc", 3, muc, "Tốt trở lên")}${chip("data-tim-muc", 4, muc, "Chỉ Rất tốt")}</div>
+    </div>
+    <p class="tn-tom"><b>${ds.length} ngày</b> hợp ${esc(viec.ten)} từ ${ngayVN(hom)} đến ${ngayVN(hom + kh - 1)}</p>
+    ${goiY}
+    ${ds.length ? `<ul class="tn-ds">${dong}</ul>` : `<p class="tn-rong">Không có ngày nào đạt mức này trong khoảng đã chọn.</p>`}`;
 }
 
 /* ── Lịch tháng ── */

@@ -121,7 +121,7 @@ function svgTrang(ngayAm, co) {
 }
 
 /* ── Chuyển mục bằng thanh menu chạm ── */
-const TAB = ["ngay", "gio", "thang", "luan", "nhac"];
+const TAB = ["ngay", "thang", "tim", "luan", "nhac"];
 function doiTab(t) {
   const cu = TAB.indexOf(document.body.dataset.tab), moi = TAB.indexOf(t);
   if (moi < 0 || moi === cu) return;
@@ -131,6 +131,7 @@ function doiTab(t) {
   document.querySelectorAll("#thanh-tab .tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
   $("khung").scrollTop = 0;
   if (t === "ngay") requestAnimationFrame(xepNhan);
+  if (t === "tim") veTimNgay();
 }
 /* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */
 /* Chiều cao màn hình chuẩn.
