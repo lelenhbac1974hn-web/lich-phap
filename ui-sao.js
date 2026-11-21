@@ -67,16 +67,17 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.26.1";
+const PHIEN_BAN = "1.27.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
   { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "hien-dai": "Hiện đại" })[layAo()]} · ${layAo() === "hien-dai" ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}` },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
+  { id: "nguyen-tac", bieu: "sao", ten: "Nguyên tắc xem ngày", phu: () => "Dòng sách, thứ tự xem, điều cần biết" },
   { id: "can-cu", bieu: "taiLieu", ten: "Căn cứ và tài liệu", phu: () => "Lịch pháp, sao Ngọc Hạp, sách tham khảo" },
   { id: "nang-cao", bieu: "khoa", ten: "Lớp nâng cao", phu: () => moKhoaNC() ? "Đã mở · cưới hỏi, nhập trạch theo tuổi" : "Mở bằng mã tác giả cấp" },
-  { id: "ban-quyen", bieu: "hopDong", ten: "Bản quyền", phu: () => "Tặng miễn phí cho mọi người" }
+  { id: "ban-quyen", bieu: "hopDong", ten: "Bản quyền", phu: () => "Tặng miễn phí cho mọi người · miễn trừ trách nhiệm" }
 ];
 function trangMenu(id) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
@@ -127,6 +128,25 @@ function trangMenu(id) {
           <li>Không phạm kiêng thì xét <b>điều tốt</b>: ngày hoàng đạo, trực tốt (Kiến, Mãn, Bình, Định, Chấp, Thành), sao tốt hợp việc, quy tắc tốt theo việc (Tạo ốc, Lộc mã, Thiên thành…). Có Giải thần thì giải được sao xấu; sao xấu nhẹ được nhiều sao tốt gánh đỡ.</li>
         </ol>
         <p>Theo sách thì rất khắt khe: khoảng sáu phần mười số ngày trong năm là ngày kiêng cho việc chung — đúng như lời sách. Riêng ba mức không phạm kiêng (Bình thường, Tốt, Rất tốt) là cách chia của chương trình dựa trên các điều tốt sách nêu. Các quy tắc theo tuổi người, theo giờ, cưới hỏi, an táng đã có trong cơ sở tri thức nhưng chưa đưa vào luận ngày.</p></section>`,
+    /* Tổng hợp từ báo cáo nghiên cứu trạch nhật 21/11/2026 (tai-lieu/nghien-cuu-trach-nhat/BAO-CAO.md) */
+    "nguyen-tac": `<section><h4>Chương trình theo dòng sách nào</h4>
+        <p>Lịch Pháp theo dòng <b>Ngọc hạp</b>, dòng sách xem ngày quen dùng nhất ở Việt Nam: bảng sao tốt xấu theo tháng, mười hai trực, hoàng đạo hắc đạo và các ngày kỵ tính theo ngày âm. Chương trình giữ một dòng, không trộn sao của hệ khác.</p>
+        <p>Các sách xem ngày xưa nay vốn không thống nhất. Sử ký chép đời Hán bảy nhà cùng xem một ngày cưới mà ra bảy kết quả. Sách lịch của triều Thanh, Hiệp kỷ biện phương thư (1739), còn bác một số phép của dòng Ngọc hạp như Dương công kỵ, tháng đại lợi cưới gả. Vì vậy cùng một ngày, lịch khác có thể ghi khác; đó là khác dòng sách, không hẳn là bên nào tính sai.</p></section>
+      <section><h4>Thứ tự xem một ngày</h4><ol>
+        <li><b>Việc gì, của ai.</b> Mỗi việc có sao nên, sao kỵ riêng; tuổi người chủ sự cũng cần biết.</li>
+        <li><b>Xét năm theo tuổi</b> với việc lớn: làm nhà xét Kim lâu, Hoang ốc, Tam tai; cưới xét tháng đại lợi. Đây là hỏi “năm ấy có nên làm không”, khác với chọn ngày.</li>
+        <li><b>Bỏ ngày đại kỵ:</b> Thụ tử, Sát chủ, Tam nương, Nguyệt kỵ, Dương công kỵ, ngày con nước. Sách dạy sao tốt không cứu được.</li>
+        <li><b>Bỏ ngày xung tuổi</b> người chủ sự.</li>
+        <li><b>Xét trực và sao theo việc.</b> Sao xấu nhẹ có nhiều sao tốt cùng ngày thì vẫn dùng được.</li>
+        <li><b>Chọn giờ.</b> Giờ hoàng đạo; đi xa xem thêm giờ đón đi và hướng Hỷ thần, Tài thần.</li></ol>
+        <p>Hai bước đầu chương trình không tự biết thay bạn; từ bước ba trở đi là phần chương trình tính ở các thẻ Luận giải và Tìm ngày. Xét theo tuổi có ở Lớp nâng cao.</p></section>
+      <section><h4>Mấy nguyên lý</h4><ul>
+        <li><b>Hai cách tính tháng.</b> Sao và thần ngày tra theo tháng âm; trực, Tứ ly, Tứ tuyệt theo tiết khí. Đầu và cuối tháng âm vì thế có ngày lịch khác ghi sao khác.</li>
+        <li><b>Ngày kỵ theo ngày âm</b> (Nguyệt kỵ mồng 5, 14, 23; Tam nương; Dương công kỵ) đếm theo số ngày trong tháng, không theo can chi.</li>
+        <li><b>Năm không bằng tháng, tháng không bằng ngày, ngày không bằng giờ.</b> Ngày chưa thật đẹp thì chọn giờ tốt để bù.</li>
+        <li><b>Âm lịch Việt Nam</b> tính theo giờ Việt Nam nên có năm lệch lịch Trung Quốc: Tết Ất Sửu 1985 hai nước cách nhau một tháng. Lịch dịch thẳng từ sách Trung Quốc có thể sai ngày.</li></ul></section>
+      <section><h4>Điều cần biết</h4>
+        <p>Xem ngày là nếp văn hoá để người làm việc lớn được yên tâm, không phải phép bảo đảm thành bại. Phan Kế Bính viết trong Việt Nam phong tục (1915) rằng việc thành hay bại “cốt do ở người”. Nhà Phật cũng dạy không có ngày tự nó tốt hay xấu. Chương trình nêu lý do của từng ngày bằng lời để bạn tự cân nhắc.</p></section>`,
     "can-cu": `<section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
         <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
       <section><h4>Căn cứ xem sao</h4>
@@ -138,12 +158,20 @@ function trangMenu(id) {
         <li>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký (bản khắc chữ Hán) — bảng sao tốt, sao xấu 12 tháng.</li>
         <li>Ngọc Hạp Chánh Tông (Viên Tài Hà Tấn Phát) — cưới gả, làm nhà, quy tắc tháng nhuận.</li>
         <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.</li>
+        <li>Hiệp kỷ biện phương thư (1739), Sử ký quyển 127, Phan Kế Bính “Việt Nam phong tục” (1915) — đọc để hiểu các dòng sách xem ngày; không dùng để an sao.</li>
         <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
         <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>`,
     "nang-cao": trangNangCao(),
     "ban-quyen": `<section><h4>Bản quyền</h4>
         <p>Lịch Pháp được tặng <b>miễn phí</b> cho mọi người. Bản chính thức duy nhất ở địa chỉ <b>lelenhbac1974hn-web.github.io/lich-phap</b>. Nếu bạn phải trả tiền, hoặc thấy ứng dụng này trên chợ ứng dụng (App Store, Google Play…), đó là bản sao trái phép.</p>
         <p>Mọi người được dùng, chia sẻ đường dẫn và xem mã để học hỏi. Không được đưa lên chợ ứng dụng, bán, gắn quảng cáo hay phát hành lại dưới tên khác khi chưa có đồng ý của tác giả.</p></section>
+      <section id="gt-mien-tru"><h4>Miễn trừ trách nhiệm</h4><ol>
+        <li><b>Nội dung xem ngày để tham khảo.</b> Sao tốt xấu, luận ngày, giờ tốt, hướng xuất hành được tổng hợp từ sách xem ngày cổ truyền (Ngọc Hạp Thông Thư và các sách ghi ở mục Căn cứ và tài liệu). Đây là tri thức văn hoá dân gian, không phải kết luận khoa học, và không thay cho ý kiến của người có chuyên môn về pháp lý, tài chính, sức khoẻ, xây dựng hay bất kỳ lĩnh vực nào.</li>
+        <li><b>Quyết định là của bạn.</b> Tác giả không chịu trách nhiệm về quyết định bạn đưa ra, cũng như mọi thiệt hại, tổn thất trực tiếp hay gián tiếp phát sinh từ việc dùng hoặc tin theo nội dung của chương trình.</li>
+        <li><b>Âm lịch tính bằng thuật toán.</b> Âm lịch, can chi, tiết khí đã được kiểm thử nhưng không bảo đảm tuyệt đối đúng ở mọi ngày. Với ngày lễ, ngày giỗ, ngày hệ trọng, nên đối chiếu thêm lịch do cơ quan có thẩm quyền ban hành.</li>
+        <li><b>Nhắc việc có giới hạn.</b> Chương trình chỉ báo đúng giờ khi đang mở; khi tắt, báo tuỳ vào trình duyệt và điện thoại. Đừng dùng thay báo thức hay lịch hẹn quan trọng. Dữ liệu nhắc việc chỉ lưu trong máy của bạn và có thể mất khi xoá dữ liệu trình duyệt, đổi máy hay cài lại; nên dùng “Xuất ra tệp” ở thẻ Nhắc để sao lưu. Tác giả không chịu trách nhiệm khi bị lỡ việc hay mất dữ liệu.</li>
+        <li><b>Cung cấp nguyên trạng.</b> Chương trình được tặng miễn phí, như hiện có, không kèm bảo hành nào. Tác giả có thể sửa, đổi hay ngừng chương trình mà không báo trước.</li></ol>
+        <p>Dùng chương trình nghĩa là bạn đồng ý với các điều trên.</p></section>
       <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc · Bảo lưu mọi quyền<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>`
   }[id] || "";
 }

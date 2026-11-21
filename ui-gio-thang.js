@@ -121,6 +121,20 @@ const Y_THAN = {
 const HY_THAN = ["Đông Bắc", "Tây Bắc", "Tây Nam", "Chính Nam", "Đông Nam", "Đông Bắc", "Tây Bắc", "Tây Nam", "Chính Nam", "Đông Nam"];
 const TAI_THAN = ["Đông Nam", "Đông Nam", "Chính Đông", "Chính Đông", "Chính Bắc", "Chính Nam", "Tây Nam", "Tây Nam", "Chính Tây", "Tây Bắc"];
 
+/* Đón giờ đi — Thông Thư tr.117–119 ("Lục nhâm đại độn"); cùng phép với 李淳風六壬時課 (HN01 q.5 tờ 86–87).
+   Từ Đại an khởi tháng giêng, trên tháng khởi mồng một, trên ngày khởi giờ Tý; mỗi bước một cung.
+   Sách không nói tháng nhuận: anh Bắc chốt 21/11/2026 lấy số tháng của tháng trước nó (a.month).
+   Ngày tính từ đầu giờ Tý (23 giờ) như can chi — Thông Thư tr.159. Lời quẻ: lục bát Thông Thư tr.117–119. */
+const LUC_NHAM = [
+  { t: "Đại an", tot: 1, y: ["Đại an gặp được quý nhân", "Có cơm có rượu có tiền tiễn đưa", "Chẳng thời cũng được đại an", "Bình an vô sự tâm thân thanh nhàn"] },
+  { t: "Lưu liên", tot: 0, y: ["Lưu liên là chuyện bất thường", "Tìm bạn chẳng thấy nửa đường phân ly", "Không thì lưu lạc một khi", "Nhiều đường trắc trở nhiều khi nhọc nhằn"] },
+  { t: "Tốc hỷ", tot: 1, y: ["Tốc hỷ là bạn trùng phùng", "Gặp trùng gặp bạn vợ chồng sánh đôi", "Có tài có lộc hẳn hoi", "Cầu gì cũng được mừng vui thỏa lòng"] },
+  { t: "Xích khẩu", tot: 0, y: ["Xích khẩu là quá bần cùng", "Sinh ra khẩu thiệt bạn cùng thị phi", "Chẳng thời mất của có khi", "Không thì chó cắn phân ly vợ chồng"] },
+  { t: "Tiểu cát", tot: 1, y: ["Tiểu cát gặp hội thanh long", "Cầu tài cầu lộc ở trong quẻ này", "Cầu gì toại ý vui vầy", "Bình an vô sự gặp thầy, gặp quen"] },
+  { t: "Không vong", tot: 0, y: ["Không vong gặp quẻ khẩn cần", "Bệnh tật khẩu thiệt chẳng làm được chi", "Không thì ốm tiểu thê nhi", "Không thì trộm cắp phân ly bất thường"] }
+];
+const lucNham = (a, gio) => LUC_NHAM[(a.month - 1 + a.day - 1 + gio) % 6];
+
 function gioChiTiet(j) {
   const canNgay = (j + 9) % 10, chiNgay = (j + 1) % 12, dau = khoiDau(chiNgay);
   return CHI.map((chi, i) => {
@@ -174,6 +188,9 @@ function veMatGio(x) {
   const tamTren = laHomNay ? `${hai(bay.getHours())}:${hai(bay.getMinutes())}` : tot.length;
   const tamDuoi = laHomNay ? `giờ ${gio[gioNay].chi}` : "giờ tốt";
   const canNgay = (jG + 9) % 10, chiNgay = (jG + 1) % 12;
+  const aG = amCuaJd(jG), donChon = lucNham(aG, chon.i);
+  const donTot = [0, 1, 2, 3, 4, 5].filter(i => lucNham(aG, i).tot)
+    .map(i => `<div><small>${lucNham(aG, i).t}</small><b>${CHI[i]} · ${CHI[i + 6]}</b></div>`).join("");
   /* Một tờ giấy: mặt giờ ở trên (đứng yên), dưới là hướng của ngày (cố định) rồi chi tiết giờ đang chọn (dài ngắn tuỳ giờ) */
   $("mat-gio").innerHTML = `
     <div class="tg-dau"><h3>Giờ trong ngày</h3><span class="tg-dau-phu">${jG !== x.j ? "Từ 23 giờ sang ngày" : "Ngày"} ${ccNgay(jG)} · ${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
@@ -194,6 +211,8 @@ function veMatGio(x) {
       <div><small>Ngày xung</small><b>${CHI[(chiNgay + 6) % 12]}</b></div>
     </div>
     <p class="gio-khoi"><span>Khởi giờ</span><b>${CAN[(canNgay * 2) % 10]} Tý</b><em>ngày ${CAN[canNgay % 5]}, ${CAN[canNgay % 5 + 5]} khởi giờ ${CAN[(canNgay * 2) % 10]} Tý</em></p>
+    <p class="gio-khoi gio-don"><span>Đón giờ đi</span><em>giờ tốt để xuất hành, ngày ${aG.day}/${aG.month} âm</em></p>
+    <div class="pd-ba huong don">${donTot}</div>
     <div class="gio-chi-tiet ${chon.hd ? "hd" : "hac"}">
       <div class="gct-dau">
         <b>Giờ ${chon.can} ${chon.chi}</b><em>${chon.hd ? "Hoàng đạo" : "Hắc đạo"}</em>
@@ -201,6 +220,10 @@ function veMatGio(x) {
       </div>
       <p><strong>${chon.than}</strong> — ${Y_THAN[chon.than] || ""}</p>
       <p class="gct-xung">Giờ xung tuổi <b>${chon.xung}</b></p>
+      <div class="gct-don ${donChon.tot ? "tot" : "kem"}">
+        <p><span>Đón giờ đi</span><strong>${donChon.t}</strong><em>${donChon.tot ? "Giờ tốt" : "Giờ kém"}</em></p>
+        <p class="tho">${donChon.y[0]},<br>${donChon.y[1]}.<br>${donChon.y[2]},<br>${donChon.y[3]}.</p>
+      </div>
       ${laHomNay && chon.i !== gioNay ? `<button type="button" class="gct-bay" data-gio="${gioNay}">${ic("dongHo")}Về giờ hiện tại · ${hai(bay.getHours())}:${hai(bay.getMinutes())} giờ ${gio[gioNay].chi}</button>` : ""}
     </div>
     </div>`;
