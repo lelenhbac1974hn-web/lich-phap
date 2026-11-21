@@ -67,11 +67,11 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.28.1";
+const PHIEN_BAN = "1.29.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
-  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "hien-dai": "Hiện đại" })[layAo()]} · ${layAo() === "hien-dai" ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}` },
+  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "hien-dai": "Hiện đại" })[layAo()]} · ${layAo() === "hien-dai" ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}${window.ThoiTiet && ThoiTiet.dangBat() ? " · thời tiết" : ""}` },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "nguyen-tac", bieu: "sao", ten: "Nguyên tắc xem ngày", phu: () => "Dòng sách, thứ tự xem, điều cần biết" },
@@ -103,7 +103,13 @@ function trangMenu(id) {
         ${chonTo("g", "Dòng tốt xấu ở chân tờ", "Mặc định · một hàng cuối vùng âm lịch: việc, kết quả và lý do rút gọn")}
         ${chonTo("e", "Triện tốt xấu", "Triện vuông màu theo bậc, giữa ngày âm và can chi")}
         ${chonTo("f", "Thang 5 bậc dưới tháng âm", "Kết quả kèm thang 5 bậc mảnh, ngay dưới tháng âm")}
-        ${chonTo("goc", "Tờ lịch gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới")}</section>`,
+        ${chonTo("goc", "Tờ lịch gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới")}</section>
+      <section><h4>Thời tiết</h4>
+        ${[["0", "Tắt", "Không hiện thời tiết, không dùng vị trí"], ["1", "Theo vị trí của máy", window.ThoiTiet && ThoiTiet.dangBat() ? ThoiTiet.moTa() : "Một dòng nhỏ dưới tháng âm trên tờ lịch hôm nay"]].map(([k, ten, mo]) => {
+          const dang = (window.ThoiTiet && ThoiTiet.dangBat() ? "1" : "0") === k;
+          return `<button type="button" class="mn-chon${dang ? " dang" : ""}" data-thoi-tiet="${k}" aria-pressed="${dang}"><span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
+        }).join("")}
+        <p class="mn-ghi">Bật thời tiết là cho phép dùng vị trí. Vị trí làm tròn khoảng 10 km rồi gửi tới Open-Meteo để lấy nhiệt độ, không gửi gì khác. Dữ liệu thời tiết: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).</p></section>`,
     "huong-dan": `<section><h4>Dùng nhanh</h4><ol>
         <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
         <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng rồi mở thẻ Tìm ngày; hoặc mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
@@ -111,7 +117,7 @@ function trangMenu(id) {
         <li><b>Thêm việc, ngày giỗ:</b> thẻ Nhắc → “＋ Thêm” → gõ một câu tự nhiên.</li></ol>
         <p><button type="button" class="nut nho" data-huong-dan>Xem hướng dẫn từng bước</button></p></section>`,
     ve: `<section><h4>Chương trình</h4>
-        <p>Lịch Pháp là lịch vạn niên dành cho người Việt: mỗi ngày là một tờ lịch có âm lịch, can chi, tiết khí, trực, nhị thập bát tú, giờ hoàng đạo và các sao tốt xấu theo Ngọc Hạp. Ứng dụng chạy trên trình duyệt, cài được lên màn hình iPhone/Android như một ứng dụng, dùng được khi không có mạng; mọi dữ liệu nhắc việc chỉ lưu trong máy của bạn.</p></section>
+        <p>Lịch Pháp là lịch vạn niên dành cho người Việt: mỗi ngày là một tờ lịch có âm lịch, can chi, tiết khí, trực, nhị thập bát tú, giờ hoàng đạo và các sao tốt xấu theo Ngọc Hạp. Ứng dụng chạy trên trình duyệt, cài được lên màn hình iPhone/Android như một ứng dụng, dùng được khi không có mạng; mọi dữ liệu nhắc việc chỉ lưu trong máy của bạn. Nếu bạn bật thời tiết (Menu → Giao diện), ứng dụng gửi vị trí đã làm tròn khoảng 10 km tới Open-Meteo để lấy nhiệt độ hôm nay.</p></section>
       <section><h4>Tính năng chính</h4><ul>
         <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước; lễ tết hiện trên tờ lịch kèm biểu tượng riêng, <i>chạm</i> tên lễ để đọc gốc tích, phong tục.</li>
         <li><b>Tìm ngày</b> — chọn việc ở dải trên cùng, chọn khoảng (1 tháng đến 1 năm) và mức; ứng dụng liệt kê các ngày hợp việc kèm điều tốt chính và lưu ý; chạm một ngày để mở tờ lịch.</li>
@@ -154,13 +160,22 @@ function trangMenu(id) {
         <p>Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán <b>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký</b> và bản Hán Nôm <b>Ngọc hạp toản yếu thông dụng</b> (1926). Ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.</p>
         <p><b>Tháng an sao</b>: sao và thần ngày tra theo tháng âm; trực, Tứ ly, Tứ tuyệt theo tiết khí. Tháng nhuận: 15 ngày đầu theo tháng trước, từ ngày 16 theo tháng sau (Ngọc Hạp Chánh Tông). Dương công kỵ và Thập ác đại bại theo bản chữ Hán và Chánh Tông, nơi bản dịch Thông Thư in lệch.</p></section>
       <section><h4>Tài liệu tham khảo</h4><ul>
-        <li>Ngọc Hạp Thông Thư — bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ.</li>
-        <li>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký (bản khắc chữ Hán) — bảng sao tốt, sao xấu 12 tháng.</li>
-        <li>Ngọc Hạp Chánh Tông (Viên Tài Hà Tấn Phát) — cưới gả, làm nhà, quy tắc tháng nhuận.</li>
-        <li>Ngọc hạp toản yếu thông dụng (Hán Nôm, 1926) — bảng an sao, tên sao chữ Hán.</li>
-        <li>Hiệp kỷ biện phương thư (1739), Sử ký quyển 127, Phan Kế Bính “Việt Nam phong tục” (1915) — đọc để hiểu các dòng sách xem ngày; không dùng để an sao.</li>
+        <li><b>Ngọc Hạp Thông Thư</b> <span class="ck-han">玉匣通書</span> (bản dịch Việt) — sách chính: bảng an sao 12 tháng, sao tốt, sao xấu, ngày kỵ, giờ, đón giờ đi.</li>
+        <li><b>Tân tuyên Hứa Chân Quân Ngọc hạp ký tăng bổ chư gia tuyển trạch nhật dụng thông thư</b> <span class="ck-han">新鐫許真君玉匣記增補諸家選擇日用通書</span> (bản khắc chữ Hán, 6 quyển) — đối chiếu bảng sao 12 tháng; phép đón giờ đi <span class="ck-han">李淳風六壬時課</span> ở quyển 5.</li>
+        <li><b>Ngọc hạp toản yếu thông dụng</b> <span class="ck-han">玉匣纂要通用</span> (Phúc Văn Đường khắc năm Bảo Đại nguyên niên, 1926) — đối chiếu bảng an sao, tên sao chữ Hán.</li>
+        <li><b>Ngọc Hạp Chánh Tông</b> <span class="ck-han">玉匣正宗</span> (Viên Tài Hà Tấn Phát) — cưới gả, làm nhà, quy tắc tháng nhuận.</li>
+        <li><b>Ngọc hạp ký</b> <span class="ck-han">玉匣記</span> (bản trong Tục Đạo tạng) — đối chiếu Dương công kỵ, Chu đường, Lục nhâm.</li>
+        <li><b>Khâm định Hiệp kỷ biện phương thư</b> <span class="ck-han">欽定協紀辨方書</span> (1739) và <b>Sử ký</b> <span class="ck-han">史記</span>, quyển 127 <span class="ck-han">日者列傳</span> — đọc để hiểu các dòng sách xem ngày; không dùng để an sao.</li>
+        <li>Phan Kế Bính, <b>Việt Nam phong tục</b> (1915) — thực hành xem ngày của người Việt đầu thế kỷ XX.</li>
         <li>Hồ Ngọc Đức, “Thuật toán tính âm lịch” — phần lịch pháp.</li>
-        <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>`,
+        <li>Ca dao, tục ngữ Việt Nam — câu in trên tờ lịch.</li></ul></section>
+      <section><h4>Trích dẫn nguyên văn</h4><ul>
+        <li><b>Đón giờ đi</b> — <span class="ck-han">「每從大安上起正月，月上起日，日上起時」</span>: từ cung Đại an khởi tháng Giêng, trên cung tháng khởi ngày mồng một, trên cung ngày khởi giờ Tý. (<span class="ck-han">李淳風六壬時課</span>, bản khắc quyển 5; Thông Thư tr.117–119.)</li>
+        <li><b>Dương công kỵ</b> — <span class="ck-han">「正月十三，二月十一，以至七月初一、二十九，而終于十二月十九」</span>: tháng Giêng ngày 13, tháng Hai ngày 11… tháng Bảy ngày 1 và 29, tháng Chạp ngày 19. (<span class="ck-han">協紀辨方書</span>, quyển 36; khớp <span class="ck-han">玉匣記</span>, nơi bản dịch Thông Thư in lệch.)</li>
+        <li><b>Tứ ly, Tứ tuyệt theo tiết</b> — <span class="ck-han">「四離四絶以節氣取義」</span>: Tứ ly, Tứ tuyệt lấy nghĩa theo tiết khí. (<span class="ck-han">協紀辨方書</span>, quyển 10.)</li>
+        <li><b>Chu đường cưới gả</b> — <span class="ck-han">「只論月分大小，不問節氣」</span>: chỉ xét tháng đủ thiếu, không hỏi tiết khí. (<span class="ck-han">玉匣記</span>; Thông Thư tr.87.)</li>
+        <li><b>Việc nào sao nấy</b> — <span class="ck-han">「以神為目，以事為綱」</span>: lấy việc làm cương, lấy thần sát làm mục. (<span class="ck-han">協紀辨方書</span>, quyển 11.)</li>
+        <li><b>Tháng nhuận</b> — “Những tháng Nhuần thì 15 ngày trên thuộc về Địa Chi của tháng trước, còn 15 ngày dưới thuộc về Địa Chi của tháng sau.” (Ngọc Hạp Chánh Tông tr.90.)</li></ul></section>`,
     "nang-cao": trangNangCao(),
     "ban-quyen": `<section><h4>Bản quyền</h4>
         <p>Lịch Pháp được tặng <b>miễn phí</b> cho mọi người. Bản chính thức duy nhất ở địa chỉ <b>lelenhbac1974hn-web.github.io/lich-phap</b>. Nếu bạn phải trả tiền, hoặc thấy ứng dụng này trên chợ ứng dụng (App Store, Google Play…), đó là bản sao trái phép.</p>
@@ -169,6 +184,7 @@ function trangMenu(id) {
         <li><b>Nội dung xem ngày để tham khảo.</b> Sao tốt xấu, luận ngày, giờ tốt, hướng xuất hành được tổng hợp từ sách xem ngày cổ truyền (Ngọc Hạp Thông Thư và các sách ghi ở mục Căn cứ và tài liệu). Đây là tri thức văn hoá dân gian, không phải kết luận khoa học, và không thay cho ý kiến của người có chuyên môn về pháp lý, tài chính, sức khoẻ, xây dựng hay bất kỳ lĩnh vực nào.</li>
         <li><b>Quyết định là của bạn.</b> Tác giả không chịu trách nhiệm về quyết định bạn đưa ra, cũng như mọi thiệt hại, tổn thất trực tiếp hay gián tiếp phát sinh từ việc dùng hoặc tin theo nội dung của chương trình.</li>
         <li><b>Âm lịch tính bằng thuật toán.</b> Âm lịch, can chi, tiết khí đã được kiểm thử nhưng không bảo đảm tuyệt đối đúng ở mọi ngày. Với ngày lễ, ngày giỗ, ngày hệ trọng, nên đối chiếu thêm lịch do cơ quan có thẩm quyền ban hành.</li>
+        <li><b>Thời tiết để tham khảo.</b> Nhiệt độ và tình trạng trời lấy từ Open-Meteo theo vị trí gần đúng của máy, có thể khác thực tế nơi bạn đứng. Khi cần quyết định theo thời tiết, hãy xem bản tin của cơ quan khí tượng.</li>
         <li><b>Nhắc việc có giới hạn.</b> Chương trình chỉ báo đúng giờ khi đang mở; khi tắt, báo tuỳ vào trình duyệt và điện thoại. Đừng dùng thay báo thức hay lịch hẹn quan trọng. Dữ liệu nhắc việc chỉ lưu trong máy của bạn và có thể mất khi xoá dữ liệu trình duyệt, đổi máy hay cài lại; nên dùng “Xuất ra tệp” ở thẻ Nhắc để sao lưu. Tác giả không chịu trách nhiệm khi bị lỡ việc hay mất dữ liệu.</li>
         <li><b>Cung cấp nguyên trạng.</b> Chương trình được tặng miễn phí, như hiện có, không kèm bảo hành nào. Tác giả có thể sửa, đổi hay ngừng chương trình mà không báo trước.</li></ol>
         <p>Dùng chương trình nghĩa là bạn đồng ý với các điều trên.</p></section>
@@ -205,6 +221,10 @@ function moGioiThieu(muc) {
     else if (gd) { datGiaoDien(gd.dataset.giaoDien); veTrang("giao-dien"); }
     else if (e.target.closest("[data-bo-ao]")) { datAo(e.target.closest("[data-bo-ao]").dataset.boAo); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
     else if (e.target.closest("[data-to-lich]")) { datToLich(e.target.closest("[data-to-lich]").dataset.toLich); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
+    else if (e.target.closest("[data-thoi-tiet]") && window.ThoiTiet) {
+      const cuon = el.querySelector(".tam-cuon"), y = cuon.scrollTop, giu = () => { veTrang("giao-dien"); el.querySelector(".tam-cuon").scrollTop = y; };
+      if (e.target.closest("[data-thoi-tiet]").dataset.thoiTiet === "1") { ThoiTiet.bat().then(giu); giu(); } else { ThoiTiet.tat(); giu(); }
+    }
   });
   const trangCua = { "gt-luan": "ve", "gt-can-cu": "can-cu" };
   if (muc && (MENU.some(x => x.id === muc) || trangCua[muc])) {

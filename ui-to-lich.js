@@ -54,6 +54,7 @@ function veToLich(x) {
           <div>
             <div class="am-so">${x.am.day}</div>
             <div class="am-thang">Tháng ${THANG_AM[x.am.month - 1]}${x.am.leap ? " nhuận" : ""} <em>${x.du ? "đủ" : "thiếu"}</em></div>
+            ${window.ThoiTiet ? window.ThoiTiet.dong(x.j) : ""}
             ${totXau.f}
           </div>
         </div>

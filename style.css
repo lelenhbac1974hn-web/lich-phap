@@ -232,6 +232,10 @@ body[data-tab="ngay"]:not([data-kieu-to="goc"]) #tom-tat{display:none}
 .am-so{font:900 46px/1 var(--so);color:var(--son)}
 .am-thang{font-size:12.5px;font-weight:600;margin-top:2px;white-space:nowrap}
 .am-thang em{font-style:normal;font-weight:500;color:var(--muc-3);margin-left:2px}
+/* Thời tiết hôm nay (thoi-tiet.js): một dòng nhỏ dưới tháng âm, nằm gọn trong cột ngày âm rộng cố định */
+.tl-troi{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:12.5px;color:var(--muc-2);white-space:nowrap}
+.tl-troi svg{flex:none;width:18px;height:18px;color:var(--muc-2)}
+.tl-troi b{font-size:14px;font-weight:700;color:var(--muc)}
 .am-phai{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;border-left:1px solid var(--am-vien);padding-left:16px}
 .am-phai div{display:flex;flex-direction:column}
 .am-phai dt{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muc-3)}
@@ -884,10 +888,14 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   body[data-kieu-to="e"] .tl-am .am-phai{gap:3px 8px;padding-left:9px}
   body[data-kieu-to="e"] .tl-am .am-phai dd{font-size:13px}
   .tl-trien{font-size:12px;padding:4px 5px}
-  .am-trai{gap:9px}
-  .am-trai .trang{width:38px;height:38px}
+  .am-trai{gap:9px;min-width:0}
+  .am-trai>div{min-width:0}
+  .am-trai .trang{width:38px;height:38px;flex:none}
   .am-so{font-size:38px}
-  .am-thang{font-size:12px}
+  .am-thang{font-size:12px;white-space:normal}
+  /* Cột ngày âm rộng cố định: lưới can chi luôn đứng một chỗ dù tên tháng dài ngắn (trước "Tháng Mười Một nhuận" đẩy lưới tràn mép tờ);
+     tên dài chỉ xuống dòng chữ đủ/thiếu. Dòng thời tiết (sắp làm) cũng nằm gọn trong cột này. */
+  body:not([data-kieu-to="e"]) .tl-am{grid-template-columns:146px minmax(0,1fr)}
   .am-phai{gap:3px 10px;padding-left:12px}
   .am-phai dt{font-size:12px}
   .am-phai dd{font-size:13.5px;white-space:nowrap}
@@ -980,6 +988,8 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .gt-than h4{margin:0 0 6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--chu-so)}
 .gt-than p,.gt-than li{font-size:14px;line-height:1.6;color:var(--muc-2);margin:0 0 6px}
 .gt-than ul{margin:0;padding-left:18px}
+/* Tên sách, câu trích chữ Hán Nôm đặt cạnh lời Việt (anh Bắc 21/11/2026) */
+.ck-han{font-family:"Noto Serif TC","Songti TC","PMingLiU",serif;font-weight:500;color:var(--muc-2);letter-spacing:.02em}
 .gt-cuoi{margin-top:14px!important;font-size:12px!important;color:var(--muc-3)!important;text-align:center}
 /* Dòng đang mở: hiện đủ chữ, không cắt */
 /* Thanh nút giữ nguyên chiều cao khi đổi chữ (Xong / Mở lại / Bấm lần nữa) */
@@ -1203,6 +1213,7 @@ html[data-ao="hien-dai"][data-toi]{
 .mn-mau{margin-left:auto;display:flex;gap:3px;flex:none}
 .mn-mau i{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
 .mn-ghi{font-size:12.5px!important;color:var(--muc-3)!important;margin:0 0 6px!important}
+.mn-ghi a{color:var(--muc-2);text-decoration:underline;text-decoration-color:var(--vien);text-underline-offset:2px}
 
 /* ═════════ LUẬN GIẢI: HAI TRANG (1.26.0) ═════════ */
 /* Tab gạch chân trên đầu Luận giải (chỉ điện thoại; màn rộng hiện cả hai) */
