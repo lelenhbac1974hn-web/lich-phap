@@ -696,13 +696,15 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   opacity:0;transition:opacity .35s ease}
 .thiep-lop.hien{opacity:1}
 .thiep-hat{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.thiep{position:relative;width:min(560px,100%);max-height:88%;overflow-y:auto;overscroll-behavior:contain;background:var(--the);color:var(--muc);
-  border-radius:26px 26px 0 0;padding:0 0 calc(22px + env(safe-area-inset-bottom));box-shadow:0 -20px 50px -20px rgba(0,0,0,.6);
+/* Thiệp: khung không cuộn, nút ✕ đứng yên; chỉ .thiep-cuon (đầu thiệp + lời) cuộn — luật dữ liệu dài chỉ cuộn dữ liệu */
+.thiep{position:relative;width:min(560px,100%);max-height:88%;display:flex;flex-direction:column;overflow:hidden;background:var(--the);color:var(--muc);
+  border-radius:26px 26px 0 0;box-shadow:0 -20px 50px -20px rgba(0,0,0,.6);
   transform:translateY(105%);transition:transform .55s cubic-bezier(.2,.95,.25,1.05)}
 .thiep-lop.hien .thiep{transform:none}
 .thiep-lop.dong .thiep{transform:translateY(105%);transition-duration:.35s}
 @media (min-width:761px){.thiep-lop{align-items:center}.thiep{border-radius:26px;max-height:86vh}}
-.thiep-dong{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.22);color:#fff;font-size:15px}
+.thiep-cuon{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 0 calc(22px + env(safe-area-inset-bottom))}
+.thiep-dong{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.32);color:#fff;font-size:15px}
 .thiep-dau{position:relative;overflow:hidden;text-align:center;padding:30px 20px 22px;color:var(--chu-sang);
   background:linear-gradient(160deg,var(--n1),var(--n2));border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0}
 .thiep-han{position:absolute;right:-6px;bottom:-26px;font:700 130px/1 "SimSun","Songti SC","Noto Serif CJK SC",serif;opacity:.14;pointer-events:none}
@@ -725,6 +727,9 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .thiep-than ul{margin:0;padding:0;list-style:none;display:grid;gap:5px}
 .thiep-than li{font-size:14px;padding-left:18px;position:relative;line-height:1.45}
 .thiep-than li::before{content:"✦";position:absolute;left:0;top:1px;font-size:10px;color:var(--n1)}
+.thiep-goc{font-size:14px;line-height:1.55;margin:0;color:var(--muc-2)}
+.thiep-ca small{display:block;font-style:normal;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--n1);margin-bottom:4px}
+.thiep-ca cite{display:block;font-style:normal;font-weight:400;font-size:12.5px;color:var(--muc-3);margin-top:4px}
 .thiep-ca{margin:18px 0 0;padding:12px 16px;border-left:3px solid var(--n1);background:color-mix(in srgb,var(--n1) 7%,transparent);
   border-radius:0 12px 12px 0;font-style:italic;font-weight:300;font-size:15px;line-height:1.6;color:var(--muc-2)}
 
