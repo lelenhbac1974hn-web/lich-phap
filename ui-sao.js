@@ -67,7 +67,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.30.4";
+const PHIEN_BAN = "1.31.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -268,19 +268,40 @@ function hienHuongDanLanDau() {
 }
 
 /* Bỏ ghi chú nghiên cứu (số trang, nhóm xếp trong sách) khỏi lời giải nghĩa, chỉ giữ ý nghĩa */
+/* Bài viết kỹ về sao (sao-bai.json, sinh từ CSDL bằng csdl.py): tải một lần, bộ đệm giữ để dùng không mạng.
+   Chưa tải xong thì thẻ hiện bản ngắn, tải xong thì thay bằng bài đầy đủ nếu thẻ vẫn đang mở. */
+let baiSao = null, dangTaiBai = null;
+function taiBaiSao() {
+  if (baiSao) return Promise.resolve(baiSao);
+  if (!dangTaiBai) dangTaiBai = fetch("sao-bai.json").then(r => r.json()).then(d => (baiSao = d)).catch(() => { dangTaiBai = null; return null; });
+  return dangTaiBai;
+}
+const hanTrich = t => esc(t).replace(/「([^」]+)」/g, '<span class="ts-han-trich">「$1」</span>');
+function thanBaiSao(s, b, an) {
+  const doan = t => t ? `<p>${hanTrich(t)}</p>` : "";
+  /* Sách không ghi điều nên/kỵ riêng thì ô không tô màu, để khỏi tưởng là có điều kỵ */
+  const o = (lop, tieu, t) => t ? `<div class="ts-viec ${/^Sách không ghi/.test(t) ? "trong" : lop}"><h4>${tieu}</h4><p>${hanTrich(t)}</p></div>` : "";
+  return `<p class="ts-chu">${hanTrich(b.chu_ve)}</p>
+    ${o("nen", "Nên", b.nen)}${o("ky", "Kỵ", b.ky)}
+    ${b.vi_sao || b.giai_nghia ? `<div class="ts-muc"><h4>Vì sao</h4>${doan(b.vi_sao)}${b.giai_nghia ? `<p class="ts-giai">${hanTrich(b.giai_nghia)}</p>` : ""}</div>` : ""}
+    ${b.gap_nhau ? `<div class="ts-muc"><h4>${s.loai === "tot" ? "Gặp ngày xấu" : "Sao tốt có cứu được không"}</h4>${doan(b.gap_nhau)}</div>` : ""}
+    ${an ? `<div class="ts-muc">${an}</div>` : ""}
+    ${b.nguon && b.nguon.length ? `<details class="ts-cc"><summary>Nguồn sách · ${b.nguon.length}</summary><ul>${b.nguon.map(c => `<li>${hanTrich(c)}</li>`).join("")}</ul></details>` : ""}`;
+}
 function moTheSao(s, tuTra, cuonTra) {
   const thangNay = thangAnSao(ttNgay(st.jd).am); // tháng nhuận chia đôi như khi an sao
-  const an = s.an && s.an.thang ? Array.from({ length: 12 }, (_, i) => {
+  const luoi = s.an && s.an.thang ? Array.from({ length: 12 }, (_, i) => {
     const v = (s.an.thang[String(i + 1)] || []).join(", ") || "—";
     return `<div class="${i + 1 === thangNay ? "nay" : ""}"><span>T${i + 1}</span><b>${esc(v)}</b></div>`;
   }).join("") : "";
+  const an = luoi ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${luoi}</div>` : "";
   const ds = (tieu, arr, lop) => arr && arr.length ? `<div class="ts-viec ${lop}"><h4>${tieu}</h4><p>${arr.map(esc).join(" · ")}</p></div>` : "";
   const cu = tamSao && tamSao.dataset.tim;
-  const el = moTam(`<div class="ts-than">
-      ${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
-      ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}
-      ${an ? `<h4 class="ts-an-tieu">An sao theo tháng âm${s.an.theo === "can" ? " (theo can ngày)" : s.an.theo === "ngayam" ? " (theo ngày âm)" : ""}</h4><div class="ts-an">${an}</div>` : ""}
-      <p class="ts-nguon"><span class="${s.tt ? "da" : "chua"}">${s.tt === 1 ? "✓ Đã đối chiếu Ngọc Hạp" : s.tt === 2 ? "✓ Theo Ngọc Hạp Thông Thư (một nguồn)" : "◔ Đang đối chiếu Ngọc Hạp"}</span></p>
+  const ngan = `${s.nghia ? `<p class="ts-nghia">${esc(s.nghia)}</p>` : `<p class="ts-nghia rong">Sách không ghi nghĩa riêng cho sao này.</p>`}
+      ${ds("Nên", s.nen, "nen")}${ds("Kỵ", s.ky, "ky")}${an}`;
+  const b = baiSao && baiSao[s.id];
+  const el = moTam(`<div class="ts-than">${b ? thanBaiSao(s, b, an) : ngan}
+      <p class="ts-nguon">${s.tt === 1 ? "Theo Ngọc Hạp Thông Thư, đã đối chiếu bản chữ Hán" : "Theo Ngọc Hạp Thông Thư"}</p>
     </div>`, "lop-sao", `
     <header class="ts-dau ${s.loai}">
       ${s.han ? `<div class="ts-han" aria-hidden="true">${esc(s.han)}</div>` : ""}
@@ -291,6 +312,10 @@ function moTheSao(s, tuTra, cuonTra) {
     ${tuTra ? `<div class="mn-dau"><button type="button" class="mn-lui" data-tra-lai>‹ Danh sách sao</button></div>` : ""}`);
   if (cu) el.dataset.tim = cu;
   if (tuTra) el.dataset.veTra = cuonTra || 0;
+  if (!b) taiBaiSao().then(d => {
+    const than = el.querySelector(".ts-than");
+    if (d && d[s.id] && tamSao === el && than) than.innerHTML = `${thanBaiSao(s, d[s.id], an)}<p class="ts-nguon">${s.tt === 1 ? "Theo Ngọc Hạp Thông Thư, đã đối chiếu bản chữ Hán" : "Theo Ngọc Hạp Thông Thư"}</p>`;
+  });
 }
 
 /* Tra cứu: danh sách trên trang sổ (cùng khuôn dòng thẻ Nhắc — luật 6), ô tìm là một dòng gạch chân,

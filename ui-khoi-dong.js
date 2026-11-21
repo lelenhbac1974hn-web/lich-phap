@@ -156,3 +156,6 @@ ganVuotThang();
 hienHuongDanLanDau();
 requestAnimationFrame(khungHinh);
 
+
+/* Tải sẵn bài viết về sao khi máy rảnh, để lần đầu mở thẻ sao đã có bài đầy đủ */
+setTimeout(() => { if (typeof taiBaiSao === "function") taiBaiSao(); }, 4000);

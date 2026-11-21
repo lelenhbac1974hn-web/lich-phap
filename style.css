@@ -649,6 +649,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .ts-nghia.rong{color:var(--muc-3);font-style:italic;font-size:14px}
 .ts-viec{margin-top:12px;border-radius:12px;padding:9px 12px}
 .ts-viec.nen{background:var(--ngoc-nhat)}.ts-viec.ky{background:var(--son-nhat)}
+.ts-viec.trong{background:none;border:1px dashed var(--vien)}.ts-viec.trong h4{color:var(--muc-3)}
 .ts-viec h4{margin:0 0 3px;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
 .ts-viec.nen h4{color:var(--ngoc-dam)}.ts-viec.ky h4{color:var(--son-dam)}
 .ts-viec p{margin:0;font-size:14px}
@@ -660,7 +661,21 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .ts-an .nay{background:var(--thu-phap);border-color:var(--thu-phap);color:var(--chu-sang)}
 .ts-an .nay span{color:#FFD9A0}
 .ts-nguon{margin:14px 0 10px;font-size:12px;color:var(--muc-3);line-height:1.55}
-.ts-nguon .da{color:var(--ngoc);font-weight:600}.ts-nguon .chua{color:var(--vang);font-weight:600}
+.ts-chu{font-size:16px;line-height:1.6;margin:0}
+.ts-muc{margin-top:16px;padding-top:12px;border-top:1px dashed var(--vien)}
+.ts-muc h4{margin:0 0 5px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muc-3);font-weight:700}
+.ts-muc p{margin:0;font-size:15px;line-height:1.6}
+.ts-muc p+p{margin-top:8px}
+.ts-giai{color:var(--muc-2)}
+.ts-han-trich{font-family:"SimSun","Songti SC","Noto Serif CJK SC",serif;color:var(--muc)}
+.ts-cc{margin-top:16px;border-top:1px dashed var(--vien);padding-top:4px}
+.ts-cc summary{list-style:none;cursor:pointer;display:flex;align-items:center;min-height:44px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muc-3);font-weight:700}
+.ts-cc summary::-webkit-details-marker{display:none}
+.ts-cc summary::after{content:"›";margin-left:auto;font-size:18px;letter-spacing:0;transition:transform .2s}
+.ts-cc[open] summary::after{transform:rotate(90deg)}
+.ts-cc ul{margin:0 0 6px;padding-left:18px;display:flex;flex-direction:column;gap:7px}
+.ts-cc li{font-size:13.5px;line-height:1.55;color:var(--muc-2)}
+.ts-than .ts-an-tieu:first-child{margin-top:0}
 .tra-dau{padding:20px 20px 0;border-bottom:1px solid var(--vien)}
 .tra-dau h3{margin:0;font-size:20px;padding-right:36px}
 .tra-dau p{margin:2px 0 8px;font-size:12.5px;color:var(--muc-3)}
