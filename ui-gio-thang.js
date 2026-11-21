@@ -39,6 +39,8 @@ function vePhanDinh(x) {
   const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(boTrang(m.t))}</li>`).join("");
   $("phan-dinh").className = `the to-giay the-phan-dinh ${bac.lop}`;
   const dau = `<div class="tg-dau pd-dau"><h3 class="pd-nhan">Luận ngày<span> · ${esc(viec.ten)}</span></h3>${nutKieu()}</div>`;
+  /* Trên điện thoại, kiểu luận nằm ở thanh Luận giải ngoài vùng cuộn (đứng yên); trong tờ thì ẩn bằng CSS */
+  $("lt-kieu").innerHTML = `<span>Kiểu luận · ${esc(viec.ten)}</span>${nutKieu()}`;
   $("phan-dinh").innerHTML = dau + `<div class="tg-than">` + (sach ? `
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
     <div class="pd-ket">${esc(boTrang(ls.ket))}</div>

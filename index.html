@@ -47,16 +47,21 @@
   <span>Lịch Pháp chỉ dùng ở chiều dọc để giữ đúng bố cục.</span>
 </div>
 
+<!-- Luận giải có hai trang: Luận ngày (hai tờ) · Giờ và xuất hành (mặt giờ).
+     Thanh nằm ngoài vùng cuộn để đứng yên khi vuốt (luật dữ liệu dài); dòng dưới là kiểu luận của trang Luận ngày -->
+<nav class="luan-tab" id="luan-tab" aria-label="Luận giải">
+  <div class="lt-trang" role="tablist">
+    <button type="button" role="tab" data-luan="ngay" aria-selected="true">Luận ngày</button>
+    <button type="button" role="tab" data-luan="gio" aria-selected="false">Giờ và xuất hành</button>
+  </div>
+  <div class="lt-kieu" id="lt-kieu"></div>
+</nav>
+
 <main class="khung" id="khung">
   <section class="cot-to-lich" id="to-lich" aria-live="polite"></section>
   <button class="tom-tat" id="tom-tat" type="button" data-tab="luan" aria-label="Xem luận giải chi tiết"></button>
 
   <section class="cot-phai">
-    <!-- Luận giải có hai trang: Luận ngày (hai tờ) · Giờ và xuất hành (mặt giờ) -->
-    <nav class="luan-tab" id="luan-tab" role="tablist" aria-label="Luận giải">
-      <button type="button" role="tab" data-luan="ngay" aria-selected="true">Luận ngày</button>
-      <button type="button" role="tab" data-luan="gio" aria-selected="false">Giờ và xuất hành</button>
-    </nav>
     <div class="hang-doi">
       <div class="the to-giay the-phan-dinh" id="phan-dinh"></div>
       <div class="the to-giay the-gio" id="mat-gio"></div>
