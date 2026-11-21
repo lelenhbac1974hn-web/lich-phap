@@ -195,7 +195,7 @@ function veMatGio(x) {
     .map(i => `<div><small>${lucNham(aG, i).t}</small><b>${CHI[i]} · ${CHI[i + 6]}</b></div>`).join("");
   /* Một tờ giấy: mặt giờ ở trên (đứng yên), dưới là hướng của ngày (cố định) rồi chi tiết giờ đang chọn (dài ngắn tuỳ giờ) */
   $("mat-gio").innerHTML = `
-    <div class="tg-dau"><h3>Giờ trong ngày</h3><span class="tg-dau-phu">${jG !== x.j ? "Từ 23 giờ sang ngày" : "Ngày"} ${ccNgay(jG)} · ${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
+    <div class="tg-dau"><h3>Giờ trong ngày</h3><span class="tg-dau-phu">${nhanNgay(x.j, true)} · ${nhanAm(x.j)} · ${jG !== x.j ? "từ 23 giờ sang ngày" : "ngày"} ${ccNgay(jG)} · ${laHomNay ? "chạm từng giờ để xem" : `${tot.length} giờ hoàng đạo`}</span></div>
     <div class="tg-than">
     <svg class="dia" viewBox="-6 -6 352 352" role="group" aria-label="Mười hai giờ can chi">
       ${vach}
