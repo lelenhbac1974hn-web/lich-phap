@@ -67,7 +67,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.29.0";
+const PHIEN_BAN = "1.29.1";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -154,7 +154,7 @@ function trangMenu(id) {
       <section><h4>Điều cần biết</h4>
         <p>Xem ngày là nếp văn hoá để người làm việc lớn được yên tâm, không phải phép bảo đảm thành bại. Phan Kế Bính viết trong Việt Nam phong tục (1915) rằng việc thành hay bại “cốt do ở người”. Nhà Phật cũng dạy không có ngày tự nó tốt hay xấu. Chương trình nêu lý do của từng ngày bằng lời để bạn tự cân nhắc.</p></section>`,
     "can-cu": `<section id="gt-can-cu"><h4>Căn cứ lịch pháp</h4>
-        <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí. Đã kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) với các trang lịch phổ biến: âm lịch, can chi, tiết khí, trực khớp 100%.</p></section>
+        <p>Âm lịch tính theo thuật toán thiên văn của Hồ Ngọc Đức, múi giờ Việt Nam (GMT+7): sóc, trung khí, tháng nhuận, tháng đủ thiếu, can chi năm tháng ngày giờ, 24 tiết khí.</p></section>
       <section><h4>Căn cứ xem sao</h4>
         <p>Sao tốt xấu an theo bảng 12 tháng trong sách <b>Ngọc Hạp Thông Thư</b> (bản dịch Việt), không trộn với các hệ khác. Mỗi sao ghi rõ: nghĩa, việc nên làm, việc kiêng, cách an theo tháng. Trong ${CSDL.sao.length} sao, ${soDa} sao <b>đã đối chiếu</b> từ hai sách trở lên (khi các sách khác nhau thì theo đa số), ${soMot} sao chỉ có Thông Thư ghi. Sao không có bảng an hay quy tắc tính trong sách đã được loại khỏi chương trình.</p>
         <p>Bảng an sao đối chiếu thêm với hai bản gốc: bản khắc chữ Hán <b>Tăng bổ tuyển trạch thông thư quảng Ngọc hạp ký</b> và bản Hán Nôm <b>Ngọc hạp toản yếu thông dụng</b> (1926). Ô nào bản dịch in thiếu hoặc vỡ bảng được bổ sung, sửa theo bản gốc.</p>
@@ -183,7 +183,7 @@ function trangMenu(id) {
       <section id="gt-mien-tru"><h4>Miễn trừ trách nhiệm</h4><ol>
         <li><b>Nội dung xem ngày để tham khảo.</b> Sao tốt xấu, luận ngày, giờ tốt, hướng xuất hành được tổng hợp từ sách xem ngày cổ truyền (Ngọc Hạp Thông Thư và các sách ghi ở mục Căn cứ và tài liệu). Đây là tri thức văn hoá dân gian, không phải kết luận khoa học, và không thay cho ý kiến của người có chuyên môn về pháp lý, tài chính, sức khoẻ, xây dựng hay bất kỳ lĩnh vực nào.</li>
         <li><b>Quyết định là của bạn.</b> Tác giả không chịu trách nhiệm về quyết định bạn đưa ra, cũng như mọi thiệt hại, tổn thất trực tiếp hay gián tiếp phát sinh từ việc dùng hoặc tin theo nội dung của chương trình.</li>
-        <li><b>Âm lịch tính bằng thuật toán.</b> Âm lịch, can chi, tiết khí đã được kiểm thử nhưng không bảo đảm tuyệt đối đúng ở mọi ngày. Với ngày lễ, ngày giỗ, ngày hệ trọng, nên đối chiếu thêm lịch do cơ quan có thẩm quyền ban hành.</li>
+        <li><b>Âm lịch tính bằng thuật toán.</b> Âm lịch, can chi, tiết khí tính theo thuật toán thiên văn, không bảo đảm tuyệt đối đúng ở mọi ngày. Với ngày lễ, ngày giỗ, ngày hệ trọng, nên đối chiếu thêm lịch do cơ quan có thẩm quyền ban hành.</li>
         <li><b>Thời tiết để tham khảo.</b> Nhiệt độ và tình trạng trời lấy từ Open-Meteo theo vị trí gần đúng của máy, có thể khác thực tế nơi bạn đứng. Khi cần quyết định theo thời tiết, hãy xem bản tin của cơ quan khí tượng.</li>
         <li><b>Nhắc việc có giới hạn.</b> Chương trình chỉ báo đúng giờ khi đang mở; khi tắt, báo tuỳ vào trình duyệt và điện thoại. Đừng dùng thay báo thức hay lịch hẹn quan trọng. Dữ liệu nhắc việc chỉ lưu trong máy của bạn và có thể mất khi xoá dữ liệu trình duyệt, đổi máy hay cài lại; nên dùng “Xuất ra tệp” ở thẻ Nhắc để sao lưu. Tác giả không chịu trách nhiệm khi bị lỡ việc hay mất dữ liệu.</li>
         <li><b>Cung cấp nguyên trạng.</b> Chương trình được tặng miễn phí, như hiện có, không kèm bảo hành nào. Tác giả có thể sửa, đổi hay ngừng chương trình mà không báo trước.</li></ol>
