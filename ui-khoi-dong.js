@@ -143,6 +143,7 @@ ve();
    Qua 23 giờ (sang giờ Tý) chỉ vẽ lại phần can chi, ngày dương giữ nguyên */
 let homTruoc = jdLich(), tyTruoc = sauGioTy();
 setInterval(() => {
+  capNhatBuoi();
   const hom = jdLich(), ty = sauGioTy();
   if (hom !== homTruoc) { const dangXemHom = st.jd === homTruoc; homTruoc = hom; tyTruoc = ty; if (dangXemHom && !document.hidden) { den(hom); return; } }
   if (ty !== tyTruoc && !document.hidden) { tyTruoc = ty; if (st.jd === hom) { st.gioChon = null; ve(); return; } }

@@ -88,5 +88,7 @@
 
   document.addEventListener("visibilitychange", () => { if (!document.hidden) capNhat(); });
   setTimeout(() => capNhat(), 1500);
-  window.ThoiTiet = { bat, tat, dangBat, dong, moTa, capNhat };
+  /* Cho cảnh trên tờ lịch: mã trời và ngày/đêm hiện tại (null nếu tắt hoặc số liệu cũ) */
+  const hienTai = () => { if (!dangBat()) return null; const s = soLieu(); return s ? { ma: s.ma, ngayDem: s.ngayDem } : null; };
+  window.ThoiTiet = { bat, tat, dangBat, dong, moTa, capNhat, hienTai };
 })();

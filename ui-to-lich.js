@@ -17,6 +17,8 @@ function veToLich(x) {
     : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${ic("sao")}${esc(l.ten)}</span>`).join("");
   /* Mỗi lễ có thiệp: biểu tượng riêng của lễ đứng trước tên, chạm cả dòng để mở thiệp (anh Bắc 21/11/2026: bỏ vòng biểu tượng
      riêng ở góc tờ, một chỗ chạm duy nhất) */
+  canhLe = T ? khoaLe.find(k => T.laLeLon(k)) || null : null;
+  canhTrang = T ? khoaLe.some(k => k && (T.layThiep(k) || {}).trang) : false;
   /* Việc và ngày nhắc viết như dòng ghi tay mực xanh trên tờ lịch (anh Bắc chọn mẫu A, 20/11/2026): biểu tượng theo loại,
      tên, phần phụ nhạt; gạch chân chấm báo chạm được để sang thẻ Nhắc; việc quá hạn mực đỏ. Lễ tết là chữ vàng nâu, không gạch.
      Tờ hôm nay còn gom cả ngày nhắc sắp đến và việc quá hạn — thay cho dải báo riêng đầu trang. */
@@ -39,6 +41,7 @@ function veToLich(x) {
         <button class="lat" data-buoc="1" type="button" aria-label="Ngày sau">›</button>
       </header>
       <div class="tl-than">
+        <div class="tl-anh" aria-hidden="true"></div>
         <canvas class="canh" aria-hidden="true"></canvas>
         <div class="tl-so">${x.dd}</div>
         <div class="tl-thu">${THU[x.thu]}</div>
@@ -244,28 +247,78 @@ function ganVuot() {
   }, { passive: true });
 }
 
-/* Cảnh động theo mùa (tính từ tiết khí): hoa đào – đom đóm – lá thu – mưa phùn */
+/* Cảnh động trên tờ lịch — một canvas, tối đa hai lớp hạt chồng nhau (anh Bắc 21/11/2026):
+     lớp lễ  — ngày lễ lớn: hạt của thiệp (hoa Tết, đèn lồng…); rằm, Nguyên tiêu, Trung thu thêm vầng trăng mờ;
+     lớp trời — thời tiết thật hôm nay (mưa, mưa to, dông, sương, tuyết, nắng), không có thì cảnh theo mùa
+                (hoa đào – đom đóm – lá thu – mưa phùn).
+   Ba kiểu mưa phải nhìn khác nhau: mưa phùn hạt li ti lất phất · mưa vệt vừa · mưa to vệt dài, dày, bắn nước ở đáy ·
+   dông: mưa to bị gió quật xiên, trời tối lại, chớp có tia. Bật tắt từng thứ ở Menu → Giao diện → Hiệu ứng.
+   Tiết kiệm: vẽ 30 khung/giây; tờ lịch không hiện (thẻ khác, app ẩn) thì nghỉ, chỉ dò lại mỗi 0,4 giây. */
+let canhLe = null, canhTrang = false;
 const MAU_HAT = {
   xuan: ["#F2A7B5", "#F7C4CE", "#EE8FA3", "#F3D36B"],
   ha: ["#F2C94C", "#F7DD8A", "#E9B949"],
   thu: ["#C8762B", "#B5862A", "#A6451E", "#D9A441"],
-  dong: ["#7F93A6", "#9FB0BF"]
+  dong: ["#8A9BAB", "#A3B2BF"],
+  mua: ["#6F8FAD", "#8AA3BB"], "mua-to": ["#4F7397", "#6A88A8"], set: ["#4A6A8C", "#6481A0"],
+  tuyet: ["#FFFFFF", "#EEF3F8"], suong: ["#9AA5AE"], nang: ["#F6D58A"]
 };
-let hat = [], muaHat = null, tTruoc = 0;
+const SO_HAT = { xuan: 14, ha: 16, thu: 11, dong: 46, mua: 40, "mua-to": 80, set: 72, tuyet: 34, suong: 5, nang: 3, le: 10 };
+/* Hình vệt mưa: dài r, nét, độ đậm */
+const MUA_NET = { dong: [0.8, 0.3], mua: [1.2, 0.42], "mua-to": [1.7, 0.5], set: [1.7, 0.52] };
+let tTruoc = 0, lanVe = 0, chop = 0, henChop = 0, tiaChop = null;
+const lopHat = new Map(), bung = [];   // hạt của từng lớp (theo khoá cảnh), giọt bắn ở đáy tờ
 const ngau = (a, b) => a + Math.random() * (b - a);
-function hatMoi(m, w, h, dau) {
-  const mau = MAU_HAT[m][Math.floor(Math.random() * MAU_HAT[m].length)];
-  const p = { x: ngau(0, w), y: dau ? ngau(0, h) : -12, goc: ngau(0, 6.28), pha: ngau(0, 6.28), mau };
+/* Hạt emoji của ngày lễ vẽ sẵn một lần ra ảnh nhỏ, mỗi khung chỉ dán ảnh (nhẹ hơn vẽ chữ) */
+const anhEmoji = {};
+function anhCua(e) {
+  if (anhEmoji[e]) return anhEmoji[e];
+  const o = document.createElement("canvas"); o.width = o.height = 64;
+  const g = o.getContext("2d"); g.textAlign = "center"; g.textBaseline = "middle";
+  g.font = '48px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.fillText(e, 32, 34);
+  return (anhEmoji[e] = o);
+}
+/* Danh sách lớp cần vẽ: [lớp lễ?, lớp trời?] */
+function chonLop() {
+  const hu = layHieuUng(), lop = [];
+  if (hu.le && canhLe && window.ThiepLe) { const d = ThiepLe.layThiep(canhLe); if (d && d.hat) lop.push({ k: "le:" + canhLe, loai: "le", le: d }); }
+  let troi = null;
+  if (hu.troi && st.jd === jdHomNay() && window.ThoiTiet) {
+    const t = ThoiTiet.hienTai();
+    if (t) {
+      const c = t.ma;
+      troi = c >= 95 ? "set" : (c >= 63 && c <= 67) || c === 81 || c === 82 ? "mua-to" : (c >= 51 && c <= 61) || c === 80 ? "mua"
+        : c === 45 || c === 48 ? "suong" : (c >= 71 && c <= 77) || c === 85 || c === 86 ? "tuyet" : c <= 1 && t.ngayDem ? "nang" : null;
+    }
+  }
+  if (!troi && hu.mua) troi = mua;
+  if (troi) lop.push({ k: troi, loai: troi });
+  return lop;
+}
+function hatMoi(cn, w, h, dau, thua) {
+  const m = cn.loai, bang = MAU_HAT[m] || MAU_HAT.xuan, mau = bang[Math.floor(Math.random() * bang.length)];
+  const p = { x: ngau(-40, w + 40), y: dau ? ngau(0, h) : -24, goc: ngau(0, 6.28), pha: ngau(0, 6.28), mau };
   if (m === "xuan") Object.assign(p, { r: ngau(3.5, 6.5), vy: ngau(16, 30), vx: ngau(-8, 8), vg: ngau(-1.6, 1.6) });
   else if (m === "thu") Object.assign(p, { r: ngau(5, 9), vy: ngau(20, 36), vx: ngau(-12, 6), vg: ngau(-1.2, 1.2) });
   else if (m === "ha") Object.assign(p, { r: ngau(1.4, 2.8), vy: ngau(-9, -3), vx: ngau(-4, 4), vg: 0, y: dau ? ngau(0, h) : h + 8 });
-  else Object.assign(p, { r: ngau(9, 16), vy: ngau(190, 260), vx: -34, vg: 0 });
+  else if (m === "dong") Object.assign(p, { r: ngau(2.5, 5), vy: ngau(80, 130), vx: ngau(-20, -8), vg: 0 });            // mưa phùn: li ti, chậm
+  else if (m === "mua") Object.assign(p, { r: ngau(13, 19), vy: ngau(380, 470), vx: -40, vg: 0 });
+  else if (m === "mua-to") Object.assign(p, { r: ngau(26, 36), vy: ngau(660, 780), vx: -70, vg: 0 });
+  else if (m === "set") Object.assign(p, { r: ngau(28, 40), vy: ngau(620, 740), vx: ngau(-230, -170), vg: 0 }); // gió quật xiên
+  else if (m === "tuyet") Object.assign(p, { r: ngau(1.4, 3.2), vy: ngau(18, 34), vx: ngau(-6, 6), vg: 0 });
+  else if (m === "suong") Object.assign(p, { r: ngau(70, 130), vy: 0, vx: ngau(5, 11) * (Math.random() < 0.5 ? -1 : 1), vg: 0, y: ngau(h * 0.15, h * 0.85), x: dau ? ngau(0, w) : (Math.random() < 0.5 ? -120 : w + 120) });
+  else if (m === "nang") Object.assign(p, { r: ngau(26, 46), vy: 0, vx: 0, vg: 0, x: ngau(w * 0.05, w * 0.75), y: 0 });
+  else if (m === "le") {
+    const bay = cn.le.kieu === "bay";
+    Object.assign(p, { e: cn.le.hat[Math.floor(Math.random() * cn.le.hat.length)], r: ngau(15, 22), vy: bay ? ngau(-26, -14) : ngau(18, 32), vx: ngau(-6, 6), vg: ngau(-0.5, 0.5), y: dau ? ngau(0, h) : (bay ? h + 14 : -14) });
+  }
   return p;
 }
-function veHat(c, p, m, t) {
-  if (m === "dong") {
-    c.globalAlpha = 0.34; c.strokeStyle = p.mau; c.lineWidth = 1; c.lineCap = "round";
-    c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.r * 0.18, p.y + p.r); c.stroke();
+function veHat(c, p, m, t, w, h, toi) {
+  if (MUA_NET[m]) {
+    const [net, dam] = MUA_NET[m], keo = p.vx / p.vy;   // vệt nghiêng theo hướng rơi
+    c.globalAlpha = dam; c.strokeStyle = p.mau; c.lineWidth = net; c.lineCap = "round";
+    c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - keo * p.r, p.y - p.r); c.stroke();
     return;
   }
   if (m === "ha") {
@@ -274,6 +327,31 @@ function veHat(c, p, m, t) {
     g.addColorStop(0, p.mau); g.addColorStop(1, "rgba(242,201,76,0)");
     c.globalAlpha = a; c.fillStyle = g;
     c.beginPath(); c.arc(p.x, p.y, p.r * 4, 0, 6.2832); c.fill();
+    return;
+  }
+  if (m === "tuyet") {
+    c.globalAlpha = toi ? 0.75 : 0.9; c.fillStyle = toi ? p.mau : "#B9C6D2";
+    c.beginPath(); c.arc(p.x + Math.sin(t + p.pha) * 4, p.y, p.r, 0, 6.2832); c.fill();
+    return;
+  }
+  if (m === "suong") {
+    const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+    g.addColorStop(0, toi ? "rgba(210,215,220,.16)" : "rgba(140,150,160,.16)"); g.addColorStop(1, "rgba(140,150,160,0)");
+    c.globalAlpha = 1; c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, p.r, 0, 6.2832); c.fill();
+    return;
+  }
+  if (m === "nang") {
+    /* Vệt nắng xiên từ mép trên, sáng tối chậm */
+    const a = 0.06 + 0.06 * (0.5 + 0.5 * Math.sin(t * 0.5 + p.pha));
+    const g = c.createLinearGradient(p.x, 0, p.x + h * 0.35, h);
+    g.addColorStop(0, "rgba(246,213,138,.9)"); g.addColorStop(1, "rgba(246,213,138,0)");
+    c.globalAlpha = a; c.fillStyle = g;
+    c.beginPath(); c.moveTo(p.x, 0); c.lineTo(p.x + p.r, 0); c.lineTo(p.x + p.r + h * 0.35, h); c.lineTo(p.x + h * 0.35, h); c.closePath(); c.fill();
+    return;
+  }
+  if (m === "le") {
+    c.save(); c.globalAlpha = 0.6; c.translate(p.x, p.y); c.rotate(p.goc * 0.4);
+    c.drawImage(anhCua(p.e), -p.r / 2, -p.r / 2, p.r, p.r); c.restore();
     return;
   }
   c.save();
@@ -290,30 +368,80 @@ function veHat(c, p, m, t) {
   c.fill();
   c.restore();
 }
+/* Vầng trăng mờ ở góc trên trái (rằm, Nguyên tiêu, Trung thu) */
+function veVangTrang(c, w, t, toi) {
+  const x = 34, y = 28, r = 12, a = 0.55 + 0.1 * Math.sin(t * 0.6);   // góc trên trái, tránh số ngày lớn
+  const g = c.createRadialGradient(x, y, r * 0.6, x, y, r * 3.2);
+  g.addColorStop(0, toi ? "rgba(255,226,150,.35)" : "rgba(240,200,110,.28)"); g.addColorStop(1, "rgba(240,200,110,0)");
+  c.globalAlpha = 1; c.fillStyle = g; c.beginPath(); c.arc(x, y, r * 3.2, 0, 6.2832); c.fill();
+  c.globalAlpha = a; c.fillStyle = toi ? "#F6DFA0" : "#F1D48C"; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill();
+}
+/* Tia chớp: đường gấp khúc từ mép trên xuống, có nhánh, hiện trong chớp mắt */
+function taoTiaChop(w, h) {
+  const diem = [[ngau(w * 0.2, w * 0.8), 0]];
+  while (diem[diem.length - 1][1] < h * 0.55) { const [x, y] = diem[diem.length - 1]; diem.push([x + ngau(-22, 22), y + ngau(14, 30)]); }
+  const goc = diem[Math.floor(diem.length * 0.4)], nhanh = [goc];
+  for (let i = 0; i < 4; i++) { const [x, y] = nhanh[nhanh.length - 1]; nhanh.push([x + ngau(6, 20), y + ngau(10, 22)]); }
+  return [diem, nhanh];
+}
+function nghiCanh() { tTruoc = 0; setTimeout(() => requestAnimationFrame(khungHinh), 400); }
 function khungHinh(ms) {
-  requestAnimationFrame(khungHinh);
   const cv = document.querySelector("#to-lich > .to-lich:not(.roi) .canh");
-  if (!cv || document.hidden) { tTruoc = ms; return; }
+  if (!cv || document.hidden || !cv.clientWidth) return nghiCanh();
+  requestAnimationFrame(khungHinh);
+  if (ms - lanVe < 31) return;   // 30 khung/giây là đủ cho hạt rơi, tốn nửa so với 60
+  lanVe = ms;
   const w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
   if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
   const c = cv.getContext("2d");
   c.setTransform(dpr, 0, 0, dpr, 0, 0);
   c.clearRect(0, 0, w, h);
-  if (giamDong.matches || !w) return;
-  if (muaHat !== mua) {
-    muaHat = mua;
-    const n = { xuan: 14, ha: 16, thu: 11, dong: 30 }[mua];
-    hat = Array.from({ length: n }, () => hatMoi(mua, w, h, true));
-  }
-  const dt = Math.min(0.05, (ms - tTruoc) / 1000 || 0), t = ms / 1000;
+  if (giamDong.matches) return;
+  const lop = chonLop(), hu = layHieuUng(), toi = document.documentElement.hasAttribute("data-toi");
+  const t = ms / 1000, dt = tTruoc ? Math.min(0.05, (ms - tTruoc) / 1000) : 0;
   tTruoc = ms;
-  for (let i = 0; i < hat.length; i++) {
-    const p = hat[i];
-    const lac = mua === "dong" ? 0 : Math.sin(t * 0.9 + p.pha) * (mua === "ha" ? 6 : 16);
-    p.x += (p.vx + lac) * dt; p.y += p.vy * dt; p.goc += p.vg * dt;
-    if (p.y > h + 20 || p.y < -20 || p.x < -24 || p.x > w + 24) hat[i] = hatMoi(mua, w, h, false);
-    veHat(c, p, mua, t);
+  const troi = (lop.find(l => l.loai !== "le") || {}).loai;
+  /* Mưa to, dông: trời tối lại một chút */
+  if (troi === "mua-to" || troi === "set") { c.globalAlpha = 1; c.fillStyle = toi ? "rgba(0,0,0,.16)" : (troi === "set" ? "rgba(52,62,78,.13)" : "rgba(60,72,86,.08)"); c.fillRect(0, 0, w, h); }
+  if (hu.le && canhTrang) veVangTrang(c, w, t, toi);
+  const dung = new Set(lop.map(l => l.k));
+  for (const k of [...lopHat.keys()]) if (!dung.has(k)) lopHat.delete(k);
+  for (const cn of lop) {
+    const m = cn.loai, ghep = lop.length > 1;
+    if (!lopHat.has(cn.k)) {
+      const n = Math.round((SO_HAT[m] || 12) * (ghep && m === "le" ? 0.7 : ghep && /^(xuan|ha|thu)$/.test(m) ? 0.6 : 1));
+      lopHat.set(cn.k, Array.from({ length: n }, () => hatMoi(cn, w, h, true)));
+    }
+    const hat = lopHat.get(cn.k);
+    for (let i = 0; i < hat.length; i++) {
+      const p = hat[i];
+      const lac = MUA_NET[m] && m !== "dong" || m === "suong" || m === "nang" ? 0 : Math.sin(t * 0.9 + p.pha) * (m === "ha" ? 6 : m === "tuyet" || m === "dong" ? 5 : 16);
+      p.x += (p.vx + lac) * dt; p.y += p.vy * dt; p.goc += p.vg * dt;
+      if ((m === "mua-to" || m === "set") && p.y > h - 6 && bung.length < 40) bung.push({ x: p.x, y: h - ngau(2, 18), t: 0 });
+      if (p.y > h + 20 || p.y < -44 || p.x < -260 || p.x > w + 260) hat[i] = hatMoi(cn, w, h, false);
+      veHat(c, p, m, t, w, h, toi);
+    }
   }
+  /* Giọt bắn ở đáy tờ khi mưa to: vòng nhỏ loang ra rồi tắt */
+  for (let i = bung.length - 1; i >= 0; i--) {
+    const b = bung[i]; b.t += dt;
+    if (b.t > 0.35 || (troi !== "mua-to" && troi !== "set")) { bung.splice(i, 1); continue; }
+    c.globalAlpha = 0.35 * (1 - b.t / 0.35); c.strokeStyle = MAU_HAT["mua-to"][0]; c.lineWidth = 1;
+    c.beginPath(); c.ellipse(b.x, b.y, 2 + b.t * 22, 0.8 + b.t * 5, 0, 0, 6.2832); c.stroke();
+  }
+  /* Dông: chớp sáng nhanh kèm tia chớp, cách nhau 4–8 giây */
+  if (troi === "set") {
+    if (!henChop) henChop = t + ngau(2, 4);
+    if (t > henChop) { chop = 1; tiaChop = taoTiaChop(w, h); henChop = t + ngau(4, 8); }
+    if (chop > 0) {
+      c.globalAlpha = chop * 0.3; c.fillStyle = "#FFFFFF"; c.fillRect(0, 0, w, h);
+      if (tiaChop && chop > 0.45) {
+        c.globalAlpha = chop; c.strokeStyle = toi ? "#FFF6D8" : "#F4E6B0"; c.lineWidth = 1.8; c.lineJoin = "round";
+        for (const duong of tiaChop) { c.beginPath(); duong.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke(); }
+      }
+      chop = Math.max(0, chop - dt * 3.2);
+    }
+  } else henChop = 0;
   c.globalAlpha = 1;
 }
 

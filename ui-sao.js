@@ -67,7 +67,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.29.1";
+const PHIEN_BAN = "1.30.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -81,35 +81,24 @@ const MENU = [
 ];
 function trangMenu(id) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
-  const g = layGiaoDien();
-  const ao = layAo();
-  const chonAo = (k, ten, mo, mau) => `<button type="button" class="mn-chon${ao === k ? " dang" : ""}" data-bo-ao="${k}" aria-pressed="${ao === k}">
-      <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span><span class="mn-mau" aria-hidden="true">${mau.map(m => `<i style="background:${m}"></i>`).join("")}</span></button>`;
-  const chonGD = (k, ten, mo) => `<button type="button" class="mn-chon${g === k ? " dang" : ""}" data-giao-dien="${k}" aria-pressed="${g === k}">
-      <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
-  const to = layToLich();
-  const chonTo = (k, ten, mo) => `<button type="button" class="mn-chon${to === k ? " dang" : ""}" data-to-lich="${k}" aria-pressed="${to === k}">
-      <span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
+  const g = layGiaoDien(), ao = layAo(), to = layToLich(), hu = layHieuUng(), coTroi = !!(window.ThoiTiet && ThoiTiet.dangBat());
+  /* Trang Giao diện gọn (anh Bắc 21/11/2026): mỗi mục một dải chip viền + một dòng mô tả lựa chọn đang dùng, ít cuộn */
+  const chip = (thuoc, k, ten, dang, them = "") => `<button type="button" class="mn-chip${dang ? " dang" : ""}" ${thuoc}="${k}" aria-pressed="${dang}">${them}${ten}</button>`;
+  const muc = (tieu, chips, mota) => `<section class="mn-nhom"><h4>${tieu}</h4><div class="mn-chips">${chips}</div>${mota ? `<p class="mn-mota">${mota}</p>` : ""}</section>`;
+  const AO = [["co-dien", "Cổ điển", "Giấy kem, gáy đỏ son · mặc định", ["#F3ECDD", "#A61E17", "#E19279"]], ["tre", "Trẻ trung", "Xanh bạc hà, kem nhạt, chữ tròn", ["#E4F1EE", "#5DB3A5", "#F2B48C"]], ["hien-dai", "Hiện đại", "Xanh thẫm, tím, vàng · luôn tối", ["#0E1726", "#7C6CF0", "#F2C14E"]]];
+  const GD = [["tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại"], ["sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày"], ["toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối"]];
+  const TO = [["g", "Dòng chân tờ", "Mặc định · một hàng cuối vùng âm lịch: việc, kết quả và lý do rút gọn"], ["e", "Triện", "Triện vuông màu theo bậc, giữa ngày âm và can chi"], ["f", "Thang 5 bậc", "Kết quả kèm thang 5 bậc mảnh, ngay dưới tháng âm"], ["goc", "Tờ gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới"]];
+  const HU = [["mua", "Cảnh theo mùa"], ["troi", "Theo thời tiết"], ["le", "Ngày lễ, trăng rằm"], ["anh", "Ánh sáng theo giờ"]];
+  const huBat = HU.filter(([k]) => hu[k]);
+  const moTaHU = huBat.length ? `Đang bật: ${huBat.map(([, t]) => t.toLowerCase()).join(", ")}.${hu.troi && !coTroi ? " Cảnh theo thời tiết cần bật Thời tiết bên trên." : ""} Ngày lễ vẽ chồng lên thời tiết; không có thời tiết thì theo mùa.` : "Tờ lịch tĩnh, không hiệu ứng.";
+  const tim = (ds, k) => (ds.find(x => x[0] === k) || ds[0])[2];
   return {
-    "giao-dien": `<section><h4>Bộ áo</h4>
-        ${chonAo("co-dien", "Cổ điển", "Giấy kem, gáy đỏ son · mặc định", ["#F3ECDD", "#A61E17", "#E19279"])}
-        ${chonAo("tre", "Trẻ trung", "Xanh bạc hà, kem nhạt, chữ tròn", ["#E4F1EE", "#5DB3A5", "#F2B48C"])}
-        ${chonAo("hien-dai", "Hiện đại", "Xanh thẫm, tím, vàng · luôn tối", ["#0E1726", "#7C6CF0", "#F2C14E"])}</section>
-      <section><h4>Sáng hay tối</h4>${ao === "hien-dai" ? `<p class="mn-ghi">Bộ áo Hiện đại luôn tối; chọn dưới đây áp dụng khi đổi về bộ áo khác.</p>` : ""}
-        ${chonGD("tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại")}
-        ${chonGD("sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày")}
-        ${chonGD("toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối")}</section>
-      <section><h4>Tờ lịch</h4>
-        ${chonTo("g", "Dòng tốt xấu ở chân tờ", "Mặc định · một hàng cuối vùng âm lịch: việc, kết quả và lý do rút gọn")}
-        ${chonTo("e", "Triện tốt xấu", "Triện vuông màu theo bậc, giữa ngày âm và can chi")}
-        ${chonTo("f", "Thang 5 bậc dưới tháng âm", "Kết quả kèm thang 5 bậc mảnh, ngay dưới tháng âm")}
-        ${chonTo("goc", "Tờ lịch gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới")}</section>
-      <section><h4>Thời tiết</h4>
-        ${[["0", "Tắt", "Không hiện thời tiết, không dùng vị trí"], ["1", "Theo vị trí của máy", window.ThoiTiet && ThoiTiet.dangBat() ? ThoiTiet.moTa() : "Một dòng nhỏ dưới tháng âm trên tờ lịch hôm nay"]].map(([k, ten, mo]) => {
-          const dang = (window.ThoiTiet && ThoiTiet.dangBat() ? "1" : "0") === k;
-          return `<button type="button" class="mn-chon${dang ? " dang" : ""}" data-thoi-tiet="${k}" aria-pressed="${dang}"><span class="mn-o" aria-hidden="true"></span><span><b>${ten}</b><small>${mo}</small></span></button>`;
-        }).join("")}
-        <p class="mn-ghi">Bật thời tiết là cho phép dùng vị trí. Vị trí làm tròn khoảng 10 km rồi gửi tới Open-Meteo để lấy nhiệt độ, không gửi gì khác. Dữ liệu thời tiết: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).</p></section>`,
+    "giao-dien": muc("Bộ áo", AO.map(([k, t, , mau]) => chip("data-bo-ao", k, t, ao === k, `<span class="mn-mau" aria-hidden="true">${mau.map(m => `<i style="background:${m}"></i>`).join("")}</span>`)).join(""), tim(AO, ao))
+      + muc("Sáng hay tối", GD.map(([k, t]) => chip("data-giao-dien", k, t, g === k)).join(""), ao === "hien-dai" ? "Bộ áo Hiện đại luôn tối; lựa chọn này dùng khi đổi về bộ áo khác." : tim(GD, g))
+      + muc("Tờ lịch", TO.map(([k, t]) => chip("data-to-lich", k, t, to === k)).join(""), tim(TO, to))
+      + muc("Thời tiết", chip("data-thoi-tiet", "0", "Tắt", !coTroi) + chip("data-thoi-tiet", "1", "Theo vị trí của máy", coTroi),
+        `${coTroi ? ThoiTiet.moTa() + ". " : ""}Bật là cho phép dùng vị trí; vị trí làm tròn khoảng 10 km rồi gửi tới Open-Meteo. Dữ liệu: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).`)
+      + muc("Hiệu ứng", HU.map(([k, t]) => chip("data-hieu-ung", k, t, hu[k])).join(""), moTaHU),
     "huong-dan": `<section><h4>Dùng nhanh</h4><ol>
         <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
         <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng rồi mở thẻ Tìm ngày; hoặc mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
@@ -215,16 +204,20 @@ function moGioiThieu(muc) {
     el.querySelector(".tam-cuon").scrollTop = 0;
   };
   el.querySelector(".tam").addEventListener("click", e => {
-    const m = e.target.closest("[data-mn]"), lui = e.target.closest("[data-mn-lui]"), gd = e.target.closest("[data-giao-dien]");
-    if (m) veTrang(m.dataset.mn, 40);
-    else if (lui) veMenu(-40);
-    else if (gd) { datGiaoDien(gd.dataset.giaoDien); veTrang("giao-dien"); }
-    else if (e.target.closest("[data-bo-ao]")) { datAo(e.target.closest("[data-bo-ao]").dataset.boAo); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
-    else if (e.target.closest("[data-to-lich]")) { datToLich(e.target.closest("[data-to-lich]").dataset.toLich); veTrang("giao-dien"); requestAnimationFrame(xepNhan); }
-    else if (e.target.closest("[data-thoi-tiet]") && window.ThoiTiet) {
-      const cuon = el.querySelector(".tam-cuon"), y = cuon.scrollTop, giu = () => { veTrang("giao-dien"); el.querySelector(".tam-cuon").scrollTop = y; };
-      if (e.target.closest("[data-thoi-tiet]").dataset.thoiTiet === "1") { ThoiTiet.bat().then(giu); giu(); } else { ThoiTiet.tat(); giu(); }
-    }
+    const m = e.target.closest("[data-mn]"), lui = e.target.closest("[data-mn-lui]");
+    if (m) return veTrang(m.dataset.mn, 40);
+    if (lui) return veMenu(-40);
+    /* Lựa chọn ở trang Giao diện: đổi xong vẽ lại trang, giữ nguyên chỗ đang cuộn */
+    const c = e.target.closest("[data-giao-dien],[data-bo-ao],[data-to-lich],[data-thoi-tiet],[data-hieu-ung]");
+    if (!c) return;
+    const y = el.querySelector(".tam-cuon").scrollTop, giu = () => { veTrang("giao-dien"); el.querySelector(".tam-cuon").scrollTop = y; requestAnimationFrame(xepNhan); };
+    const d = c.dataset;
+    if (d.giaoDien) datGiaoDien(d.giaoDien);
+    else if (d.boAo) datAo(d.boAo);
+    else if (d.toLich) datToLich(d.toLich);
+    else if (d.hieuUng) doiHieuUng(d.hieuUng);
+    else if (d.thoiTiet && window.ThoiTiet) { if (d.thoiTiet === "1") ThoiTiet.bat().then(giu); else ThoiTiet.tat(); }
+    giu();
   });
   const trangCua = { "gt-luan": "ve", "gt-can-cu": "can-cu" };
   if (muc && (MENU.some(x => x.id === muc) || trangCua[muc])) {

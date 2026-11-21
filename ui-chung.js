@@ -56,6 +56,26 @@ function datToLich(k) {
   document.body.dataset.kieuTo = k;
 }
 document.body.dataset.kieuTo = layToLich();
+/* Hiệu ứng trên tờ lịch (Menu → Giao diện → Hiệu ứng), mặc định bật cả bốn:
+   mua — cảnh theo mùa · troi — cảnh theo thời tiết thật (cần bật Thời tiết) · le — cảnh ngày lễ, trăng rằm · anh — ánh sáng giấy theo giờ */
+const KHOA_HU = "lichphap:hieu-ung", HIEU_UNG = ["mua", "troi", "le", "anh"];
+function layHieuUng() {
+  let tat = [];
+  try { tat = JSON.parse(localStorage.getItem(KHOA_HU)) || []; } catch (e) { /* mặc định */ }
+  return Object.fromEntries(HIEU_UNG.map(k => [k, !tat.includes(k)]));
+}
+function doiHieuUng(k) {
+  const hu = layHieuUng(); hu[k] = !hu[k];
+  const tat = HIEU_UNG.filter(x => !hu[x]);
+  try { if (tat.length) localStorage.setItem(KHOA_HU, JSON.stringify(tat)); else localStorage.removeItem(KHOA_HU); } catch (e) { /* chỉ đổi trong phiên */ }
+  capNhatBuoi();
+}
+/* Ánh sáng giấy theo giờ: html[data-buoi] = sang (5–9 giờ) · chieu (15–18) · toi (18–5); trưa không phủ màu */
+function capNhatBuoi() {
+  const h = new Date().getHours(), b = h >= 5 && h < 9 ? "sang" : h >= 15 && h < 18 ? "chieu" : h >= 18 || h < 5 ? "toi" : "";
+  if (layHieuUng().anh && b) document.documentElement.dataset.buoi = b; else delete document.documentElement.dataset.buoi;
+}
+capNhatBuoi();
 /* Biểu tượng nét nhỏ đi kèm chữ (thay emoji màu) — cùng bộ với biểu tượng Nhắc việc */
 const ic = k => window.BieuTuong ? `<i class="ic">${window.BieuTuong.svg(k)}</i>` : "";
 
