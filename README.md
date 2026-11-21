@@ -55,9 +55,6 @@ tuổi người, theo giờ, cưới hỏi, an táng có trong cơ sở tri th�
 
 - Âm lịch tính theo thuật toán thiên văn của **Hồ Ngọc Đức**, múi giờ Việt Nam (GMT+7): điểm sóc,
   trung khí, tháng nhuận, tháng đủ / thiếu, can chi năm – tháng – ngày – giờ, 24 tiết khí, trực.
-- Kiểm thử 510 ngày ngẫu nhiên (10 ngày mỗi năm, 1990–2040) so với các trang lịch phổ biến:
-  âm lịch, can chi, tiết khí, trực khớp 100%. Mỗi lần phát hành chạy lại 510 ngày này (lịch pháp, sao,
-  mức tốt xấu của 5 việc × 2 kiểu luận) và so với mẫu chuẩn đã duyệt.
 
 ## Căn cứ xem sao
 
