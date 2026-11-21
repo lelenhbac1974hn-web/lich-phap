@@ -289,7 +289,7 @@
         </div>
       </article>`;
     document.body.appendChild(lop);
-    requestAnimationFrame(() => lop.classList.add("hien"));
+    const moi = lop; requestAnimationFrame(() => moi.classList.add("hien"));
     lop.addEventListener("click", e => { if (e.target === lop || e.target.closest(".thiep-dong")) dongThiep(); });
     let y0 = null;
     lop.addEventListener("touchstart", e => { y0 = e.touches[0].clientY; }, { passive: true });

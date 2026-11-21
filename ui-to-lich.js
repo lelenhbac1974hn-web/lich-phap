@@ -13,10 +13,10 @@ function veToLich(x) {
   if (laNgayThanhMinh(x.j)) leDs.push({ ten: "Tiết Thanh minh — tảo mộ", loai: "tiet", nghi: false, khoa: "dac:thanhminh" });
   const khoaLe = leDs.map(l => l.khoa || (T ? T.khoaCuaLe(l, x.am, x.dd, x.mm) : null));
   const le = leDs.map((l, i) => khoaLe[i]
-    ? `<button type="button" class="le le-${l.loai}${l.nghi ? " le-nghi" : ""} co-thiep" data-thiep="${khoaLe[i]}" title="Nhấn giữ để xem">${ic("sao")}${esc(l.ten)}</button>`
+    ? `<button type="button" class="le le-${l.loai}${l.nghi ? " le-nghi" : ""} co-thiep" data-thiep="${khoaLe[i]}" title="Chạm để xem về ngày này"><i class="le-bieu" aria-hidden="true">${T.layThiep(khoaLe[i]).bieu}</i>${esc(l.ten)}</button>`
     : `<span class="le le-${l.loai}${l.nghi ? " le-nghi" : ""}">${ic("sao")}${esc(l.ten)}</span>`).join("");
-  const khoaLon = khoaLe.find(k => T && T.laLeLon(k));
-  const ruy = khoaLon ? `<button type="button" class="tl-ruy" data-thiep="${khoaLon}" aria-label="Nhấn giữ để xem về ngày lễ">${T.layThiep(khoaLon).bieu}</button>` : "";
+  /* Mỗi lễ có thiệp: biểu tượng riêng của lễ đứng trước tên, chạm cả dòng để mở thiệp (anh Bắc 21/11/2026: bỏ vòng biểu tượng
+     riêng ở góc tờ, một chỗ chạm duy nhất) */
   /* Việc và ngày nhắc viết như dòng ghi tay mực xanh trên tờ lịch (anh Bắc chọn mẫu A, 20/11/2026): biểu tượng theo loại,
      tên, phần phụ nhạt; gạch chân chấm báo chạm được để sang thẻ Nhắc; việc quá hạn mực đỏ. Lễ tết là chữ vàng nâu, không gạch.
      Tờ hôm nay còn gom cả ngày nhắc sắp đến và việc quá hạn — thay cho dải báo riêng đầu trang. */
@@ -40,7 +40,6 @@ function veToLich(x) {
       </header>
       <div class="tl-than">
         <canvas class="canh" aria-hidden="true"></canvas>
-        ${ruy}
         <div class="tl-so">${x.dd}</div>
         <div class="tl-thu">${THU[x.thu]}</div>
         ${nhacHom || le ? `<div class="tl-nhan">${nhacHom}${le}</div>` : ""}
@@ -116,7 +115,7 @@ function xepNhan() {
 window.addEventListener("resize", () => requestAnimationFrame(xepNhan));
 const laNgayThanhMinh = j => tietKhi(j) === "Thanh minh" && tietKhi(j - 1) !== "Thanh minh";
 
-/* Nhấn giữ một ngày lễ để mở thiệp mô tả */
+/* Chạm (hoặc nhấn giữ) một ngày lễ để mở thiệp mô tả */
 function ganGiuLe() {
   let hen = 0, el = null, x0 = 0, y0 = 0, daMo = false;
   const huy = () => { clearTimeout(hen); if (el) el.classList.remove("dang-giu"); el = null; };
@@ -137,7 +136,7 @@ function ganGiuLe() {
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-thiep]");
     if (!b) return;
-    if (!daMo) baoTam("Nhấn giữ để xem về ngày này");
+    if (!daMo) { const t = ttNgay(st.jd); window.ThiepLe.mo(b.dataset.thiep, `${THU[thuCuaJd(st.jd)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy} · ${t.am.day}/${t.am.month}${t.am.leap ? " nhuận" : ""} âm lịch`); }
     daMo = false;
   });
 }

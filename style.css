@@ -683,13 +683,11 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .le.co-thiep{position:relative;overflow:hidden;cursor:pointer;font-family:var(--chu);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .le.co-thiep i{font-style:normal;margin-left:5px;font-size:10px;opacity:.75;display:inline-block;animation:lap-lanh 2.4s ease-in-out infinite}
 @keyframes lap-lanh{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
-.le.co-thiep::after,.tl-ruy::after{content:"";position:absolute;inset:0;background:currentColor;opacity:.16;transform:scaleX(0);transform-origin:left;pointer-events:none}
-.le.co-thiep.dang-giu::after,.tl-ruy.dang-giu::after{transform:scaleX(1);transition:transform .48s linear}
-.tl-than>.tl-ruy{position:absolute;top:8px;left:12px;z-index:2;width:46px;height:46px;border-radius:50%;border:0;padding:0;overflow:hidden;
-  background:radial-gradient(circle at 35% 30%,#FFF6DF,#F3D98A);box-shadow:0 0 0 3px rgba(255,255,255,.7),0 6px 16px -6px rgba(140,20,15,.6);
-  font-size:25px;line-height:46px;color:var(--son-dam);cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-  animation:ruy-tho 3s ease-in-out infinite}
-@keyframes ruy-tho{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
+.le.co-thiep::after{content:"";position:absolute;inset:0;background:currentColor;opacity:.16;transform:scaleX(0);transform-origin:left;pointer-events:none}
+.le.co-thiep.dang-giu::after{transform:scaleX(1);transition:transform .48s linear}
+/* Biểu tượng riêng của lễ đứng trước tên (thay ngôi sao và vòng biểu tượng ở góc tờ); nhịp nhẹ báo chạm được */
+.tl-nhan .le .le-bieu{font-style:normal;font-size:19px;line-height:1;margin:0;opacity:1;animation:le-nhip 3s ease-in-out infinite}
+@keyframes le-nhip{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-2px) rotate(5deg)}}
 
 .thiep-lop{position:fixed;inset:0;z-index:150;display:flex;align-items:flex-end;justify-content:center;
   background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--n1) 70%,transparent),color-mix(in srgb,var(--n2) 92%,black));

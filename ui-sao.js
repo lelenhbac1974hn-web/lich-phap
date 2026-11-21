@@ -67,7 +67,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.28.0";
+const PHIEN_BAN = "1.28.1";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -113,7 +113,7 @@ function trangMenu(id) {
     ve: `<section><h4>Chương trình</h4>
         <p>Lịch Pháp là lịch vạn niên dành cho người Việt: mỗi ngày là một tờ lịch có âm lịch, can chi, tiết khí, trực, nhị thập bát tú, giờ hoàng đạo và các sao tốt xấu theo Ngọc Hạp. Ứng dụng chạy trên trình duyệt, cài được lên màn hình iPhone/Android như một ứng dụng, dùng được khi không có mạng; mọi dữ liệu nhắc việc chỉ lưu trong máy của bạn.</p></section>
       <section><h4>Tính năng chính</h4><ul>
-        <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước; lễ tết hiện trên tờ lịch, <i>nhấn giữ</i> biểu tượng lễ để đọc phong tục.</li>
+        <li><b>Ngày</b> — tờ lịch lật: vuốt trái hoặc vuốt lên sang ngày sau, vuốt phải hoặc vuốt xuống về ngày trước; lễ tết hiện trên tờ lịch kèm biểu tượng riêng, <i>chạm</i> tên lễ để đọc gốc tích, phong tục.</li>
         <li><b>Tìm ngày</b> — chọn việc ở dải trên cùng, chọn khoảng (1 tháng đến 1 năm) và mức; ứng dụng liệt kê các ngày hợp việc kèm điều tốt chính và lưu ý; chạm một ngày để mở tờ lịch.</li>
         <li><b>Tháng</b> — lịch tháng âm dương, đánh dấu ngày tốt xấu và ngày có nhắc.</li>
         <li><b>Luận giải</b> — hai trang: <i>Luận ngày</i> và <i>Giờ và xuất hành</i> (mặt đồng hồ 12 canh giờ, giờ hoàng đạo, hướng Hỷ thần, Tài thần, khởi giờ). Luận ngày xét theo việc (động thổ, khởi công, ký kết hợp đồng, khai trương, bàn giao, xuất hành) bằng hai kiểu: <b>Cộng sao</b> (thang điểm) và <b>Theo sách</b> (theo quy tắc Ngọc Hạp Thông Thư), sao Ngọc Hạp của ngày, tra cứu ${CSDL.sao.length} sao.</li>
