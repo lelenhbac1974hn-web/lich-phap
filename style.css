@@ -16,7 +16,7 @@
 /* ═════════ MÀU ═════════ */
 :root{
   --giay:#F3ECDD; --giay-2:#EAE0CC; --the:#FFFCF5; --vien:#E2D6BD;
-  --muc:#211A15; --muc-2:#5B4F43; --muc-3:#93877A;
+  --muc:#211A15; --muc-2:#5B4F43; --muc-3:#786C5F; /* 1.30.1: chữ phụ đậm lên 3,42 → ≥4,5:1 */
   --thu-phap:#9E1D15; --thu-phap-dam:#6B0F0A;
   --son:#B3261E; --son-dam:#8A1B15; --son-nhat:#F7E1DC;
   --vang:#B5862A; --vang-nhat:#F5E6BF; --vang-sang:#E7C873;
@@ -608,10 +608,10 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .viec-trong b{display:block;font-size:16px;color:var(--muc);margin-bottom:4px}
 
 /* ── Thông báo tạm (có Hoàn tác) ── */
-.bao-tam{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 112px);z-index:120;transform:translate(-50%,24px);opacity:0;pointer-events:none;
-  display:flex;align-items:center;gap:12px;max-width:min(520px,calc(100vw - 28px));background:#2A211B;color:#FBEFD8;border-radius:14px;padding:10px 10px 10px 14px;
-  font-size:13.5px;box-shadow:0 14px 30px -12px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}
-.bao-tam.hien{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.bao-tam{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 112px);z-index:180;transform:translate(-50%,24px);opacity:0;pointer-events:none;visibility:hidden; /* 1.30.1: nổi trên tấm (140) và thiệp (150) */
+  display:flex;align-items:center;gap:12px;min-width:min(300px,calc(100vw - 28px));max-width:min(520px,calc(100vw - 28px));background:#2A211B;color:#FBEFD8;border-radius:14px;padding:10px 10px 10px 14px;
+  font-size:13.5px;box-shadow:0 14px 30px -12px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s,visibility .25s}
+.bao-tam.hien{opacity:1;transform:translate(-50%,0);pointer-events:auto;visibility:visible}
 .bao-tam span{flex:1;min-width:0}
 .bao-tam button{flex:none;border:0;background:transparent;color:var(--vang-sang);font:700 13.5px var(--chu);padding:6px 8px}
 @media (min-width:761px){.bao-tam{bottom:28px}}
@@ -1199,8 +1199,10 @@ html[data-ao="tre"][data-toi]{
 }
 html[data-ao="tre"],html[data-ao="hien-dai"]{--an-mau:var(--thu-phap)}
 /* Nền thẫm: đỏ mang nghĩa xấu sáng lên cho đọc được (nghĩa giữ nguyên) */
-html[data-ao][data-toi]{--son:#F0605A}
-html[data-ao][data-toi] .gct-xung b{color:var(--son)}
+/* 1.30.1: áp cho mọi bộ áo, cả Cổ điển (không đặt data-ao) — đỏ 2,46:1 → ≥4,5:1; xanh "tốt" cũng sáng lên; gáy giữ đỏ cũ */
+html[data-toi]{--son:#F0605A; --ngoc:#4FBF8E}
+html[data-toi]:not([data-ao]){--gay-2:#B3261E; --an-mau:#B3261E} /* Cổ điển tối: gáy và triện giữ đỏ son cũ */
+html[data-toi] .gct-xung b{color:var(--son)}
 /* Tâm mặt giờ theo màu bộ áo */
 html[data-ao] .tam-gio{fill:var(--thu-phap)}
 html[data-ao="tre"]{--chu:"Nunito",system-ui,"Segoe UI",sans-serif; --so:"Nunito",system-ui,sans-serif}
@@ -1275,3 +1277,13 @@ html[data-ao="hien-dai"][data-toi]{
 .tn-muc.b4{--m:var(--b4)}.tn-muc.b2{--m:var(--b2)}
 .tn-muc i{display:block;width:44px;height:4px;border-radius:2px;background:var(--m);margin:4px 0 0 auto}
 @media (max-width:760px){.tn-loc{padding:10px 16px 2px}}
+
+/* ═════════ VÙNG CHẠM ≥ 44px (1.30.1, review N3) ═════════ */
+/* Giữ nguyên hình vẽ; lớp ::after trong suốt nới vùng bấm ra tối thiểu 44×44 quanh tâm nút */
+.thuong-hieu,.lat,.tl-hang,.nut,.viec,.mn-chip,.mn-lui,.ct-chinh,.ct-chu,.bao-tam button,
+#n-truoc-chon [data-truoc],#tim-ngay button,#luan-tab button,.pd-lien,.tg-lien,.loc,.nut-them{position:relative}
+.lat{z-index:2}
+.thuong-hieu::before,.lat::before,.tl-hang::before,.nut::before,.viec::before,.mn-chip::before,.mn-lui::before,
+.ct-chinh::before,.ct-chu::before,.bao-tam button::before,#n-truoc-chon [data-truoc]::before,#tim-ngay button::before,#luan-tab button::before,
+.pd-lien::before,.tg-lien::before,.loc::before,.nut-them::before,.tam-dong::before,.thiep-dong::before{
+  content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}

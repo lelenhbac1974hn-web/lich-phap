@@ -209,9 +209,7 @@ function ganChieuCao() {
   logo.addEventListener("touchend", e => { if (henGiu === -1) e.preventDefault(); clearTimeout(henGiu); henGiu = 0; });
   logo.addEventListener("touchmove", () => { clearTimeout(henGiu); henGiu = 0; }, { passive: true });
   logo.addEventListener("contextmenu", e => e.preventDefault());
-  /* Chặn phóng to bằng hai ngón và chạm đúp trên iPhone, để giao diện luôn giữ nguyên tỉ lệ */
-  ["gesturestart", "gesturechange", "gestureend"].forEach(ev =>
-    document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+  /* Cho phóng to bằng hai ngón (người lớn tuổi đọc chữ nhỏ — review 1.30.0, N2); chỉ chặn chạm đúp để chạm nhanh không bị phóng nhầm */
   let lanCham = 0;
   document.addEventListener("touchend", e => {
     const bay = Date.now();

@@ -61,7 +61,7 @@
       if (typeof ve === "function") ve();
     } catch (e) {
       /* Bị từ chối vị trí: tắt hẳn (không có vị trí thì không có thời tiết); lỗi mạng: giữ số liệu cũ nếu còn hạn */
-      if (e && e.code === 1) { tat(); if (typeof baoTam === "function") baoTam("Chưa cho phép dùng vị trí nên đã tắt thời tiết"); }
+      if (e && e.code === 1) { tat(); if (typeof baoTam === "function") baoTam("Máy chưa cho dùng vị trí nên đã tắt thời tiết. Cho phép trong Cài đặt → Quyền riêng tư → Vị trí rồi bật lại."); }
     } finally { dangLay = false; }
   }
   function bat() {
