@@ -30,7 +30,7 @@
   --nhac:#2F6FA8; --nhac-nhat:#E3EEF7; --nhac-dam:#1E4F7A; --nhac-vien:#B9D0E6; /* việc, nhắc: màu chính, nền, chữ, viền */
   --chinh:#E19279; --tren-chinh:#3A1E12; --chinh-dam:#C0573E; --chinh-nhat:#FBEAE2; /* màu chính: cam đất (Claude nhạt 20%) — nút chính, đang chọn */
   --le-so:#EDB9AC; --gach-so:rgba(147,135,122,.2); --chu-so:#6B4A2A; /* trang sổ tay: lề đôi, gạch giữa dòng, chữ tiêu đề */
-  --b0:#A61E17; --b1:#D2691E; --b2:#B5862A; --b3:#3F8F5B; --b4:#0F7A5E;
+  --b0:#A61E17; --b1:#D2691E; --b2:#8C8273; --b3:#5A9A3A; --b4:#0B6B58;
   --bong:0 1px 2px rgba(60,40,10,.06),0 8px 24px -8px rgba(60,40,10,.18);
   /* Vật liệu tờ lịch, nền trang — gom về biến để đổi theo bộ áo và chế độ tối (1.24.0) */
   --nen-hao-1:rgba(181,134,42,.16); --nen-hao-2:rgba(179,38,30,.10); --nen-ke:rgba(120,90,40,.035); /* quầng sáng và vân kẻ nền trang */
@@ -1069,7 +1069,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
     --vang-dam:#F1D79A; --vang-vien:#6B5526; --vang-nen:#3A2F17; --ngoc-dam:#8ED4B0;
     --nhac-nhat:#1D2C3A; --nhac-dam:#A9CBEA; --nhac-vien:#2F4A63;
     --chinh-dam:#EBA48D; --chinh-nhat:#3A2620; --le-so:#6B3F36; --gach-so:rgba(240,230,214,.09); --chu-so:#D2B48C;
-    --b0:#E0574B; --b1:#E58A45; --b2:#D3A84A; --b3:#5DB37C; --b4:#3DBE93;
+    --b0:#E0574B; --b1:#E58A45; --b2:#A89E8D; --b3:#9BCB6E; --b4:#2FB894;
     --bong:0 1px 2px rgba(0,0,0,.3),0 8px 24px -8px rgba(0,0,0,.6);
     --nen-hao-1:rgba(181,134,42,.10); --nen-ke:transparent;
     --to-sang:rgba(255,255,255,.05); --to-lop-1:#3A3027; --to-lop-2:#2A231C; --to-lop-3:#3A3027; --to-lop-4:#342A21; --to-bong:rgba(0,0,0,.7);
@@ -1091,7 +1091,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   /* Mặt giờ */
   html[data-toi] .mui.hd path{fill:#1F3A2C}html[data-toi] .mui.hac path{fill:#3D2421}
   html[data-toi] .mui.hd.chon path{fill:#2A5640}html[data-toi] .mui.hac.chon path{fill:#5A3029}
-  html[data-toi] .mui.chon path{stroke:var(--b2)}
+  html[data-toi] .mui.chon path{stroke:var(--vang)}
   html[data-toi] .mui .chi{fill:#A8E0C1}html[data-toi] .mui .khung{fill:#7FB89A}
   html[data-toi] .mui.hac .chi{fill:#F2B2A7}html[data-toi] .mui.hac .khung{fill:#C98C82}
   html[data-toi] .mui.hd.dang path{fill:#2E8A5E;animation-name:sang-hd-toi}html[data-toi] .mui.hac.dang path{fill:#A9483B;animation-name:sang-hac-toi}
@@ -1384,3 +1384,10 @@ html[data-co] .tn-loc .sx-chip{gap:0 11px}
 .loc b{color:inherit}
 .loc.chon{box-shadow:none;border-bottom-color:var(--chinh);color:var(--chinh-dam);font-weight:700}
 html[data-co] .loc-viec{gap:13px}
+
+/* ═════════ 1.36.0 ═════════ */
+/* Màu năm mức theo mẫu C (anh Bắc chọn 22/11/2026): Bình thường xám nâu trung tính (không trùng vàng lễ, khung Hôm nay);
+   Tốt xanh lá mạ, Rất tốt xanh ngọc thẫm; Rất tốt vẽ gạch đôi để không cần phân biệt sắc xanh */
+.o.b4 .o-cham,.tn-muc.b4 i,.chu-thich .b4 i{height:8px;border-radius:2px;background:linear-gradient(var(--b4) 0 3px,transparent 3px 5px,var(--b4) 5px)}
+/* gạch trên nằm đúng chỗ gạch đơn, gạch dưới thêm xuống phía dưới — không đè số ngày âm */
+.o.b4 .o-cham{bottom:0}
