@@ -1396,20 +1396,37 @@ html[data-co] .loc-viec{gap:13px}
 /* Bộ áo Trung niên (anh Bắc chọn mẫu X, 22/11/2026): nền xanh lam vừa, chữ trắng, điểm nhấn vàng — luôn tối như Hiện đại
    nhưng khác hẳn chế độ tối nâu đen. Khung chung lấy của Hiện đại (khối trên), ở đây chỉ đổi giá trị biến.
    Tương phản chữ trên --the: chính 9,8 · phụ 7,4 · mờ 5,0 · năm mức 4,6–6,8. */
+html[data-ao="trung-nien"]{--chu:"Lexend",system-ui,"Segoe UI",sans-serif; --so:"SpaceG","Lexend",sans-serif}
+/* 1.37.2 — Trung niên sáng: xanh da trời dịu theo ảnh mẫu anh Bắc gửi 22/11/2026 (bản xanh lam đậm chữ trắng bị chói).
+   Chữ xanh đen trên tờ giấy gần trắng: chính 14,6 · phụ 10,1 · mờ 7,6; chữ mờ trên nền trời 4,8. Màu mang nghĩa giữ bản sáng mặc định. */
+html[data-ao="trung-nien"]:not([data-toi]){
+  --giay:#AFC8E8; --giay-2:#9DBBE2; --the:#F4F8FD; --vien:#C2D2EA;
+  --muc:#121E36; --muc-2:#2C3A55; --muc-3:#3D4C69;
+  --thu-phap:#2F5FA8; --chu-sang:#FFFFFF;
+  --chinh:#3F6FB8; --tren-chinh:#FFFFFF; --chinh-dam:#2B5699; --chinh-nhat:#DCE8F8;
+  --nhac:#2F6FB5; --nhac-dam:#1F4E86; --nhac-nhat:#E1ECFA; --nhac-vien:#B9CFEC;
+  --gach-so:rgba(40,70,120,.10); --chu-so:#3A5C96;
+  --nen-hao-1:rgba(255,255,255,.38); --nen-hao-2:rgba(255,255,255,.16); --nen-ke:transparent;
+  --tt-1:#6F97D0; --tt-2:#7FA3D6; --gay-1:#3E6DB6; --gay-2:#5B8AD0; --gay-3:#4C7BC4;
+  --to-lop-1:#E3ECF9; --to-lop-2:#D6E3F5; --to-lop-3:#E3ECF9; --to-lop-4:#DBE7F7;
+  --am-1:#E4EDF9; --am-2:#D8E5F6; --am-gach:#B4C8E6; --am-vien:#B4C8E6;
+}
+/* Trung niên tối: xanh chàm trầm, bớt rực so với bản 1.37.0 */
 html[data-ao="trung-nien"][data-toi]{
-  --giay:#122B63; --giay-2:#17347A; --the:#1B3F8C; --vien:#3A5DB0;
-  --muc:#FFFFFF; --muc-2:#D5DFF5; --muc-3:#A7B8E0;
+  --giay:#14264A; --giay-2:#182D57; --the:#1E3663; --vien:#36507F;
+  --muc:#F2F5FB; --muc-2:#C9D4E8; --muc-3:#9DADCB;
   --son:#FF9388; --son-dam:#FF9388; --ngoc:#7BE3B4; --ngoc-dam:#7BE3B4;
   --b0:#FF9388; --b1:#FFB77A; --b2:#CFC8BA; --b3:#B4E584; --b4:#6BE5C2;
-  --chinh:#FFD25E; --chinh-dam:#FFD25E; --chinh-nhat:#2D4FA6; --tren-chinh:#2A1F00;
-  --vang:#FFD25E; --vang-dam:#FFE08A; --vang-nhat:#3A4470; --vang-nen:#3A4470; --vang-vien:#6F74A0;
-  --nhac:#A9D0FF; --nhac-dam:#A9D0FF; --nhac-nhat:#234E9C; --nhac-vien:#4A72C4;
-  --le-so:#6C84D6; --gach-so:rgba(220,230,255,.14); --chu-so:#DAD6FF;
-  --nen-hao-1:rgba(124,160,255,.22); --nen-hao-2:rgba(255,210,94,.08);
-  --tt-1:#122B63; --tt-2:#1B3F8C; --gay-1:#6A5AE0; --gay-2:#8C7DF5; --gay-3:#7C6CF0;
-  --to-lop-1:#2A4F9E; --to-lop-2:#234590; --to-lop-3:#2A4F9E; --to-lop-4:#234590;
+  --thu-phap:#4C7BC4;
+  --chinh:#8FB6F0; --chinh-dam:#A9C8F5; --chinh-nhat:#2B4677; --tren-chinh:#0E1B36;
+  --vang:#F2C968; --vang-dam:#F6D98E; --vang-nhat:#3A4265; --vang-nen:#3A4265; --vang-vien:#6F74A0;
+  --nhac:#A9D0FF; --nhac-dam:#A9D0FF; --nhac-nhat:#25467A; --nhac-vien:#4A6CA8;
+  --le-so:#5C74B0; --gach-so:rgba(220,230,255,.12); --chu-so:#C9D6F5;
+  --nen-hao-1:rgba(124,160,255,.14); --nen-hao-2:rgba(143,182,240,.06);
+  --tt-1:#14264A; --tt-2:#1E3663; --gay-1:#3E6DB6; --gay-2:#5B8AD0; --gay-3:#4C7BC4;
+  --to-lop-1:#26416F; --to-lop-2:#213A66; --to-lop-3:#26416F; --to-lop-4:#213A66;
   --do-nghi:#FF9AA6;
-  --am-1:#224896; --am-2:#1D3F88; --am-gach:#4468BC; --am-vien:#4468BC;
+  --am-1:#233E6C; --am-2:#1F3761; --am-gach:#3D5788; --am-vien:#3D5788;
 }
 /* Dải chọn ở Menu → Giao diện: một hàng, gạt ngang, không xuống dòng (anh Bắc 22/11/2026) */
 .mn-chips{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;margin:0 -18px;padding:2px 18px}

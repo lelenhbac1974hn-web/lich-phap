@@ -81,7 +81,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.37.1";
+const PHIEN_BAN = "1.37.2";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -100,7 +100,7 @@ function trangMenu(id) {
   /* Trang Giao diện gọn (anh Bắc 21/11/2026): mỗi mục một dải chip viền + một dòng mô tả lựa chọn đang dùng, ít cuộn */
   const chip = (thuoc, k, ten, dang, them = "") => `<button type="button" class="mn-chip${dang ? " dang" : ""}" ${thuoc}="${k}" aria-pressed="${dang}">${them}${ten}</button>`;
   const muc = (tieu, chips, mota) => `<section class="mn-nhom"><h4>${tieu}</h4><div class="mn-chips">${chips}</div>${mota ? `<p class="mn-mota">${mota}</p>` : ""}</section>`;
-  const AO = [["co-dien", "Cổ điển", "Giấy kem, gáy đỏ son · mặc định", ["#F3ECDD", "#A61E17", "#E19279"]], ["tre", "Trẻ trung", "Xanh bạc hà, kem nhạt, chữ tròn", ["#E4F1EE", "#5DB3A5", "#F2B48C"]], ["trung-nien", "Trung niên", "Xanh lam, chữ trắng, điểm nhấn vàng · luôn tối", ["#3A6BD8", "#FFFFFF", "#FFD25E"]], ["hien-dai", "Hiện đại", "Xanh thẫm, tím, vàng · luôn tối", ["#0E1726", "#7C6CF0", "#F2C14E"]]];
+  const AO = [["co-dien", "Cổ điển", "Giấy kem, gáy đỏ son · mặc định", ["#F3ECDD", "#A61E17", "#E19279"]], ["tre", "Trẻ trung", "Xanh bạc hà, kem nhạt, chữ tròn", ["#E4F1EE", "#5DB3A5", "#F2B48C"]], ["trung-nien", "Trung niên", "Xanh da trời dịu, chữ xanh đen, dịu mắt", ["#AFC8E8", "#3F6FB8", "#F4F8FD"]], ["hien-dai", "Hiện đại", "Xanh thẫm, tím, vàng · luôn tối", ["#0E1726", "#7C6CF0", "#F2C14E"]]];
   const GD = [["tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại"], ["sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày"], ["toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối"]];
   const TO = [["e", "Triện", "Con dấu vuông ghi mức tốt xấu, giữa ngày âm và can chi"], ["g", "Dòng", "Mặc định · một dòng ở chân tờ lịch: việc, mức tốt xấu và lý do rút gọn"], ["f", "Thang", "Mức tốt xấu kèm thang năm bậc, ngay dưới tháng âm"], ["goc", "Gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới"]];
   const HU = [["mua", "Cảnh theo mùa"], ["troi", "Theo thời tiết"], ["le", "Ngày lễ, trăng rằm"], ["anh", "Ánh sáng theo giờ"]];
