@@ -30,6 +30,14 @@ function dongKieuKhac(sach, cd, ls) {
     : `Theo sách: <b>${BAC_UI[ls.bac].t}</b> — ${esc(boTrang(ls.ket))}.`;
   return `<p class="pd-khac">${t}</p>`;
 }
+/* Lời luận thành văn (luan-van.js): chỉ cho năm việc thường; lỗi thì bỏ qua, các mục bên dưới vẫn đủ */
+function loiLuan(x) {
+  if (!window.LUAN_VAN2 || !["chung", "dongtho", "kyket", "khaitruong", "xuathanh"].includes(st.viec)) return "";
+  let b; try { b = LUAN_VAN2.ghep(x.j, st.viec); } catch (e) { return ""; }
+  const tho = k => b.tho.filter(t => t.sau === k + 1).map(t => `${t.dan ? `<p>${esc(t.dan)}</p>` : ""}
+    <blockquote class="pd-tho">${t.t.map(esc).join("<br>")}<small>${esc(t.nguon.replace(/\s*\(.*\)$/, ""))}</small></blockquote>`).join("");
+  return `<div class="pd-loi"><h4>Lời luận</h4>${b.doan.map((d, k) => `<p>${esc(d)}</p>${tho(k)}`).join("")}<p class="pd-loi-ket">${esc(b.ket)}</p></div>`;
+}
 function vePhanDinh(x) {
   const sach = st.kieu === "sach", cd = x.cd, ls = x.ls, soBac = sach ? ls.bac : cd.bac, bac = BAC_UI[soBac];
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
@@ -49,6 +57,7 @@ function vePhanDinh(x) {
     <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
     ${oTuoi()}
     ${dongKieuKhac(true, cd, ls)}
+    ${loiLuan(x)}
     ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
     <div class="pd-ly">
       <div><h4>Điều tốt</h4><ul>${liSach(ls.tot, "cong") || '<li class="rong">Không có</li>'}</ul></div>
