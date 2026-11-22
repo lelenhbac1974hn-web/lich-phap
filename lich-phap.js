@@ -267,6 +267,9 @@ function bangDuongCong() {
    Tháng nhuận: "15 ngày trên thuộc về Địa Chi của tháng trước, còn 15 ngày dưới thuộc về Địa Chi của tháng sau"
    (Ngọc Hạp Chánh Tông tr.90). Tháng nhuận N nằm sau tháng N, nên ngày 1–15 dùng tháng N, ngày 16 trở đi dùng tháng N+1. */
 const thangAnSao = am => am.leap && am.day > 15 ? am.month % 12 + 1 : am.month;
+/* Can chi tháng âm, kể cả tháng nhuận (Ngọc Hạp Chánh Tông tr.90): tháng nhuận 15 ngày đầu theo can chi tháng trước,
+   từ ngày 16 theo can chi tháng sau; can tháng tính liền 60 tháng không kể tháng nhuận. Nhuận tháng Chạp thì tháng sau là Giêng năm sau. */
+const ccThangAm = am => { const m = thangAnSao(am); return ccThang(m, m < am.month ? am.year + 1 : am.year); };
 const laTamNuong = am => TAM_NUONG.includes(am.day);
 const laNguyetKy = am => NGUYET_KY.includes(am.day);
 const laDuongCong = am => !am.leap && (bangDuongCong()[am.month] || []).includes(am.day);

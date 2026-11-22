@@ -120,7 +120,7 @@ function thongTin(j, viec) {
     gio: gioTrongNgay(j),
     tiet: tietKhi(j),
     ccNgay: ccNgay(j),
-    ccThang: ccThang(am.month, am.year),
+    ccThang: ccThangAm(am),
     ccNam: ccNam(am.year),
     conGiap: CON_GIAP[(am.year + 8) % 12]
   };
