@@ -91,6 +91,13 @@ document.addEventListener("click", e => {
   if (lt) { doiLuan(lt.dataset.luan); return; }
   const tk = e.target.closest("[data-tim-khoang],[data-tim-muc]");
   if (tk) { if (tk.dataset.timKhoang) st.timKhoang = +tk.dataset.timKhoang; if (tk.dataset.timMuc) st.timMuc = +tk.dataset.timMuc; veTimNgay(); return; }
+  const dt = e.target.closest("[data-tim-chon]");
+  if (dt && !e.target.closest("[data-jd]")) {
+    st.timChon = +dt.dataset.timChon;
+    document.querySelectorAll(".tn-dong.sang").forEach(d => d.classList.remove("sang"));
+    dt.classList.add("sang");
+    return;
+  }
   const k = e.target.closest("[data-kieu]");
   if (k) {
     st.kieu = k.dataset.kieu === "sao" ? "sao" : "sach";

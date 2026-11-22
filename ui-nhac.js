@@ -837,7 +837,8 @@ function moFormViec(v) {
   $("v-luu").innerHTML = v ? `${ic("luu")}<span>Lưu</span>` : `${ic("them")}<span>Thêm việc</span>`; $("v-loi").textContent = "";
   lichViecMo = gioViecMo = false;
   hieuNhap();
-  $("v-go").focus();
+  /* Sửa việc: không tự đặt con trỏ, để bàn phím iPhone khỏi bật lên che nửa tờ khi chỉ muốn đổi ngày */
+  if (!v) $("v-go").focus();
 }
 function dongFormViec() {
   viecSua = null;

@@ -74,13 +74,13 @@ h3,h4,p{margin:0}
 .chon-ngay:focus-within{border-color:var(--vang);box-shadow:0 0 0 3px rgba(181,134,42,.2)}
 .nut{border:1px solid var(--vien);background:var(--the);border-radius:999px;padding:9px 18px;font-weight:600;font-size:14px;transition:.15s}
 .nut-chinh{background:var(--chinh);border-color:var(--chinh);color:var(--tren-chinh)} /* nút chính: cam đất, đỏ chỉ để nói "xấu" (luật giao diện 7) */
-.nut-chinh:hover{filter:brightness(1.05)}
+@media (hover:hover){.nut-chinh:hover{filter:brightness(1.05)}}
 
 /* ═════════ DẢI VIỆC ═════════ */
 .dai-viec{max-width:1240px;margin:0 auto;padding:6px 24px 4px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
 .dai-viec::-webkit-scrollbar{display:none}
 .viec{white-space:nowrap;border:1px solid var(--vien);background:rgba(255,252,245,.6);border-radius:999px;padding:7px 15px;font-size:13.5px;font-weight:500;color:var(--muc-2);transition:.15s}
-.viec:hover{border-color:var(--vang);color:var(--muc)}
+@media (hover:hover){.viec:hover{border-color:var(--vang);color:var(--muc)}}
 /* Việc đang chọn: viên viền màu chính + chữ đậm (luật 3); đỏ chỉ dành cho nghĩa xấu (luật 7) */
 .viec.chon{background:var(--the);border-color:var(--chinh);color:var(--muc);font-weight:700;box-shadow:inset 0 0 0 1px var(--chinh)}
 
@@ -104,7 +104,7 @@ h3,h4,p{margin:0}
 .tl-thang{display:flex;align-items:baseline;gap:8px;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muc-2);font-weight:600}
 .tl-thang b{font:900 30px/1 var(--so);letter-spacing:0;color:var(--do-nghi)}
 .lat{width:38px;height:38px;border-radius:50%;border:1px solid var(--vien);background:transparent;font-size:22px;line-height:1;color:var(--muc-2);display:grid;place-items:center;padding:0 0 3px;transition:.15s}
-.lat:hover{background:var(--thu-phap);border-color:var(--thu-phap);color:var(--chu-sang)}
+@media (hover:hover){.lat:hover{background:var(--thu-phap);border-color:var(--thu-phap);color:var(--chu-sang)}}
 .lat.nho{width:30px;height:30px;font-size:18px}
 .tl-than{text-align:center;padding:0 22px 18px;position:relative}
 .tl-so{font:900 208px/0.92 var(--so);letter-spacing:-.04em;color:var(--muc);margin-top:6px;
@@ -363,7 +363,7 @@ body[data-tab="ngay"]:not([data-kieu-to="goc"]) #tom-tat{display:none}
 .o{position:relative;aspect-ratio:1/0.86;border-radius:6px;border:0;border-bottom:1px solid var(--gach-so);background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:background .12s;--m:var(--b2)}
 .o.trong{background:transparent}
 .o.b0{--m:var(--b0)}.o.b1{--m:var(--b1)}.o.b2{--m:var(--b2)}.o.b3{--m:var(--b3)}.o.b4{--m:var(--b4)}
-button.o:hover{background:color-mix(in srgb,var(--chinh) 10%,transparent)}
+@media (hover:hover){button.o:hover{background:color-mix(in srgb,var(--chinh) 10%,transparent)}}
 .o-duong{font:700 21px/1 var(--so)}
 .o.do .o-duong{color:var(--do-nghi)}
 .o-am{font-size:12px;color:var(--muc-3);font-weight:500}
@@ -375,7 +375,7 @@ button.o:hover{background:color-mix(in srgb,var(--chinh) 10%,transparent)}
 .o-goc .c-ta,.chu-thich .ct-ta i{background:var(--nhac)}
 .o.ngoai{background:transparent;opacity:.38;border-bottom-color:transparent}
 .o.ngoai .o-duong{font-weight:600}
-button.o.ngoai:hover{opacity:.7}
+@media (hover:hover){button.o.ngoai:hover{opacity:.7}}
 .o.hom-nay{box-shadow:inset 0 0 0 2px var(--vang)}
 .o.chon{background:var(--chinh);border-bottom-color:transparent}
 .o.chon .o-duong,.o.chon.do .o-duong{color:var(--tren-chinh)}
@@ -410,7 +410,7 @@ button.o.ngoai:hover{opacity:.7}
 
 /* ═════════ NHẮC NGÀY ═════════ */
 .nut-nhac{text-decoration:none;color:var(--muc);display:inline-flex;align-items:center;gap:8px}
-.nut-nhac:hover{border-color:var(--vang)}
+@media (hover:hover){.nut-nhac:hover{border-color:var(--vang)}}
 .nut-nhac b{background:var(--son);color:var(--chu-sang);border-radius:999px;min-width:20px;height:20px;padding:0 6px;font-size:12px;display:inline-grid;place-items:center}
 .nut-nhac b[hidden]{display:none}
 .nut.nho{padding:6px 13px;font-size:12.5px}
@@ -627,7 +627,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
 .sao-nut b small{font:400 12px "SimSun","Songti SC","Noto Serif CJK SC",serif;color:var(--muc-3);margin-left:6px}
 .sao-nut:active{opacity:.6}
 .sao-ds li:has(.sao-nut){border-radius:8px;transition:background .2s}
-.sao-ds li:has(.sao-nut):hover{background:#FBF4E4}
+@media (hover:hover){.sao-ds li:has(.sao-nut):hover{background:#FBF4E4}}
 .tam-lop{position:fixed;inset:0;z-index:140;display:flex;align-items:flex-end;justify-content:center;background:rgba(33,26,21,.45);
   -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;transition:opacity .3s}
 .tam-lop.hien{opacity:1}
@@ -1108,7 +1108,7 @@ button.ds-bieu{justify-self:center;width:40px;height:40px;border:0;border-radius
   /* Lịch tháng */
   html[data-toi] .o.chon .o-duong{color:var(--tren-chinh)}
   /* Nhắc */
-  html[data-toi] .sao-ds li:has(.sao-nut):hover{background:#2E261F}
+  @media (hover:hover){html[data-toi] .sao-ds li:has(.sao-nut):hover{background:#2E261F}}
   html[data-toi] .chon-bieu button{color:#E3CBA7}
   /* Menu dưới, thẻ nổi */
   html[data-toi] .bao-tam{background:var(--muc);color:#211A15}
@@ -1355,3 +1355,25 @@ html[data-co="rat-lon"] .am-phai{zoom:.86;padding-left:10px}
 html[data-co] .phan-doan{gap:14px}
 html[data-co] .phan-doan button{white-space:nowrap}
 html[data-co="rat-lon"] .phan-doan button,html[data-co="rat-lon"] .nut-them{font-size:13.5px}
+
+/* ═════════ 1.35.1 ═════════ */
+/* Bộ lọc Tìm ngày: chữ sáng lên + gạch dưới, không viên tròn (anh Bắc 22/11/2026) */
+.tn-loc .sx-chip{gap:0 16px}
+.tn-loc .sx-chip .c{border:0;border-radius:0;background:none;box-shadow:none;padding:9px 1px 7px;min-height:36px;border-bottom:2px solid transparent;font:500 13.5px var(--chu);color:var(--muc-3)}
+.tn-loc .sx-chip .c.chon{border-color:var(--chinh);box-shadow:none;color:var(--chinh-dam);font-weight:700}
+/* Danh sách Tìm ngày: dòng đánh dấu giữ hai kẻ dọc của trang sổ; ô ngày đầu dòng là nút mở tờ lịch */
+.tn-dong.sang,.tn-dong:active{background:linear-gradient(to right,transparent 66px,var(--le-so) 66px 67px,transparent 67px 68px,var(--le-so) 68px 69px,transparent 69px),var(--chinh-nhat)}
+button.tn-so{border:0;background:none;padding:6px 0 4px;margin:0;color:inherit;font:inherit;cursor:pointer;border-bottom:1.5px solid transparent;justify-self:center;min-width:44px;-webkit-tap-highlight-color:transparent;transition:color .2s,border-color .2s}
+button.tn-so:active{opacity:.6}
+.tn-dong.sang .tn-so{border-bottom-color:color-mix(in srgb,var(--chinh) 55%,transparent)}
+.tn-dong.sang .tn-so b,.tn-dong.sang .tn-so small{color:var(--chinh-dam)}
+/* Thẻ Nhắc: biểu tượng của dòng đang đánh dấu sáng lên, gạch dưới mờ — không khoanh tròn */
+button.ds-bieu{border-radius:0}
+.dong-so.sang .ds-mo{background:none;box-shadow:inset 0 -1.5px 0 color-mix(in srgb,var(--chinh) 55%,transparent);color:var(--chinh-dam)}
+/* Mặt giờ: ô chú thích "Đang diễn ra" theo đúng màu giờ hiện tại */
+.chu-gio .dang.hac i{background:#F0A496;border-color:#A66A60}
+html[data-toi] .chu-gio .dang.hac i{background:#A9483B;border-color:#F2B2A7}
+/* Thẻ Nhắc không dùng dải chọn việc */
+@media (max-width:760px){body[data-tab="nhac"] .dai-viec{display:none}}
+html[data-co] .tn-loc{grid-template-columns:44px minmax(0,1fr)}
+html[data-co] .tn-loc .sx-chip{gap:0 11px}

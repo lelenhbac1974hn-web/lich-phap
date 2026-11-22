@@ -228,7 +228,7 @@ function veMatGio(x) {
       <text x="${C}" y="${C + (laHomNay ? 3 : 1)}" class="tam-so${laHomNay ? " nho" : ""}">${tamTren}</text>
       <text x="${C}" y="${C + 24}" class="tam-chu">${tamDuoi}</text>
     </svg>
-    <div class="chu-gio"><span><i></i>Hoàng đạo</span><span class="hac"><i></i>Hắc đạo</span>${laHomNay ? '<span class="dang"><i></i>Đang diễn ra</span>' : ""}</div>
+    <div class="chu-gio"><span><i></i>Hoàng đạo</span><span class="hac"><i></i>Hắc đạo</span>${laHomNay ? '<span class="dang' + (gio[gioNay].hd ? "" : " hac") + '"><i></i>Đang diễn ra</span>' : ""}</div>
     <div class="pd-ba huong">
       <div><small>Hỷ thần</small><b>${HY_THAN[canNgay]}</b></div>
       <div><small>Tài thần</small><b>${TAI_THAN[canNgay]}</b></div>
@@ -290,12 +290,14 @@ function veTimNgay() {
     const sau = KHOANG_TIM.find(([n]) => n > kh);
     if (sau) { const so = locNgayTot(hom, sau[0], viec.id, muc).length; if (so > ds.length) goiY = `<button type="button" class="tn-goi" data-tim-khoang="${sau[0]}">${esc(viec.ten)} ít ngày hợp. <u>Xem ${sau[1]} tới: ${so} ngày ›</u></button>`; }
   }
+  /* Chạm dòng chỉ đánh dấu; chạm ô ngày đầu dòng mới mở tờ lịch ngày đó (cùng cơ chế với biểu tượng ở thẻ Nhắc — anh Bắc 22/11/2026) */
+  const chonTim = st.timChon || st.jd;
   let thangTruoc = "", dong = "";
   ds.forEach(({ j, a, b }) => {
     const [d, m, y] = jdToDate(j), k = j - hom, thu = thuCuaJd(j), ld = lyDoTim(j, a, viec.id);
     if (`${m}/${y}` !== thangTruoc) { thangTruoc = `${m}/${y}`; dong += `<li class="tn-td">Tháng ${m} · ${y}</li>`; }
-    dong += `<li class="tn-dong${j === st.jd ? " sang" : ""}" data-jd="${j}" tabindex="0" title="Mở tờ lịch ngày ${ngayVN(j)}">
-      <span class="tn-so${thu === 0 ? " cn" : ""}"><b>${d}</b><small>${THU_NGAN[thu]}</small></span>
+    dong += `<li class="tn-dong${j === chonTim ? " sang" : ""}" data-tim-chon="${j}" tabindex="0">
+      <button type="button" class="tn-so${thu === 0 ? " cn" : ""}" data-jd="${j}" aria-label="Mở tờ lịch ngày ${ngayVN(j)}"><b>${d}</b><small>${THU_NGAN[thu]}</small></button>
       <span class="tn-nd"><b>${k === 0 ? "Hôm nay · " : k === 1 ? "Ngày mai · " : ""}${a.day}/${a.month}${a.leap ? " nhuận" : ""} âm</b>${ld.tot ? `<span>${esc(ld.tot)}</span>` : ""}${ld.luu ? `<em>Lưu ý: ${esc(ld.luu)}</em>` : ""}</span>
       <span class="tn-muc ${BAC_UI[b].lop}">${BAC_UI[b].t}<i></i></span></li>`;
   });
@@ -308,6 +310,9 @@ function veTimNgay() {
     <p class="tn-tom"><b>${ds.length} ngày</b> hợp ${esc(viec.ten)} từ ${ngayVN(hom)} đến ${ngayVN(hom + kh - 1)}</p>
     ${goiY}
     ${ds.length ? `<ul class="tn-ds">${dong}</ul>` : `<p class="tn-rong">Không có ngày nào đạt mức này trong khoảng đã chọn.</p>`}`;
+  /* Quay lại thẻ: dòng đang đánh dấu nằm giữa vùng nhìn, khỏi cuộn tìm */
+  const khung = el.querySelector(".tn-ds"), sang = el.querySelector(".tn-dong.sang");
+  if (khung && sang) khung.scrollTop = Math.max(0, sang.offsetTop - (khung.clientHeight - sang.offsetHeight) / 2);
 }
 
 /* ── Lịch tháng ── */
