@@ -10,7 +10,11 @@ const CSDL = window.NGOC_HAP_CSDL || { sao: [] };
 const saoTheoTen = new Map();
 CSDL.sao.forEach(s => { saoTheoTen.set(s.ten, s); (s.ct || []).forEach(t => { if (!saoTheoTen.has(t)) saoTheoTen.set(t, s); }); });
 
+/* Trong tờ Luận ngày các sao đã được kể ở lý do, nên danh sách sao thu lại thành một dòng; bấm mới mở (anh Bắc 22/11/2026) */
+const KHOA_MO_SAO = "lichphap:mo-sao";
+let saoMo = (() => { try { return localStorage.getItem(KHOA_MO_SAO) === "1"; } catch (e) { return false; } })(), saoX = null;
 function veNgocHap(x) {
+  saoX = x;
   const nh = x.cd.nh;
   const ds = (sao, lop) => sao.length
     ? sao.map(s => {
@@ -19,11 +23,12 @@ function veNgocHap(x) {
       }).join("")
     : `<li class="rong">Không có sao nào chiếu.</li>`;
   /* Tờ thứ hai của Luận giải: hai cột Cát tinh · Hung tinh trên cùng một tờ; Tra cứu, Căn cứ là chữ màu chính ở đầu tờ */
+  $("ngoc-hap").classList.toggle("thu", !saoMo);
   $("ngoc-hap").innerHTML = `
     <div class="tg-dau">
-      <h3>Sao Ngọc Hạp</h3>
-      ${CSDL.sao.length ? `<button type="button" class="tg-lien" data-tra-sao>Tra cứu</button><button type="button" class="tg-lien" data-gioi-thieu="gt-can-cu">Căn cứ</button>` : ""}
-    </div>
+      <h3><button type="button" class="sao-mo" data-mo-sao aria-expanded="${saoMo}">Sao Ngọc Hạp${saoMo ? "" : `<span>${nh.tot.length} cát tinh · ${nh.xau.length} hung tinh</span>`}<i aria-hidden="true"></i></button></h3>
+      ${saoMo && CSDL.sao.length ? `<button type="button" class="tg-lien" data-tra-sao>Tra cứu</button><button type="button" class="tg-lien" data-gioi-thieu="gt-can-cu">Căn cứ</button>` : ""}
+    </div>` + (!saoMo ? "" : `
     <p class="tg-phu">Ngày ${x.ccNgay}, tháng ${THANG_AM[x.am.month - 1]} âm lịch · chạm tên sao để xem nghĩa</p>
     <div class="sao-cot">
       <div>
@@ -34,8 +39,15 @@ function veNgocHap(x) {
         <h4 class="xau"><i></i>Hung tinh <em>${nh.xau.length}</em></h4>
         <ul class="sao-ds">${ds(nh.xau, "xau")}</ul>
       </div>
-    </div>`;
+    </div>`);
 }
+document.addEventListener("click", e => {
+  if (!e.target.closest("[data-mo-sao]") || !saoX) return;
+  saoMo = !saoMo;
+  try { if (saoMo) localStorage.setItem(KHOA_MO_SAO, "1"); else localStorage.removeItem(KHOA_MO_SAO); } catch (er) { /* chỉ giữ trong phiên */ }
+  veNgocHap(saoX);
+  if (saoMo) $("ngoc-hap").scrollIntoView({ block: "nearest", behavior: "smooth" });
+});
 
 /* ── Thẻ sao và bảng tra cứu (dạng tấm trượt lên từ đáy) ── */
 let tamSao = null;
@@ -69,11 +81,11 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.34.0";
+const PHIEN_BAN = "1.35.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
-  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "hien-dai": "Hiện đại" })[layAo()]} · ${layAo() === "hien-dai" ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}${window.ThoiTiet && ThoiTiet.dangBat() ? " · thời tiết" : ""}` },
+  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "hien-dai": "Hiện đại" })[layAo()]} · ${layAo() === "hien-dai" ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} ${layCo() === "vua" ? "" : ` · chữ ${layCo() === "lon" ? "lớn" : "rất lớn"}`} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}${window.ThoiTiet && ThoiTiet.dangBat() ? " · thời tiết" : ""}` },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "nguyen-tac", bieu: "sao", ten: "Nguyên tắc xem ngày", phu: () => "Dòng sách, thứ tự xem, điều cần biết" },
@@ -83,6 +95,7 @@ const MENU = [
 ];
 function trangMenu(id) {
   const soDa = CSDL.sao.filter(s => s.tt === 1).length, soMot = CSDL.sao.filter(s => s.tt === 2).length;
+  const co = layCo(), CO = [["vua", "Vừa", "Cỡ chữ thường"], ["lon", "Lớn", "Chữ và nút to hơn một bậc"], ["rat-lon", "Rất lớn", "Chữ và nút to hơn hai bậc, dễ đọc cho người lớn tuổi"]];
   const g = layGiaoDien(), ao = layAo(), to = layToLich(), hu = layHieuUng(), coTroi = !!(window.ThoiTiet && ThoiTiet.dangBat());
   /* Trang Giao diện gọn (anh Bắc 21/11/2026): mỗi mục một dải chip viền + một dòng mô tả lựa chọn đang dùng, ít cuộn */
   const chip = (thuoc, k, ten, dang, them = "") => `<button type="button" class="mn-chip${dang ? " dang" : ""}" ${thuoc}="${k}" aria-pressed="${dang}">${them}${ten}</button>`;
@@ -97,6 +110,7 @@ function trangMenu(id) {
   return {
     "giao-dien": muc("Bộ áo", AO.map(([k, t, , mau]) => chip("data-bo-ao", k, t, ao === k, `<span class="mn-mau" aria-hidden="true">${mau.map(m => `<i style="background:${m}"></i>`).join("")}</span>`)).join(""), tim(AO, ao))
       + muc("Sáng hay tối", GD.map(([k, t]) => chip("data-giao-dien", k, t, g === k)).join(""), ao === "hien-dai" ? "Bộ áo Hiện đại luôn tối; lựa chọn này dùng khi đổi về bộ áo khác." : tim(GD, g))
+      + muc("Cỡ chữ", CO.map(([k, t]) => chip("data-co-chu", k, t, co === k)).join(""), CO.find(z => z[0] === co)[2])
       + muc("Tờ lịch", TO.map(([k, t]) => chip("data-to-lich", k, t, to === k)).join(""), tim(TO, to))
       + muc("Thời tiết", chip("data-thoi-tiet", "0", "Tắt", !coTroi) + chip("data-thoi-tiet", "1", "Theo vị trí của máy", coTroi),
         `${coTroi ? ThoiTiet.moTa() + ". " : ""}Bật là cho phép dùng vị trí; vị trí làm tròn khoảng 10 km rồi gửi tới Open-Meteo. Dữ liệu: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).`)
@@ -210,12 +224,13 @@ function moGioiThieu(muc) {
     if (m) return veTrang(m.dataset.mn, 40);
     if (lui) return veMenu(-40);
     /* Lựa chọn ở trang Giao diện: đổi xong vẽ lại trang, giữ nguyên chỗ đang cuộn */
-    const c = e.target.closest("[data-giao-dien],[data-bo-ao],[data-to-lich],[data-thoi-tiet],[data-hieu-ung]");
+    const c = e.target.closest("[data-giao-dien],[data-bo-ao],[data-to-lich],[data-thoi-tiet],[data-hieu-ung],[data-co-chu]");
     if (!c) return;
     const y = el.querySelector(".tam-cuon").scrollTop, giu = () => { veTrang("giao-dien"); el.querySelector(".tam-cuon").scrollTop = y; requestAnimationFrame(xepNhan); };
     const d = c.dataset;
     if (d.giaoDien) datGiaoDien(d.giaoDien);
     else if (d.boAo) datAo(d.boAo);
+    else if (d.coChu) datCo(d.coChu);
     else if (d.toLich) datToLich(d.toLich);
     else if (d.hieuUng) doiHieuUng(d.hieuUng);
     else if (d.thoiTiet && window.ThoiTiet) { if (d.thoiTiet === "1") ThoiTiet.bat().then(giu); else ThoiTiet.tat(); }

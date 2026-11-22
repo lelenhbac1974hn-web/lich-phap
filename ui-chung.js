@@ -45,6 +45,16 @@ function datGiaoDien(g) {
 }
 mayToi.addEventListener("change", () => apGiaoDien());
 apGiaoDien();
+/* Cỡ chữ (Menu → Giao diện): "vua" (mặc định) · "lon" · "rat-lon". Phóng cả trang theo biến --co (style.css),
+   bố cục giữ nguyên tỉ lệ như trên một máy hẹp hơn — dành cho người lớn tuổi. */
+const KHOA_CO = "lichphap:co-chu", CO_CHU = ["vua", "lon", "rat-lon"];
+function layCo() { try { const c = localStorage.getItem(KHOA_CO); return CO_CHU.includes(c) ? c : "vua"; } catch (e) { return "vua"; } }
+function datCo(c) {
+  c = CO_CHU.includes(c) ? c : "vua";
+  try { if (c === "vua") localStorage.removeItem(KHOA_CO); else localStorage.setItem(KHOA_CO, c); } catch (e) { /* chỉ đổi trong phiên */ }
+  if (c === "vua") delete document.documentElement.dataset.co; else document.documentElement.dataset.co = c;
+  window.dispatchEvent(new Event("resize"));
+}
 /* Kiểu tờ lịch — tốt xấu ở chân tờ: "g" (mặc định) hàng mỏng có lý do · "e" triện · "f" thang 5 bậc dưới tháng âm ·
    "goc" tờ lịch gốc, dải tốt xấu riêng bên dưới */
 const KHOA_TO = "lichphap:to-lich", KIEU_TO = ["g", "e", "f", "goc"];

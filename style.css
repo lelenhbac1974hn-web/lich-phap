@@ -1331,3 +1331,27 @@ html[data-ao="hien-dai"][data-toi]{
 .pd-le{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--muc-2)}
 .gio-don small{flex-basis:100%;font-size:12.5px;line-height:1.45;color:var(--muc-3)}
 .td-nd b small.td-ky{font-family:var(--chu);font-weight:400;font-size:12px;letter-spacing:0;color:var(--muc-3)}
+
+/* ═════════ 1.35.0 ═════════ */
+/* Cỡ chữ (Menu → Giao diện): phóng cả trang theo một biến; bố cục giữ tỉ lệ như trên máy hẹp hơn */
+html[data-co="lon"]{--co:1.1}html[data-co="rat-lon"]{--co:1.2}
+body{zoom:var(--co,1)}
+@media (max-width:760px){html.chay-rieng body{height:calc(var(--cao) / var(--co,1))}}
+/* Sao Ngọc Hạp thu thành một dòng trong Luận giải; bấm mới mở */
+.sao-mo{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:-10px 0 -9px;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sao-mo span{font:400 12.5px var(--chu);color:var(--muc-3);margin-left:2px}
+.sao-mo i{flex:none;width:8px;height:8px;margin:-4px 3px 0 auto;border-right:1.6px solid var(--muc-3);border-bottom:1.6px solid var(--muc-3);transform:rotate(45deg);transition:transform .2s}
+.sao-mo[aria-expanded="true"] i{transform:rotate(-135deg);margin-top:4px;margin-left:6px}
+.sao-mo:active{opacity:.6}
+#ngoc-hap .tg-dau h3{flex:1 1 auto;margin-right:0}
+#ngoc-hap.thu .tg-dau{border-bottom:0;padding-bottom:3px}
+/* Chữ to: mấy chỗ bố cục chật thì nới riêng */
+html[data-co] .dia{zoom:calc(1 / var(--co,1))}
+html[data-co] .o{aspect-ratio:1/1.32}
+html[data-co] .am-phai{zoom:.92;gap:3px 8px}
+html[data-co="rat-lon"] body:not([data-kieu-to="e"]) .tl-am{grid-template-columns:132px minmax(0,1fr);gap:8px}
+html[data-co="rat-lon"] .am-trai .trang{width:30px;height:30px}
+html[data-co="rat-lon"] .am-phai{zoom:.86;padding-left:10px}
+html[data-co] .phan-doan{gap:14px}
+html[data-co] .phan-doan button{white-space:nowrap}
+html[data-co="rat-lon"] .phan-doan button,html[data-co="rat-lon"] .nut-them{font-size:13.5px}
