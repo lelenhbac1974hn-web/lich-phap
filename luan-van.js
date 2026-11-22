@@ -101,7 +101,7 @@
   /* ═════════ KHO CÂU MẪU — xếp theo LOẠI Ý ═════════ */
   const MAU = {
     /* — Ý quyết định: sáu ngày đại kỵ — câu mở bắt đầu bằng "," thì nối liền sau dòng ngày tháng */
-    mo_ngay: ["Ngày {cc}, {am}", "Xét ngày {cc}, {nham}", "Bạn đang xem ngày {cc}, {am}", "Nay xét ngày {cc}, tức {am}", "Ngày {cc}, {nham}"],
+    mo_ngay: ["Ngày {cc}, {am}", "Xét ngày {cc}, {nham}", "Nay xem đến ngày {cc}, {am}", "Nay xét ngày {cc}, tức {am}", "Ngày {cc}, {nham}"],
     qd_dai_ky: [", phạm {ky}, một trong sáu ngày đại kỵ.", "Ngày này phạm {ky}, là một trong sáu ngày đại kỵ.",
       "Trước hết phải nói: ngày này phạm {ky}, một trong sáu ngày đại kỵ.", ", nhằm ngày {ky} — một trong sáu ngày đại kỵ."],
     qd_dai_ky_am: ["Ngày {am_ngay} này phạm {ky}, một trong sáu ngày đại kỵ."],          // chỉ khi kỵ tính theo ngày âm
@@ -179,9 +179,11 @@
   /* ═════════ CHỮ NỐI theo chiều hai ý liền nhau: {a} + cụm ý + {b} ═════════ */
   const NOI = {
     cung_xau: [{ a: "Lại ", b: "." }, { a: "Thêm nữa, còn ", b: "." }, { a: "Huống chi còn ", b: "." }],       // sau ý quyết định xấu
-    nguoc_dai_ky: [{ a: "Dẫu ", b: ", cũng đành bỏ." }, { a: "Tuy ", b: ", song đã phạm đại kỵ thì không dùng được." },
-      { a: "Tiếc thay, ngày ", b: ", mà gặp đại kỵ cũng thành vô ích." },
-      { a: "Ngày vốn ", b: ", tiếc rằng phạm đại kỵ nên không dùng được." }, { a: "Dẫu ", b: ", gặp đại kỵ rồi thì cũng phải kiêng." }],
+    nguoc_dai_ky: [{ a: "Dẫu ", b: ", cũng đành bỏ, vì sách dạy gặp đại kỵ thì kiêng mọi việc." },
+      { a: "Tuy ", b: ", song sách dạy đã phạm đại kỵ thì sao tốt cũng không cứu được." },
+      { a: "Tiếc thay, ngày ", b: ", mà gặp đại kỵ cũng thành vô ích; sách dạy phải kiêng mọi việc." },
+      { a: "Ngày vốn ", b: ", tiếc rằng phạm đại kỵ nên không dùng được." },
+      { a: "Dẫu ", b: ", gặp đại kỵ rồi thì cũng phải kiêng; sao tốt không giải được." }],
     nguoc_xau: [{ a: "Tuy ", b: ", song tốt chẳng bù được xấu." }, { a: "Dẫu ", b: ", cũng không gỡ được." }, { a: "Ngày tuy ", b: ", song cũng không đỡ nổi." }],
     nguoc_tot: [{ a: "Tuy ", b: ", song điều lành vẫn nhiều hơn." }, { a: "Chỉ có điều ", b: "; chừng ấy chưa đủ làm ngày kém đi." },
       { a: "Duy ", b: ", song không đáng ngại." }],   // sau ý quyết định tốt
@@ -252,7 +254,10 @@
     const conLai = x => rieng(x) ? x.ten : x.ten.filter(t => !/Giải thần/i.test(t) && !phan(t).every(p => daNoi.has(p))
       && !(daNoi.has("sát chủ") && /^Sát chủ /i.test(t)));
     /* Vế câu cho một nhóm ý (hai vế liền nhau không mở cùng một chữ: "được…, được…") */
-    const cum = (ds, o) => { const ra = []; let w = "";
+    const cum = (ds0, o) => { const ra = []; let w = "", ds = ds0;
+      const qt = ds0.find(x => x.loai === "quy_tac_cat"), sg = ds0.find(x => /^sao_tot/.test(x.loai));
+      if (qt && sg) { const rieng2 = qt.ten.filter(t => t[0] !== t[0].toLowerCase());
+        ds = ds0.map(x => x === sg ? { ...x, ten: [...x.ten, ...rieng2] } : x === qt ? { ...x, ten: x.ten.filter(t => !rieng2.includes(t)) } : x); }
       for (const x of ds) { const ten = conLai(x); if (!ten.length) continue; ten.forEach(nhan);
         const s = lay(o + "_" + x.loai, CUM[x.loai], { ten: ten[0], ds: dsTen(ten, o === "nghich") }, t => dau(t) !== w && !(ten.length > 4 && /cùng chiếu/.test(t))); w = dau(s); ra.push(s); }
       return ra.join(", "); };
@@ -272,7 +277,7 @@
       /* ═══ Đại kỵ: phạm gì (đoạn 1, kèm thơ/câu sách) → lời sách → ý cùng chiều → điều tốt "dẫu… cũng không cứu được" ═══ */
       const ky = qd.ten, vk = { ...v, ky: noi(ky), n: SO_DEM[ky.length] || String(ky.length) };
       const theoAm = ky.length === 1 && DAI_KY_AM.includes(ky[0]);
-      const mo = ky.length > 1 ? lay("qd_dai_ky_nhieu", MAU.qd_dai_ky_nhieu, vk) : lay("qd_dai_ky", theoAm ? MAU.qd_dai_ky.concat(MAU.qd_dai_ky_am) : MAU.qd_dai_ky, vk);
+      const mo = ky.length > 1 ? lay("qd_dai_ky_nhieu", MAU.qd_dai_ky_nhieu, vk) : lay("qd_dai_ky", theoAm && !/tức|nhằm/.test(c0m) ? MAU.qd_dai_ky.concat(MAU.qd_dai_ky_am) : MAU.qd_dai_ky, vk);
       let p1 = mo.startsWith(",") ? c0 + mo : c0m + ". " + hoa(mo);
       const coTrich = ky.filter(k => TRICH[k]), kyTrich = coTrich.find(k => DAI_KY_AM.includes(k)) || coTrich[0];
       const p2 = [];
@@ -287,10 +292,11 @@
         } else tho.push({ sau: 1, t: t.t, nguon: t.nguon, dan: lay("dan_tho_ky", MAU.dan_tho_ky, { ky: kyTrich }, ky.length > 1 ? x => /\{ky\}/.test(x) : null) });
       }
       ghi(p1); doan.push(don(p1));
-      p2.push(ghi(hoa(ky.length > 1 ? lay("khong_cuu_nhieu", MAU.khong_cuu_nhieu, vk, khacMo) : lay("khong_cuu", MAU.khong_cuu, vk, khacMo))));
       nguon.add("Ngọc Hạp Thông Thư, trang 9");
-      const cx = bam(j + ":dk_nghich") % 2 ? cum(d.nghich, "nghich") : ""; if (cx) p2.push(noiCau("cung_xau", cx));
-      const nt = cum(d.thuan, "thuan"); if (nt) p2.push(noiCau("nguoc_dai_ky", nt));
+      const cx = bam(j + ":dk_nghich") % 2 ? cum(d.nghich, "nghich") : "", nt = cum(d.thuan, "thuan");
+      if (!nt) p2.push(ghi(hoa(ky.length > 1 ? lay("khong_cuu_nhieu", MAU.khong_cuu_nhieu, vk, khacMo) : lay("khong_cuu", MAU.khong_cuu, vk, khacMo))));
+      if (cx) p2.push(noiCau("cung_xau", cx));
+      if (nt) p2.push(noiCau("nguoc_dai_ky", nt));
       doan.push(don(p2.join(" ")));
     } else {
       /* ═══ Các ngày khác: một đoạn — ý quyết định → cùng chiều → ngược chiều → gỡ ═══ */
@@ -354,7 +360,8 @@
     const du = t => khacMo(t) && demChu(t) + daCo >= 60;
     if (bac === 0) k.push(lay("ket_0", MAU.ket_0, { viec: chung ? noi(SAU_VIEC.map(x => TEN_VIEC[x])) : TEN_VIEC[viec] }, du));
     else if (bac === 1) k.push(lay("ket_1", MAU.ket_1, { viec: chung ? "việc lớn" : TEN_VIEC[viec] }, du));
-    else if (bac === 2) k.push(lay("ket_2", MAU.ket_2, v, t => du(t) && (d.nghich.length + d.go.length > 0 || !/chẳng tốt|đều ít/.test(t)) && (d.thuan.length > 0 || !/Điều lành tuy có/.test(t))));
+    else if (bac === 2) k.push(lay("ket_2", MAU.ket_2, v, t => du(t) && (d.thuan.length + d.nghich.length <= 2 || !/đều ít/.test(t)) && (d.nghich.length > 0 || !/chẳng tốt|chẳng phải ngày đẹp/.test(t))
+      && (d.thuan.length >= 2 || !/Điều lành tuy có|điều dữ không nặng/.test(t)) && (d.thuan.length < 3 || /Điều lành tuy có|điều dữ không nặng/.test(t))));
     else if (nhieuTranh) k.push(hop.length ? lay("ket_tot_hep", MAU.ket_tot_hep, { viec: noi(hop) }, du) : lay("ket_tot_hep", MAU.ket_tot_hep_khong, {}));
     else {
       const vk = chung ? (hop.length >= 4 ? "các việc lớn" : hop.length ? noi(hop) : "việc lớn") : TEN_VIEC[viec];
@@ -410,7 +417,7 @@
     if (bai.bac >= 3 && /nên tránh ngày này/i.test(ket)) loi.push("mức tốt mà câu kết bảo tránh ngày này");
     /* Độ dài (không kể thơ) */
     const n = demChu(loiVan);
-    if (n < 50 || n > 190) loi.push("độ dài " + n + " chữ, ngoài khoảng 50–190");
+    if (n < 45 || n > 190) loi.push("độ dài " + n + " chữ, ngoài khoảng 45–190");
     /* Chữ nối giữa hai câu liền nhau */
     const cs = cauCua(loiVan);
     for (let i = 1; i < cs.length; i++) {
