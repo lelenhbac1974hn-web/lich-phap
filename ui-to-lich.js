@@ -56,7 +56,7 @@ function veToLich(x) {
           ${svgTrang(x.am.day, 46)}
           <div>
             <div class="am-so">${x.am.day}</div>
-            <div class="am-thang">Tháng ${THANG_AM[x.am.month - 1]}${x.am.leap ? " nhuận" : ""} <em>${x.du ? "đủ" : "thiếu"}</em></div>
+            <div class="am-thang">Tháng ${THANG_AM[x.am.month - 1]}${x.am.leap ? " nhuận" : ""} <em title="${x.du ? "Tháng đủ (30 ngày)" : "Tháng thiếu (29 ngày)"}">${x.du ? "(đ)" : "(t)"}</em></div>
             ${window.ThoiTiet ? window.ThoiTiet.dong(x.j) : ""}
             ${totXau.f}
           </div>
@@ -96,6 +96,13 @@ function totXauChanTo(x) {
 /* Ngày có nhiều nhắc / lễ: tờ lịch giữ nguyên cỡ, nhãn không được đè lên ca dao.
    Không đủ chỗ thì ẩn câu ca dao; vẫn chưa đủ thì giữ các nhãn đầu, phần còn lại gộp thành nút "+N" sang mục Nhắc. */
 function xepNhan() {
+  /* Tên tháng âm dài (Mười Một, nhuận…) không đủ chỗ trên một dòng thì rút "Tháng" thành "T." — chân tờ không nhảy, không tràn sang cột can chi */
+  document.querySelectorAll("#to-lich .to-lich:not(.roi) .am-thang").forEach(t => {
+    const c = t.firstChild;
+    if (!c || c.nodeType !== 3) return;
+    c.textContent = c.textContent.replace(/^T\. /, "Tháng ");
+    if (t.scrollWidth > t.clientWidth + 1) c.textContent = c.textContent.replace(/^Tháng /, "T. ");
+  });
   const than = document.querySelector("#to-lich .tl-than"), nhan = than && than.querySelector(".tl-nhan");
   if (!nhan) return;
   than.classList.remove("an-cau");

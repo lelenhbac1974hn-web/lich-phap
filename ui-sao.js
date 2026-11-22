@@ -81,11 +81,11 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.37.0";
+const PHIEN_BAN = "1.37.1";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
-  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "trung-nien": "Trung niên", "hien-dai": "Hiện đại" })[layAo()]} · ${AO_TOI.includes(layAo()) ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} ${layCo() === "vua" ? "" : ` · chữ ${layCo() === "lon" ? "lớn" : "rất lớn"}`} · tờ lịch ${({ g: "dòng chân tờ", e: "triện", f: "thang 5 bậc", goc: "gốc" })[layToLich()]}${window.ThoiTiet && ThoiTiet.dangBat() ? " · thời tiết" : ""}` },
+  { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "trung-nien": "Trung niên", "hien-dai": "Hiện đại" })[layAo()]} · ${AO_TOI.includes(layAo()) ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} ${layCo() === "vua" ? "" : ` · chữ ${layCo() === "lon" ? "lớn" : "rất lớn"}`} · thông tin ngày: ${({ g: "dòng", e: "triện", f: "thang", goc: "gốc" })[layToLich()]}${window.ThoiTiet && ThoiTiet.dangBat() ? " · thời tiết" : ""}` },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "nguyen-tac", bieu: "sao", ten: "Nguyên tắc xem ngày", phu: () => "Dòng sách, thứ tự xem, điều cần biết" },
@@ -102,7 +102,7 @@ function trangMenu(id) {
   const muc = (tieu, chips, mota) => `<section class="mn-nhom"><h4>${tieu}</h4><div class="mn-chips">${chips}</div>${mota ? `<p class="mn-mota">${mota}</p>` : ""}</section>`;
   const AO = [["co-dien", "Cổ điển", "Giấy kem, gáy đỏ son · mặc định", ["#F3ECDD", "#A61E17", "#E19279"]], ["tre", "Trẻ trung", "Xanh bạc hà, kem nhạt, chữ tròn", ["#E4F1EE", "#5DB3A5", "#F2B48C"]], ["trung-nien", "Trung niên", "Xanh lam, chữ trắng, điểm nhấn vàng · luôn tối", ["#3A6BD8", "#FFFFFF", "#FFD25E"]], ["hien-dai", "Hiện đại", "Xanh thẫm, tím, vàng · luôn tối", ["#0E1726", "#7C6CF0", "#F2C14E"]]];
   const GD = [["tu-dong", "Theo máy", "Tự đổi theo cài đặt sáng/tối của điện thoại"], ["sang", "Sáng", "Nền giấy kem, dễ đọc ban ngày"], ["toi", "Tối", "Nền nâu sẫm, dịu mắt buổi tối"]];
-  const TO = [["g", "Dòng chân tờ", "Mặc định · một hàng cuối vùng âm lịch: việc, kết quả và lý do rút gọn"], ["e", "Triện", "Triện vuông màu theo bậc, giữa ngày âm và can chi"], ["f", "Thang 5 bậc", "Kết quả kèm thang 5 bậc mảnh, ngay dưới tháng âm"], ["goc", "Tờ gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới"]];
+  const TO = [["e", "Triện", "Con dấu vuông ghi mức tốt xấu, giữa ngày âm và can chi"], ["g", "Dòng", "Mặc định · một dòng ở chân tờ lịch: việc, mức tốt xấu và lý do rút gọn"], ["f", "Thang", "Mức tốt xấu kèm thang năm bậc, ngay dưới tháng âm"], ["goc", "Gốc", "Tờ lịch như cũ, tốt xấu ở một dải riêng bên dưới"]];
   const HU = [["mua", "Cảnh theo mùa"], ["troi", "Theo thời tiết"], ["le", "Ngày lễ, trăng rằm"], ["anh", "Ánh sáng theo giờ"]];
   const huBat = HU.filter(([k]) => hu[k]);
   const moTaHU = huBat.length ? `Đang bật: ${huBat.map(([, t]) => t.toLowerCase()).join(", ")}.${hu.troi && !coTroi ? " Cảnh theo thời tiết cần bật Thời tiết bên trên." : ""} Ngày lễ vẽ chồng lên thời tiết; không có thời tiết thì theo mùa.` : "Tờ lịch tĩnh, không hiệu ứng.";
@@ -111,7 +111,7 @@ function trangMenu(id) {
     "giao-dien": muc("Bộ áo", AO.map(([k, t, , mau]) => chip("data-bo-ao", k, t, ao === k, `<span class="mn-mau" aria-hidden="true">${mau.map(m => `<i style="background:${m}"></i>`).join("")}</span>`)).join(""), tim(AO, ao))
       + muc("Sáng hay tối", GD.map(([k, t]) => chip("data-giao-dien", k, t, g === k)).join(""), AO_TOI.includes(ao) ? "Bộ áo này luôn tối; lựa chọn này dùng khi đổi về bộ áo khác." : tim(GD, g))
       + muc("Cỡ chữ", CO.map(([k, t]) => chip("data-co-chu", k, t, co === k)).join(""), CO.find(z => z[0] === co)[2])
-      + muc("Tờ lịch", TO.map(([k, t]) => chip("data-to-lich", k, t, to === k)).join(""), tim(TO, to))
+      + muc("Thông tin nhanh ngày", TO.map(([k, t]) => chip("data-to-lich", k, t, to === k)).join(""), tim(TO, to))
       + muc("Thời tiết", chip("data-thoi-tiet", "0", "Tắt", !coTroi) + chip("data-thoi-tiet", "1", "Theo vị trí của máy", coTroi),
         `${coTroi ? ThoiTiet.moTa() + ". " : ""}Bật là cho phép dùng vị trí; vị trí làm tròn khoảng 10 km rồi gửi tới Open-Meteo. Dữ liệu: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).`)
       + muc("Hiệu ứng", HU.map(([k, t]) => chip("data-hieu-ung", k, t, hu[k])).join(""), moTaHU),
@@ -220,7 +220,8 @@ function moGioiThieu(muc) {
     el.querySelector(".tam-cuon").scrollTop = 0;
   };
   /* Dải chọn ở trang Giao diện gạt ngang, không xuống dòng: đưa lựa chọn đang dùng vào vùng nhìn */
-  const canChip = () => el.querySelectorAll(".mn-chips").forEach(r => { const d = r.querySelector(".dang"); if (d) r.scrollLeft = Math.max(0, d.offsetLeft - r.offsetLeft - (r.clientWidth - d.offsetWidth) / 2); });
+  /* Chỉ gạt khi lựa chọn đang dùng nằm ngoài vùng nhìn (lúc mới mở trang); đổi lựa chọn thì dải đứng yên chỗ người dùng đang gạt */
+  const canChip = () => el.querySelectorAll(".mn-chips").forEach(r => { const d = r.querySelector(".dang"); if (!d) return; const x = d.offsetLeft - r.offsetLeft; if (x < r.scrollLeft || x + d.offsetWidth > r.scrollLeft + r.clientWidth) r.scrollLeft = Math.max(0, x - (r.clientWidth - d.offsetWidth) / 2); });
   el.querySelector(".tam").addEventListener("click", e => {
     const m = e.target.closest("[data-mn]"), lui = e.target.closest("[data-mn-lui]");
     if (m) { veTrang(m.dataset.mn, 40); canChip(); return; }
@@ -228,7 +229,7 @@ function moGioiThieu(muc) {
     /* Lựa chọn ở trang Giao diện: đổi xong vẽ lại trang, giữ nguyên chỗ đang cuộn */
     const c = e.target.closest("[data-giao-dien],[data-bo-ao],[data-to-lich],[data-thoi-tiet],[data-hieu-ung],[data-co-chu]");
     if (!c) return;
-    const y = el.querySelector(".tam-cuon").scrollTop, giu = () => { veTrang("giao-dien"); el.querySelector(".tam-cuon").scrollTop = y; canChip(); requestAnimationFrame(xepNhan); };
+    const y = el.querySelector(".tam-cuon").scrollTop, gat = [...el.querySelectorAll(".mn-chips")].map(r => r.scrollLeft), giu = () => { veTrang("giao-dien"); el.querySelector(".tam-cuon").scrollTop = y; el.querySelectorAll(".mn-chips").forEach((r, i) => { r.scrollLeft = gat[i] || 0; }); requestAnimationFrame(xepNhan); };
     const d = c.dataset;
     if (d.giaoDien) datGiaoDien(d.giaoDien);
     else if (d.boAo) datAo(d.boAo);
