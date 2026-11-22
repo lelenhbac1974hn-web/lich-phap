@@ -1,7 +1,7 @@
 /* Lịch Pháp — bộ đệm chạy không cần mạng. © 2026 Lê Lệnh Bắc
    Mỗi lần phát hành bản mới: đổi số phiên bản ở dòng dưới (perl nguon-csdl/cong-cu/dat-phien-ban.pl a.b.c).
    Mở app: lấy ngay bộ đệm (nhanh cả khi sóng yếu), đồng thời tải bản mới ở nền cho lần mở sau. */
-const C = 'lp-v1.32.8';
+const C = 'lp-v1.33.0';
 const F = ['./', 'index.html', 'style.css', 'lich-phap.js', 'le-tet.js', 'thoi-tiet.js','ngoc-hap.js', 'luan-giai.js', 'luan-sach.js', 'luan-van-mau.js', 'luan-van.js', 'bieu-tuong.js', 'ui-chung.js', 'ui-to-lich.js', 'ui-gio-thang.js', 'ui-sao.js', 'ui-nhac.js', 'ma-nang-cao.js', 'ui-nang-cao.js', 'ui-khoi-dong.js', 'manifest.json', 'sao-bai.json',
   'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'apple-touch-icon.png',
   'be-vietnam-pro-latin-300-italic.woff2', 'be-vietnam-pro-latin-400-normal.woff2',
@@ -10,7 +10,7 @@ const F = ['./', 'index.html', 'style.css', 'lich-phap.js', 'le-tet.js', 'thoi-t
   'be-vietnam-pro-vietnamese-400-normal.woff2', 'be-vietnam-pro-vietnamese-500-normal.woff2',
   'be-vietnam-pro-vietnamese-600-normal.woff2', 'be-vietnam-pro-vietnamese-700-normal.woff2',
   'bodoni-moda-latin-700-normal.woff2', 'bodoni-moda-latin-900-normal.woff2',
-  'phong/lich-phap-but-long-400.woff2'];
+  'phong/lich-phap-gan-guoc-400.woff2', 'phong/lich-phap-mem-mai-400.woff2'];
 
 /* Cài bản mới: tải lại đủ tệp từ máy chủ (bỏ qua bộ đệm HTTP của trình duyệt) */
 self.addEventListener('install', e => {

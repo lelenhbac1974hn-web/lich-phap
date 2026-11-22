@@ -2,6 +2,6 @@ Phông cho bộ áo Trẻ trung (Nunito) và Hiện đại (Lexend, Space Grotes
 Nguồn: Fontsource 5.3.0 (https://fontsource.org), tệp woff2 tách bộ latin / vietnamese.
 Giấy phép: SIL Open Font License 1.1 — xem OFL-*.txt cùng thư mục. Phông được dùng nguyên bản, không sửa.
 
-Thư pháp (từ 1.32.8): lich-phap-but-long-400.woff2 — phông "Lich Phap But Long", bản sửa từ Water Brush
-(Robert Leuschke, Google Fonts): nét đậm hơn, bớt nghiêng, chữ cao hơn 6%, chỉ giữ bộ chữ Latin + tiếng Việt.
-Đã đổi tên theo điều kiện của SIL Open Font License 1.1; giấy phép và bản quyền gốc: OFL-water-brush.txt.
+Chữ thư pháp (từ 1.33.0): lich-phap-gan-guoc-400.woff2 và lich-phap-mem-mai-400.woff2 — phông riêng của Lịch Pháp,
+chữ vẽ bằng công cụ thiết kế phông của dự án (nét bút tính ra từ xương chữ tự đặt), không dựa trên phông nào khác.
+Bản quyền: Lê Lệnh Bắc, 2026.
