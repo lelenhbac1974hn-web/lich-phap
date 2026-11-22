@@ -53,6 +53,8 @@ function moTam(html, lop, dau) {
     const b = e.target.closest("[data-sao-id]");
     /* Mở một sao từ bảng tra cứu: nhớ chữ đang tìm và chỗ đang cuộn để đóng thẻ thì về đúng chỗ đó */
     if (b) { const s = CSDL.sao.find(z => z.id === b.dataset.saoId); if (s) moTheSao(s, true, tamSao.querySelector(".tam-cuon").scrollTop); }
+    const k = e.target.closest("[data-ky-id]");
+    if (k) { const q = window.LUAN_GIAI.quyTac.find(z => z.id === k.dataset.kyId); if (q) moTheKy(q, true, tamSao.querySelector(".tam-cuon").scrollTop); }
     if (e.target.closest("[data-tra-lai]")) dongTam(true);
   });
   return tamSao;
@@ -67,7 +69,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.33.2";
+const PHIEN_BAN = "1.34.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -320,24 +322,48 @@ function moTheSao(s, tuTra, cuonTra) {
 
 /* Tra cứu: danh sách trên trang sổ (cùng khuôn dòng thẻ Nhắc — luật 6), ô tìm là một dòng gạch chân,
    ba tab gạch chân Tất cả · Cát tinh · Hung tinh (luật 3). Bộ lọc nhớ trong lúc tấm còn mở. */
+/* Chạm tên sao, tên ngày kỵ trong lý do ở tờ Luận ngày: mở thẻ giải thích */
+document.addEventListener("click", e => {
+  const b = e.target.closest(".pd-tra"); if (!b) return;
+  if (b.dataset.saoId) { const s = CSDL.sao.find(z => z.id === b.dataset.saoId); if (s) moTheSao(s); }
+  else if (b.dataset.kyId) { const q = window.LUAN_GIAI.quyTac.find(z => z.id === b.dataset.kyId); if (q) moTheKy(q); }
+});
 let locSao = "tat";
+/* Ngày kỵ trong sách (Thụ tử, Tam nương sát, Nguyệt kỵ…): tra được như sao, lời lấy nguyên từ chương luận giải của Thông Thư.
+   Chỉ gồm ngày kỵ của năm việc thường; ngày kỵ riêng của lớp nâng cao không đưa ra đây. */
+const VIEC_THUONG = ["chung", "dongtho", "kyket", "khaitruong", "xuathanh"];
+const dsNgayKy = () => (window.LUAN_GIAI ? window.LUAN_GIAI.quyTac : []).filter(q => /hung/.test(q.muc) && !q.nguon && q.nd && q.viec.some(v => VIEC_THUONG.includes(v)));
+function moTheKy(q, tuTra, cuonTra) {
+  const cu = tamSao && tamSao.dataset.tim;
+  const dk = window.LUAN_GIAI.khongCuu.ds.includes(q.id);
+  const el = moTam(`<div class="ts-than"><p class="ts-nghia">${esc(q.nd)}</p>
+      ${dk ? `<p class="ts-nghia">Đây là một trong sáu ngày đại kỵ: gặp ngày này thì sao tốt không cứu được, nên kiêng mọi việc lớn.</p>` : ""}
+      <p class="ts-nguon">Theo Ngọc Hạp Thông Thư</p></div>`, "lop-sao", `
+    <header class="ts-dau xau"><span class="ts-loai">${dk ? "Ngày đại kỵ" : "Ngày kỵ"}</span><h3>${esc(q.ten)}</h3></header>
+    ${tuTra ? `<div class="mn-dau"><button type="button" class="mn-lui" data-tra-lai>‹ Danh sách sao</button></div>` : ""}`);
+  if (cu) el.dataset.tim = cu;
+  if (tuTra) el.dataset.veTra = cuonTra || 0;
+}
 function moTraSao(tim, cuon) {
   const el = moTam(`<ul class="tra-ds"></ul>`, "lop-tra", `
-    <header class="tra-dau"><h3>Tra cứu sao Ngọc Hạp</h3><p>${CSDL.sao.length} sao · theo Ngọc Hạp Thông Thư</p>
-      <label class="tra-tim">${ic("tim")}<input type="search" class="tra-o" placeholder="Gõ tên sao, ví dụ: thiên đức" aria-label="Tìm sao" value="${esc(tim || "")}" /></label>
+    <header class="tra-dau"><h3>Tra cứu sao Ngọc Hạp</h3><p>${CSDL.sao.length} sao · ${dsNgayKy().length} ngày kỵ · theo Ngọc Hạp Thông Thư</p>
+      <label class="tra-tim">${ic("tim")}<input type="search" class="tra-o" placeholder="Gõ tên sao, ngày kỵ — ví dụ: thiên đức, tam nương" aria-label="Tìm sao" value="${esc(tim || "")}" /></label>
       <div class="tra-loc" role="tablist" aria-label="Lọc sao"></div></header>`);
   const o = el.querySelector(".tra-o"), ul = el.querySelector(".tra-ds"), loc = el.querySelector(".tra-loc");
   const bo = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").toLowerCase();
   const ve2 = () => {
     const q = bo(o.value.trim()); el.dataset.tim = o.value;
     const hop = CSDL.sao.filter(s => !q || bo(s.ten).includes(q) || (s.han || "").includes(o.value.trim()));
-    const dem = { tat: hop.length, tot: hop.filter(s => s.loai === "tot").length, xau: hop.filter(s => s.loai === "xau").length };
-    loc.innerHTML = Object.entries({ tat: "Tất cả", tot: "Cát tinh", xau: "Hung tinh" }).map(([k, t]) =>
+    const ky = dsNgayKy().filter(k => !q || bo(k.ten).includes(q));
+    const dem = { tat: hop.length + ky.length, tot: hop.filter(s => s.loai === "tot").length, xau: hop.filter(s => s.loai === "xau").length, ky: ky.length };
+    loc.innerHTML = Object.entries({ tat: "Tất cả", tot: "Cát tinh", xau: "Hung tinh", ky: "Ngày kỵ" }).map(([k, t]) =>
       `<button type="button" role="tab" data-loc-sao="${k}" aria-selected="${locSao === k}">${t} <em>${dem[k]}</em></button>`).join("");
     const ds = hop.filter(s => locSao === "tat" || s.loai === locSao).sort((a, b) => a.ten.localeCompare(b.ten, "vi"));
     ul.innerHTML = ds.map(s => `<li><button type="button" data-sao-id="${esc(s.id)}" class="${s.loai}"><span class="td-dau"><i></i></span>
       <span class="td-nd"><b>${esc(s.ten)}${s.han ? `<small>${esc(s.han)}</small>` : ""}</b>${s.nghia ? `<em>${esc(s.nghia)}</em>` : ""}</span><span class="td-mui">›</span></button></li>`).join("")
-      || `<li class="rong">Không tìm thấy sao nào.</li>`;
+      + (locSao === "tat" || locSao === "ky" ? ky.sort((a, b) => a.ten.localeCompare(b.ten, "vi")).map(k => `<li><button type="button" data-ky-id="${esc(k.id)}" class="xau"><span class="td-dau"><i></i></span>
+      <span class="td-nd"><b>${esc(k.ten)}<small class="td-ky">ngày kỵ</small></b><em>${esc(k.nd.split(/[.:;]/)[0])}</em></span><span class="td-mui">›</span></button></li>`).join("") : "")
+      || `<li class="rong">Không tìm thấy sao hay ngày kỵ nào.</li>`;
   };
   loc.addEventListener("click", e => { const b = e.target.closest("[data-loc-sao]"); if (b) { locSao = b.dataset.locSao; ve2(); } });
   o.addEventListener("input", ve2); ve2();

@@ -192,7 +192,7 @@ function veChanDoan() {
     ["Vùng an toàn trên / dưới", `${tren} / ${duoi}`],
     ["Chiều cao đang dùng", cs.getPropertyValue("--cao").trim()],
     ["Menu đáy cách mép dưới", Math.round(chieuCaoChuan() - tab.bottom)]
-  ].map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join("") + `<small>Nhấn giữ con dấu 曆 để đóng</small>`;
+  ].map(([a, b]) => `<div><span>${a}</span><b>${b}</b></div>`).join("") + `<small>Chạm vào bảng này để đóng</small>`;
 }
 function ganChieuCao() {
   datChieuCao();
@@ -204,11 +204,13 @@ function ganChieuCao() {
   let henGiu = 0;
   const logo = $("nut-hom-nay-logo");
   logo.addEventListener("touchstart", () => {
-    henGiu = setTimeout(() => { henGiu = -1; const cd = $("chan-doan"); cd.hidden = !cd.hidden; if (!cd.hidden) veChanDoan(); }, 900);
+    henGiu = setTimeout(() => { henGiu = -1; const cd = $("chan-doan"); cd.hidden = !cd.hidden; if (!cd.hidden) veChanDoan(); }, 3000);
   }, { passive: true });
   logo.addEventListener("touchend", e => { if (henGiu === -1) e.preventDefault(); clearTimeout(henGiu); henGiu = 0; });
   logo.addEventListener("touchmove", () => { clearTimeout(henGiu); henGiu = 0; }, { passive: true });
   logo.addEventListener("contextmenu", e => e.preventDefault());
+  /* Bảng thông số màn hình (để dò lỗi bố cục): giữ con dấu 3 giây mới mở, chạm vào bảng là đóng — trước đây giữ 0,9 giây là mở, dễ mở nhầm và khó đóng */
+  $("chan-doan").addEventListener("click", () => { $("chan-doan").hidden = true; });
   /* Cho phóng to bằng hai ngón (người lớn tuổi đọc chữ nhỏ — review 1.30.0, N2); chỉ chặn chạm đúp để chạm nhanh không bị phóng nhầm */
   let lanCham = 0;
   document.addEventListener("touchend", e => {

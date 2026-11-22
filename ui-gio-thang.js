@@ -43,7 +43,18 @@ function vePhanDinh(x) {
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
   const li = (ds, lop) => ds.map(t => `<li class="${lop}">${esc(t)}</li>`).join("");
   /* Lý do luận theo sách hiện bằng lời thường; số trang sách chỉ giữ trong dữ liệu (luan-sach.js), không đưa lên màn hình */
-  const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(boTrang(m.t))}</li>`).join("");
+  /* Tên sao, tên ngày kỵ trong lý do chạm được: mở thẻ giải thích (review 1.30.0 — "chỗ tra không ra") */
+  const tenSao = new Map((typeof CSDL !== "undefined" ? CSDL.sao : []).map(s => [s.ten, s])), tenKy = new Map(window.LUAN_GIAI.quyTac.filter(q => q.nd && !q.nguon && /hung/.test(q.muc)).map(q => [q.ten, q.id]));
+  const noi = t => {
+    if (tenKy.has(t)) return `<button type="button" class="pd-tra" data-ky-id="${tenKy.get(t)}">${esc(t)}</button>`;
+    const m = /^(Sao tốt hợp việc|Sao xấu kỵ việc này|Sao xấu nhẹ|Có Giải thần giải trừ sao xấu): (.+?)( — .*)?$/.exec(t);
+    if (!m) return esc(t);
+    return esc(m[1]) + ": " + m[2].split(", ").map(n => tenSao.has(n) && tenSao.get(n).id ? `<button type="button" class="pd-tra" data-sao-id="${esc(tenSao.get(n).id)}">${esc(n)}</button>` : esc(n)).join(", ") + esc(m[3] || "");
+  };
+  const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${noi(boTrang(m.t))}</li>`).join("");
+  const khongThem = ls.khongCuu.length ? '<li class="rong">Ngoài ngày đại kỵ nêu trên, không phạm thêm</li>' : '<li class="rong">Không phạm</li>';
+  /* Ngày lễ, Tết mà mức xấu: một câu cho người xem khỏi hoảng (review 1.30.0, L10) */
+  const leLon = sach && soBac <= 1 && x.le.some(l => l.nghi) ? `<p class="pd-le">Hôm nay là ngày lễ. Mức trên chỉ để cân nhắc khi chọn ngày làm việc lớn; còn sum họp, vui lễ vẫn như thường.</p>` : "";
   $("phan-dinh").className = `the to-giay the-phan-dinh ${bac.lop}`;
   const dau = `<div class="tg-dau pd-dau"><h3 class="pd-nhan">Luận ngày<span> · ${esc(viec.ten)}</span></h3>${nutKieu()}</div>`;
   /* Trên điện thoại, kiểu luận nằm ở thanh Luận giải ngoài vùng cuộn (đứng yên); trong tờ thì ẩn bằng CSS */
@@ -53,6 +64,7 @@ function vePhanDinh(x) {
   $("phan-dinh").innerHTML = dau + ngayLuan + `<div class="tg-than">` + (sach ? `
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
     <div class="pd-ket">${esc(boTrang(ls.ket))}</div>
+    ${leLon}
     <hr class="pd-ke">
     ${oTuoi()}
     ${dongKieuKhac(true, cd, ls)}
@@ -60,9 +72,9 @@ function vePhanDinh(x) {
     ${ls.khongCuu.length ? `<div class="pd-chan"><b>Ngày đại kỵ — sao tốt không cứu được</b><ul>${liSach(ls.khongCuu, "tru")}</ul></div>` : ""}
     <div class="pd-ly">
       <div><h4>Điều tốt</h4><ul>${liSach(ls.tot, "cong") || '<li class="rong">Không có</li>'}</ul></div>
-      ${ls.kyNho ? `<div><h4>Kỵ lớn — nên tránh</h4><ul>${liSach(ls.kyLon, "tru") || '<li class="rong">Không phạm</li>'}</ul>
+      ${ls.kyNho ? `<div><h4>Kỵ lớn — nên tránh</h4><ul>${liSach(ls.kyLon, "tru") || khongThem}</ul>
         <h4>Kỵ nhỏ — gia chủ cân nhắc</h4><ul>${liSach(ls.kyNho, "nhac") || '<li class="rong">Không có</li>'}</ul></div>`
-        : `<div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || '<li class="rong">Không phạm</li>'}</ul></div>`}
+        : `<div><h4>Điều kiêng</h4><ul>${liSach(ls.kieng, "tru") || khongThem}</ul></div>`}
     </div>
     ${ls.thamKhao && ls.thamKhao.length ? `<div class="pd-tk"><h4>Sách tham khảo</h4><ul>${ls.thamKhao.map(m => `<li class="${/cat/.test(m.muc) ? "cong" : "tru"}">${esc(m.t)} <small>· ${esc(m.nguon)}</small></li>`).join("")}</ul></div>` : ""}
     ${ls.nhac.length ? `<ul class="pd-nhac">${liSach(ls.nhac, "nhac")}</ul>` : ""}
@@ -223,7 +235,7 @@ function veMatGio(x) {
       <div><small>Ngày xung</small><b>${CHI[(chiNgay + 6) % 12]}</b></div>
     </div>
     <p class="gio-khoi"><span>Khởi giờ</span><b>${CAN[(canNgay * 2) % 10]} Tý</b><em>ngày ${CAN[canNgay % 5]}, ${CAN[canNgay % 5 + 5]} khởi giờ ${CAN[(canNgay * 2) % 10]} Tý</em></p>
-    <p class="gio-khoi gio-don"><span>Đón giờ đi</span><em>giờ tốt để xuất hành, ngày ${aG.day}/${aG.month} âm</em></p>
+    <p class="gio-khoi gio-don"><span>Đón giờ đi</span><em>giờ tốt để xuất hành, ngày ${aG.day}/${aG.month} âm</em><small>Chỉ dùng khi chọn giờ lên đường; xét riêng, không liên quan giờ hoàng đạo – hắc đạo.</small></p>
     <div class="pd-ba huong don">${donTot}</div>
     <div class="gio-chi-tiet ${chon.hd ? "hd" : "hac"}">
       <div class="gct-dau">

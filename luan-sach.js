@@ -197,7 +197,9 @@
       if (saoXauNhe.length && !saoTot.length && !nh.tot.length) d -= 1;
       if (kieng.length) d -= 1;
       bac = d >= 4 ? 4 : d >= 2 ? 3 : 2;
-      ket = bac === 4 ? "Hoàng đạo, trực tốt, có sao và quy tắc tốt cho việc này" : bac === 3 ? "Không phạm kiêng, có điều tốt cho việc này" : "Không phạm kiêng, ít điều tốt";
+      ket = bac === 4 ? "Hoàng đạo, trực tốt, có sao và quy tắc tốt cho việc này"
+        : kieng.length ? (bac === 3 ? "Có sao xấu kỵ việc này, song điều tốt nhiều hơn" : "Có sao xấu kỵ việc này, ít điều tốt")
+        : bac === 3 ? "Không phạm kiêng, có điều tốt cho việc này" : "Không phạm kiêng, ít điều tốt";
     }
     return { bac, ket, khongCuu, kieng, tot, nhac, than, truc, tuoiThieu };
   }

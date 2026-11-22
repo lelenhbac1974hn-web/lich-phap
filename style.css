@@ -1326,3 +1326,8 @@ html[data-ao="hien-dai"][data-toi]{
 .pd-loi{border-top:0;margin-top:8px;padding-top:0}
 .thiep-ca{font:400 21px/1.4 var(--but-long);color:var(--muc)}
 .thiep-ca small,.thiep-ca cite{font-family:var(--chu)}
+/* 1.34.0: tên sao, ngày kỵ trong lý do chạm được; câu nhắc ngày lễ; ghi chú Đón giờ đi */
+.pd-tra{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;border-bottom:1px dotted color-mix(in srgb,currentColor 55%,transparent);-webkit-tap-highlight-color:transparent}
+.pd-le{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--muc-2)}
+.gio-don small{flex-basis:100%;font-size:12.5px;line-height:1.45;color:var(--muc-3)}
+.td-nd b small.td-ky{font-family:var(--chu);font-weight:400;font-size:12px;letter-spacing:0;color:var(--muc-3)}
