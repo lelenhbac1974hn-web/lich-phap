@@ -704,9 +704,9 @@ function baoTam(noiDung, hoanTac, giuLau) {
   const el = $("bao-tam");
   clearTimeout(henBao);
   el.innerHTML = `<span>${noiDung}</span>${hoanTac ? '<button type="button" id="bt-hoan">' + ic("moLai") + '<span>Hoàn tác</span></button>' : ""}`;
-  el.classList.add("hien");
+  el.classList.add("hien"); el.removeAttribute("aria-hidden");
   if (hoanTac) $("bt-hoan").onclick = () => { hoanTac(); el.classList.remove("hien"); };
-  henBao = setTimeout(() => el.classList.remove("hien"), giuLau ? 9000 : 4500);
+  henBao = setTimeout(() => { el.classList.remove("hien"); el.setAttribute("aria-hidden", "true"); }, giuLau ? 9000 : 4500);
 }
 
 /* Một dòng việc. coNgay: ghi ngày ở dòng phụ khi nhóm không theo một ngày (Quá hạn, Đã xong) */
@@ -714,7 +714,7 @@ function veMucViec(v, coNgay) {
   const hom = jdHomNay(), qh = quaHan(v), k = v.jd == null ? null : v.jd - hom;
   const phu = [coNgay && v.jd != null ? nhanNgayViec(v.jd) : "", v.gio || "", v.lap !== "khong" ? `↻ ${chuThuong(LAP[v.lap])}` : "",
     v.uuTien ? `ưu tiên ${UU[v.uuTien].toLowerCase()}` : ""].filter(Boolean).join(" · ");
-  const dem = v.xong ? "Đã xong" : k == null ? "" : qh ? (k < 0 ? chuDem(k) : "Quá giờ") : k === 0 ? (v.gio || "Hôm nay") : chuDem(k);
+  const dem = v.xong ? "Đã xong" : k == null ? "" : qh ? (k < 0 ? chuDem(k) : "Quá giờ") : (k === 0 || k === 1) && !coNgay ? (v.gio || "") : k === 0 ? (v.gio || "Hôm nay") : chuDem(k); /* trong nhóm Hôm nay / Ngày mai không nhắc lại tên nhóm */
   return dongSo({ attr: `data-viec-id="${esc(v.id)}"`, sang: viecChon === v.id, lop: v.xong ? "da-xong" : "",
     bieu: chonBieu(v.ten, "viec", v.bieu), ten: v.ten, phu, dem, demLop: qh ? "qua" : k === 0 && !v.xong ? "nay" : "" });
 }
@@ -723,7 +723,7 @@ function moTamViec(v) {
   const xongLuc = v.xong && v.xongLuc ? `Xong lúc ${new Date(v.xongLuc).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}` : "";
   moTamCT({
     bieu: chonBieu(v.ten, "viec", v.bieu), ten: v.ten, ghi: v.ghi,
-    ngay: v.jd == null ? "Chưa đặt ngày" : `${nhanNgay(v.jd, true)}${v.gio ? ` · ${v.gio}` : ""} · ${nhanAm(v.jd)}`,
+    ngay: v.jd == null ? "Chưa đặt ngày" : `${nhanNgay(v.jd, true)} · ${nhanAm(v.jd)}${v.gio ? ` · ${v.gio}` : ""}`,
     dong: [[v.uuTien ? `Ưu tiên ${UU[v.uuTien].toLowerCase()}` : "Không ưu tiên", LAP[v.lap].toLowerCase()].join(" · "), xongLuc],
     nut: nutBt(v.xong ? "moLai" : "xong", v.xong ? "Mở lại" : "Xong", `class="ct-chinh" data-ct="xong"`) +
       nutBt("sua", "Sửa", `class="ct-chu" data-ct="sua"`) + nutBt("xoa", "Xoá", `class="ct-chu ct-xoa" data-ct="xoa"`),

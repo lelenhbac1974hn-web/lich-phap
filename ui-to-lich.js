@@ -137,7 +137,7 @@ function ganGiuLe() {
     b.classList.add("dang-giu");
     hen = setTimeout(() => {
       const t = ttNgay(st.jd);
-      window.ThiepLe.mo(b.dataset.thiep, `${THU[thuCuaJd(st.jd)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy} · ${t.am.day}/${t.am.month}${t.am.leap ? " nhuận" : ""} âm lịch`);
+      window.ThiepLe.mo(b.dataset.thiep, `${nhanNgay(st.jd, true)} · ${nhanAm(st.jd)}`);
       daMo = true; huy();
     }, 480);
   });
@@ -147,7 +147,7 @@ function ganGiuLe() {
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-thiep]");
     if (!b) return;
-    if (!daMo) { const t = ttNgay(st.jd); window.ThiepLe.mo(b.dataset.thiep, `${THU[thuCuaJd(st.jd)]} ${hai(t.dd)}/${hai(t.mm)}/${t.yy} · ${t.am.day}/${t.am.month}${t.am.leap ? " nhuận" : ""} âm lịch`); }
+    if (!daMo) { const t = ttNgay(st.jd); window.ThiepLe.mo(b.dataset.thiep, `${nhanNgay(st.jd, true)} · ${nhanAm(st.jd)}`); }
     daMo = false;
   });
 }

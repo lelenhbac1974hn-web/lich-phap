@@ -1451,3 +1451,5 @@ html[data-co] #nut-hom-nay .ic{display:none}
 .am-trai{min-width:0}.am-trai>div{min-width:0;flex:1 1 0}
 .am-thang{overflow:hidden}
 html[data-co] .tl-bac-f .tl-thang5 i{width:6px}
+/* 1.37.3: thông báo tạm rộng gần hết bề ngang, chữ không gãy ba dòng (review L2) */
+.bao-tam{width:min(520px,calc(100vw - 28px))}

@@ -340,10 +340,12 @@ function veLichThang(x) {
     const nh = nhacCuaNgay(j);
     const vh = viecCuaNgay(j);
     const ten = nh.map(n => n.ten).concat(vh.map(v => v.ten), le.length ? [le[0].ten] : []).join(" · ");
+    /* Đọc màn hình: đọc đủ ngày, ngày âm, mức tốt xấu (review L7) */
+    const nhanO = `${nhanNgay(j, true)} · ${nhanAm(j)} · ${BAC_UI[bacNgay].t}${ten ? " · " + ten : ""}`;
     /* Luật giao diện 9: tối đa 3 dấu, không dấu nào đè số — vạch tốt xấu ở đáy; góc phải trên tối đa hai chấm:
        vàng = lễ tết, xanh dương = việc hoặc ngày nhắc người dùng ghi. Biểu tượng lễ lớn chỉ hiện trên tờ lịch ngày đó. */
     const cham = (le.length ? '<i class="c-le"></i>' : "") + (nh.length || vh.length ? '<i class="c-ta"></i>' : "");
-    o += `<button type="button" class="${lop.join(" ")}" data-jd="${j}" title="${esc(`${BAC_UI[bacNgay].t} · ${ccNgay(j)}${ten ? " · " + ten : ""}`)}">
+    o += `<button type="button" class="${lop.join(" ")}" data-jd="${j}" aria-label="${esc(nhanO)}" title="${esc(`${BAC_UI[bacNgay].t} · ${ccNgay(j)}${ten ? " · " + ten : ""}`)}">
       ${cham ? `<span class="o-goc" aria-hidden="true">${cham}</span>` : ""}
       <span class="o-duong">${n + 1}</span>
       <span class="o-am${am.day === 1 || am.day === 15 ? " moc" : ""}">${amTxt}</span>
