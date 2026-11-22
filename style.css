@@ -1223,7 +1223,7 @@ html[data-ao="tre"][data-toi]{
   --so-1:#F2FAF7; --so-2:#D6ECE6; --so-3:#B3D5CC;
   --am-1:#1F3633; --am-2:#1A2E2B; --am-gach:#35524D; --am-vien:#35524D;
 }
-html[data-ao="tre"],html[data-ao="hien-dai"]{--an-mau:var(--thu-phap)}
+html[data-ao="tre"],html[data-ao="hien-dai"],html[data-ao="trung-nien"]{--an-mau:var(--thu-phap)}
 /* Nền thẫm: đỏ mang nghĩa xấu sáng lên cho đọc được (nghĩa giữ nguyên) */
 /* 1.30.1: áp cho mọi bộ áo, cả Cổ điển (không đặt data-ao) — đỏ 2,46:1 → ≥4,5:1; xanh "tốt" cũng sáng lên; gáy giữ đỏ cũ */
 html[data-toi]{--son:#F0605A; --ngoc:#4FBF8E}
@@ -1233,7 +1233,7 @@ html[data-toi] .gct-xung b{color:var(--son)}
 html[data-ao] .tam-gio{fill:var(--thu-phap)}
 html[data-ao="tre"]{--chu:"Nunito",system-ui,"Segoe UI",sans-serif; --so:"Nunito",system-ui,sans-serif}
 /* Hiện đại — luôn tối: nền xanh thẫm, gáy tím, nút chính và điểm nhấn vàng, chữ Lexend, số Space Grotesk */
-html[data-ao="hien-dai"][data-toi]{
+html[data-ao="hien-dai"][data-toi],html[data-ao="trung-nien"][data-toi]{
   --giay:#0E1726; --giay-2:#121E31; --the:#16233A; --vien:#2A3A56;
   --muc:#EEF2FA; --muc-2:#B6C2D6; --muc-3:#7F8DA6;
   --thu-phap:#7C6CF0; --chu-sang:#FFFFFF;
@@ -1391,3 +1391,40 @@ html[data-co] .loc-viec{gap:13px}
 .o.b4 .o-cham,.tn-muc.b4 i,.chu-thich .b4 i{height:8px;border-radius:2px;background:linear-gradient(var(--b4) 0 3px,transparent 3px 5px,var(--b4) 5px)}
 /* gạch trên nằm đúng chỗ gạch đơn, gạch dưới thêm xuống phía dưới — không đè số ngày âm */
 .o.b4 .o-cham{bottom:0}
+
+/* ═════════ 1.37.0 ═════════ */
+/* Bộ áo Trung niên (anh Bắc chọn mẫu X, 22/11/2026): nền xanh lam vừa, chữ trắng, điểm nhấn vàng — luôn tối như Hiện đại
+   nhưng khác hẳn chế độ tối nâu đen. Khung chung lấy của Hiện đại (khối trên), ở đây chỉ đổi giá trị biến.
+   Tương phản chữ trên --the: chính 9,8 · phụ 7,4 · mờ 5,0 · năm mức 4,6–6,8. */
+html[data-ao="trung-nien"][data-toi]{
+  --giay:#122B63; --giay-2:#17347A; --the:#1B3F8C; --vien:#3A5DB0;
+  --muc:#FFFFFF; --muc-2:#D5DFF5; --muc-3:#A7B8E0;
+  --son:#FF9388; --son-dam:#FF9388; --ngoc:#7BE3B4; --ngoc-dam:#7BE3B4;
+  --b0:#FF9388; --b1:#FFB77A; --b2:#CFC8BA; --b3:#B4E584; --b4:#6BE5C2;
+  --chinh:#FFD25E; --chinh-dam:#FFD25E; --chinh-nhat:#2D4FA6; --tren-chinh:#2A1F00;
+  --vang:#FFD25E; --vang-dam:#FFE08A; --vang-nhat:#3A4470; --vang-nen:#3A4470; --vang-vien:#6F74A0;
+  --nhac:#A9D0FF; --nhac-dam:#A9D0FF; --nhac-nhat:#234E9C; --nhac-vien:#4A72C4;
+  --le-so:#6C84D6; --gach-so:rgba(220,230,255,.14); --chu-so:#DAD6FF;
+  --nen-hao-1:rgba(124,160,255,.22); --nen-hao-2:rgba(255,210,94,.08);
+  --tt-1:#122B63; --tt-2:#1B3F8C; --gay-1:#6A5AE0; --gay-2:#8C7DF5; --gay-3:#7C6CF0;
+  --to-lop-1:#2A4F9E; --to-lop-2:#234590; --to-lop-3:#2A4F9E; --to-lop-4:#234590;
+  --do-nghi:#FF9AA6;
+  --am-1:#224896; --am-2:#1D3F88; --am-gach:#4468BC; --am-vien:#4468BC;
+}
+/* Dải chọn ở Menu → Giao diện: một hàng, gạt ngang, không xuống dòng (anh Bắc 22/11/2026) */
+.mn-chips{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;margin:0 -18px;padding:2px 18px}
+.mn-chips::-webkit-scrollbar{display:none}
+.mn-chip{flex:none;white-space:nowrap}
+/* Nút có biểu tượng (luật 4): Hôm nay, Hoàn tác */
+#nut-hom-nay{display:inline-flex;align-items:center;gap:5px}
+#nut-hom-nay .ic,#bt-hoan .ic{display:inline-grid;width:15px;height:15px}
+#nut-hom-nay .ic svg,#bt-hoan .ic svg{width:15px;height:15px}
+#bt-hoan{display:inline-flex;align-items:center;gap:5px}
+/* "Bỏ qua" ở hướng dẫn là nút phụ: chỉ là chữ */
+.hd-bo{border:0;background:none;padding:8px 10px;font:500 13px var(--chu);color:var(--muc-3);cursor:pointer}
+/* Chấm góc ô tháng lùi ra mép, khỏi sát chữ số */
+.o-goc{top:3px;right:3px}
+/* Nút ✕ của thiệp: nền đậm hơn để không lẫn vào chữ khi cuộn */
+.thiep-dong{background:rgba(0,0,0,.55)}
+/* Chữ to: nút Hôm nay bỏ biểu tượng để ô ngày không bị ép */
+html[data-co] #nut-hom-nay .ic{display:none}

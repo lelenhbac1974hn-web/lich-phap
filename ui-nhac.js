@@ -703,7 +703,7 @@ let henBao = 0;
 function baoTam(noiDung, hoanTac, giuLau) {
   const el = $("bao-tam");
   clearTimeout(henBao);
-  el.innerHTML = `<span>${noiDung}</span>${hoanTac ? '<button type="button" id="bt-hoan">Hoàn tác</button>' : ""}`;
+  el.innerHTML = `<span>${noiDung}</span>${hoanTac ? '<button type="button" id="bt-hoan">' + ic("moLai") + '<span>Hoàn tác</span></button>' : ""}`;
   el.classList.add("hien");
   if (hoanTac) $("bt-hoan").onclick = () => { hoanTac(); el.classList.remove("hien"); };
   henBao = setTimeout(() => el.classList.remove("hien"), giuLau ? 9000 : 4500);

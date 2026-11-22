@@ -70,6 +70,7 @@ document.addEventListener("click", async e => {
   if (b.dataset.nc === "khoa") { ghiNC(KHOA_NC, null); giuViecHopLe(); ve(); if (vung) vung.innerHTML = trangNangCao(); return; }
   const o = vung && vung.querySelector("[data-nc-ma]"), bao = vung && vung.querySelector(".nc-bao");
   try {
+    if (o && !o.value.trim()) { if (bao) bao.textContent = "Chưa nhập mã."; return; }
     const h = await bamMa(o ? o.value : "");
     if ((window.LP_MA || []).includes(h)) { ghiNC(KHOA_NC, h); ve(); vung.innerHTML = trangNangCao(); }
     else if (bao) bao.textContent = "Mã không đúng hoặc đã bị thu hồi.";

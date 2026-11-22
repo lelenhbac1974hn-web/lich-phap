@@ -124,6 +124,7 @@ document.addEventListener("click", e => {
   else if (b.dataset.viec) { st.viec = b.dataset.viec; ve(); }
 });
 $("nut-hom-nay").addEventListener("click", () => den(jdLich()));
+$("nut-hom-nay").insertAdjacentHTML("afterbegin", ic("homNay"));
 $("nut-hom-nay-logo").addEventListener("click", e => { e.preventDefault(); moGioiThieu(); });
 /* Máy tính: bấm vào đâu trên ô cũng mở bảng chọn ngày (điện thoại tự mở khi chạm) */
 $("o-ngay").addEventListener("click", e => { try { e.target.showPicker(); } catch (er) { /* trình duyệt cũ: để mặc định */ } });

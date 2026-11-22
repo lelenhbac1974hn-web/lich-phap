@@ -15,7 +15,7 @@
 <link rel="manifest" href="./manifest.json" />
 <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
 <link rel="icon" href="./icon-192.png" />
-<script>/* Đặt bộ áo, sáng/tối trước khi vẽ để không nháy màu; ui-chung.js lo phần còn lại */(function(){try{var a=localStorage.getItem("lichphap:bo-ao"),g=localStorage.getItem("lichphap:giao-dien"),h=document.documentElement;if(a==="tre"||a==="hien-dai")h.setAttribute("data-ao",a);var c=localStorage.getItem("lichphap:co-chu");if(c==="lon"||c==="rat-lon")h.setAttribute("data-co",c);if(a==="hien-dai"||g==="toi"||(g!=="sang"&&matchMedia("(prefers-color-scheme: dark)").matches))h.setAttribute("data-toi","")}catch(e){}})();</script>
+<script>/* Đặt bộ áo, sáng/tối trước khi vẽ để không nháy màu; ui-chung.js lo phần còn lại */(function(){try{var a=localStorage.getItem("lichphap:bo-ao"),g=localStorage.getItem("lichphap:giao-dien"),h=document.documentElement;if(a==="tre"||a==="hien-dai"||a==="trung-nien")h.setAttribute("data-ao",a);var c=localStorage.getItem("lichphap:co-chu");if(c==="lon"||c==="rat-lon")h.setAttribute("data-co",c);if(a==="hien-dai"||a==="trung-nien"||g==="toi"||(g!=="sang"&&matchMedia("(prefers-color-scheme: dark)").matches))h.setAttribute("data-toi","")}catch(e){}})();</script>
 <link rel="stylesheet" href="./style.css" />
 </head>
 <body data-tab="ngay">
@@ -34,7 +34,7 @@
       <input type="date" id="o-ngay" min="1900-01-01" max="2199-12-31" aria-label="Chọn ngày xem" />
     </label>
     <a class="nut nut-nhac" href="#nhac">Nhắc ngày <b id="dem-nhac" hidden></b></a>
-    <button class="nut nut-chinh" id="nut-hom-nay" type="button">Hôm nay</button>
+    <button class="nut nut-chinh" id="nut-hom-nay" type="button"><span>Hôm nay</span></button>
   </div>
 </header>
 

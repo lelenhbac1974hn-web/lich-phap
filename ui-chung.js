@@ -23,7 +23,7 @@ const mayToi = window.matchMedia("(prefers-color-scheme: dark)");
 function layGiaoDien() { try { return localStorage.getItem(KHOA_GD) || "tu-dong"; } catch (e) { return "tu-dong"; } }
 /* Bộ áo: "co-dien" (mặc định, giấy kem gáy đỏ) · "tre" (Trẻ trung: bạc hà, kem, chữ tròn) · "hien-dai" (xanh thẫm, tím, vàng — luôn tối).
    Chỉ đổi biến màu và phông; màu mang nghĩa (đỏ xấu, xanh tốt, 5 bậc) giữ nguyên nghĩa. */
-const KHOA_AO = "lichphap:bo-ao", BO_AO = ["co-dien", "tre", "hien-dai"];
+const KHOA_AO = "lichphap:bo-ao", BO_AO = ["co-dien", "tre", "trung-nien", "hien-dai"], AO_TOI = ["trung-nien", "hien-dai"]; /* trung-nien: nền xanh lam, chữ trắng (anh Bắc đặt tên 22/11/2026) — cũng luôn tối */
 function layAo() { try { const a = localStorage.getItem(KHOA_AO); return BO_AO.includes(a) ? a : "co-dien"; } catch (e) { return "co-dien"; } }
 function datAo(a) {
   a = BO_AO.includes(a) ? a : "co-dien";
@@ -31,11 +31,11 @@ function datAo(a) {
   apGiaoDien(a);
 }
 function apGiaoDien(aoTam) {
-  const ao = aoTam || layAo(), g = layGiaoDien(), toi = ao === "hien-dai" || g === "toi" || (g !== "sang" && mayToi.matches);
+  const ao = aoTam || layAo(), g = layGiaoDien(), toi = AO_TOI.includes(ao) || g === "toi" || (g !== "sang" && mayToi.matches);
   if (ao === "co-dien") delete document.documentElement.dataset.ao; else document.documentElement.dataset.ao = ao;
   document.documentElement.toggleAttribute("data-toi", toi);
   const mau = document.querySelector('meta[name="theme-color"]');
-  if (mau) mau.content = ao === "tre" ? "#3F9688" : ao === "hien-dai" ? "#0E1726" : "#B3261E";
+  if (mau) mau.content = ao === "tre" ? "#3F9688" : ao === "hien-dai" ? "#0E1726" : ao === "trung-nien" ? "#122B63" : "#B3261E";
   const m = document.querySelector('meta[name="color-scheme"]');
   if (m) m.content = toi ? "dark" : "light";
 }

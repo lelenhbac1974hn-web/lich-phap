@@ -104,7 +104,7 @@ const kyNgay = cd => cd.daiKy;
 function lyDoNgan(x) {
   if (st.kieu !== "sach") { const cd = x.cd, ky = kyNgay(cd); return (ky.length ? ky.join(" · ") + " · " : "") + `Trực ${cd.truc.t} · ${cd.than.t}`; }
   const ls = x.ls, ds = ls.khongCuu.length ? ls.khongCuu : ls.kieng.length ? ls.kieng : ls.tot;
-  const t = ds.map(m => boTrang(m.t).replace(/\s*\([^)]*\)/g, "").replace(/^Sao tốt hợp việc:\s*/, ""));
+  const t = ds.map(m => boTrang(m.t).replace(/\s*\([^)]*\)/g, "").replace(/^Sao tốt hợp việc:\s*/, "").replace(/^Sao xấu kỵ việc này:\s*/, "Kỵ: "));
   return t.length ? t.map((s, i) => i ? chuThuong(s) : s).join(" · ") : boTrang(ls.ket);
 }
 
