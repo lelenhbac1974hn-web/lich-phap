@@ -1377,3 +1377,10 @@ html[data-toi] .chu-gio .dang.hac i{background:#A9483B;border-color:#F2B2A7}
 @media (max-width:760px){body[data-tab="nhac"] .dai-viec{display:none}}
 html[data-co] .tn-loc{grid-template-columns:44px minmax(0,1fr)}
 html[data-co] .tn-loc .sx-chip{gap:0 11px}
+/* ═════════ 1.35.2 ═════════ */
+/* Bộ lọc thẻ Nhắc: chữ sáng lên + gạch dưới như Tìm ngày, không viên tròn (anh Bắc 22/11/2026) */
+.loc-viec{gap:18px;border-bottom:1px dashed var(--vien)}
+.loc{border:0;border-radius:0;background:none;box-shadow:none;padding:8px 1px 7px;border-bottom:2px solid transparent;color:var(--muc-3)}
+.loc b{color:inherit}
+.loc.chon{box-shadow:none;border-bottom-color:var(--chinh);color:var(--chinh-dam);font-weight:700}
+html[data-co] .loc-viec{gap:13px}
