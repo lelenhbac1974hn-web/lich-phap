@@ -101,6 +101,7 @@
   /* ═════════ KHO CÂU MẪU — xếp theo LOẠI Ý ═════════ */
   const MAU = {
     /* — Ý quyết định: sáu ngày đại kỵ — câu mở bắt đầu bằng "," thì nối liền sau dòng ngày tháng */
+    mo_ngay: ["Ngày {cc}, {am}", "Xét ngày {cc}, {nham}", "Bạn đang xem ngày {cc}, {am}", "Nay xét ngày {cc}, tức {am}", "Ngày {cc}, {nham}"],
     qd_dai_ky: [", phạm {ky}, một trong sáu ngày đại kỵ.", "Ngày này phạm {ky}, là một trong sáu ngày đại kỵ.",
       "Trước hết phải nói: ngày này phạm {ky}, một trong sáu ngày đại kỵ.", ", nhằm ngày {ky} — một trong sáu ngày đại kỵ."],
     qd_dai_ky_am: ["Ngày {am_ngay} này phạm {ky}, một trong sáu ngày đại kỵ."],          // chỉ khi kỵ tính theo ngày âm
@@ -116,20 +117,20 @@
     dan_tho_thang: ["Bài thơ Thụ tử – Sát chủ, câu nói về tháng này, rằng:", "Sách có bài thơ Thụ tử – Sát chủ; câu ứng với tháng này rằng:"],
     chu_tho: ["{con} tức ngày {chi}, chính là ngày hôm nay.", "Trong câu thơ, {con} tức ngày {chi}, chính là hôm nay."],
     /* — Ý quyết định: ngày kiêng theo việc — */
-    qd_kieng_dai_hung: ["Không thuộc sáu ngày đại kỵ, ngày này vẫn phạm {ds}; sách dạy kiêng {viec}.",
-      "Sách chép ngày này phạm {ds}; ấy là điều kỵ nặng, kiêng {viec}.", "Trước hết phải nói: ngày này phạm {ds}; sách dạy kiêng {viec}.",
-      "Ngày này phạm {ds}, tuy không phải đại kỵ song cũng là điều kỵ nặng; sách dạy kiêng {viec}."],
-    qd_kieng: ["Sách chép ngày này phạm {ds}, kỵ {viec}.", "Ngày này phạm {ds}; sách dạy kiêng {viec}.",
-      "Theo sách thì ngày phạm {ds}, không lợi cho {viec}.", "Điều đáng ngại là ngày phạm {ds}; sách dạy kiêng {viec}."],
+    qd_kieng_dai_hung: ["Chẳng thuộc sáu ngày đại kỵ mà vẫn phạm {ds}; sách dạy kiêng {viec}.",
+      "Sách chép phạm {ds}; ấy là điều kỵ nặng, kiêng {viec}.", "Trước hết phải nói: ngày này phạm {ds}; sách dạy kiêng {viec}.",
+      "Phạm {ds}, tuy không phải đại kỵ song cũng là điều kỵ nặng; sách dạy kiêng {viec}."],
+    qd_kieng: ["Sách chép ngày này phạm {ds}, kỵ {viec}.", "Xét ra thì phạm {ds}; sách dạy kiêng {viec}.",
+      "Theo sách thì phạm {ds}, không lợi cho {viec}.", "Điều đáng ngại là phạm {ds}; sách dạy kiêng {viec}."],
     satchu_khac: ["Đây là Sát chủ lối khác, không phải Sát chủ trong sáu ngày đại kỵ."],
     /* — Ý quyết định: sao xấu kỵ việc nhiều hơn sao tốt hợp việc — */
-    qd_sao_xau_hon: ["Ngày có hung tinh {ds}, kỵ {viec}.", "Xét sao thì ngày có {ds} là sao xấu, kỵ {viec}.",
-      "Hung tinh có {ds}, chủ điều chẳng lợi cho {viec}."],
+    qd_sao_xau_hon: ["Hung tinh có {ds}, kỵ {viec}.", "Xét sao thì có {ds} là sao xấu, kỵ {viec}.",
+      "Điều đáng ngại là có {ds}, chủ điều chẳng lợi cho {viec}."],
     /* — Ý quyết định: nhiều điều tốt / bình — */
-    qd_nhieu_dieu_tot: ["Ngày này nhiều điều tốt: {ds}.", "Xét ra ngày này {ds}.", "Ngày này được nhiều điều lành: {ds}.", "Nói về điều tốt thì ngày này {ds}."],
-    qd_binh: ["Ngày này không phạm ngày đại kỵ nào.", "Xét sáu ngày đại kỵ thì ngày này không phạm.", "Sáu ngày đại kỵ, ngày này không phạm ngày nào."],
-    khong_xau: ["Hung tinh đáng ngại cũng không gặp.", "Sao xấu đáng ngại thì ngày này không có."],   // chỉ khi dàn ý không có sao xấu nào
-    khong_pham: ["Ngày không phạm ngày đại kỵ nào.", "Xét sáu ngày đại kỵ thì ngày này không phạm.", "Sáu ngày đại kỵ, ngày này không phạm ngày nào.",
+    qd_nhieu_dieu_tot: ["Xét về điều tốt: {ds}.", "Nói về điều lành thì {ds}.", "Điều lành trước hết: {ds}.", "Ngày này nhiều điều tốt: {ds}."],
+    qd_binh: ["Sáu ngày đại kỵ đều không phạm.", "Xét sáu ngày đại kỵ thì không phạm ngày nào.", "Về đại kỵ thì ngày này không phạm."],
+    khong_xau: ["Hung tinh đáng ngại cũng không gặp.", "Sao xấu đáng ngại thì không có."],
+    khong_pham: ["Sáu ngày đại kỵ đều không phạm.", "Xét sáu ngày đại kỵ thì không phạm ngày nào.", "Về đại kỵ thì không phạm ngày nào.",
       "Ngày này không phạm một ngày nào trong sáu ngày đại kỵ."],
     /* — Ý gỡ — */
     giai_than: ["May có Giải thần giải trừ được {ds}.", "{ds} vốn là hung tinh, may có Giải thần giải trừ.", "Có {ds}, song đã được Giải thần hoá giải.",
@@ -177,15 +178,15 @@
   };
   /* ═════════ CHỮ NỐI theo chiều hai ý liền nhau: {a} + cụm ý + {b} ═════════ */
   const NOI = {
-    cung_xau: [{ a: "Ngày lại ", b: "." }, { a: "Thêm nữa, ngày còn ", b: "." }, { a: "Huống chi ngày còn ", b: "." }],       // sau ý quyết định xấu
-    nguoc_dai_ky: [{ a: "Dẫu ngày ", b: ", cũng đành bỏ." }, { a: "Ngày tuy ", b: ", song đã phạm đại kỵ thì không dùng được." },
+    cung_xau: [{ a: "Lại ", b: "." }, { a: "Thêm nữa, còn ", b: "." }, { a: "Huống chi còn ", b: "." }],       // sau ý quyết định xấu
+    nguoc_dai_ky: [{ a: "Dẫu ", b: ", cũng đành bỏ." }, { a: "Tuy ", b: ", song đã phạm đại kỵ thì không dùng được." },
       { a: "Tiếc thay, ngày ", b: ", mà gặp đại kỵ cũng thành vô ích." },
-      { a: "Ngày vốn ", b: ", tiếc rằng phạm đại kỵ nên không dùng được." }, { a: "Dẫu ngày ", b: ", gặp đại kỵ rồi thì cũng phải kiêng." }],
-    nguoc_xau: [{ a: "Tuy ngày ", b: ", song tốt chẳng bù được xấu." }, { a: "Dẫu ngày ", b: ", cũng không gỡ được." }, { a: "Ngày tuy ", b: ", song cũng không đỡ nổi." }],
-    nguoc_tot: [{ a: "Tuy ngày ", b: ", song điều lành vẫn nhiều hơn." }, { a: "Chỉ có điều ngày ", b: "; chừng ấy chưa đủ làm ngày kém đi." },
-      { a: "Duy ngày ", b: ", song không đáng ngại." }],   // sau ý quyết định tốt
-    cung_binh: [{ a: "Điều lành thì ngày ", b: "." }, { a: "Xét ra ngày này ", b: "." }],
-    nguoc_binh: [{ a: "Song ngày ", b: "." }, { a: "Có điều ngày ", b: "." }, { a: "Nhưng ngày lại ", b: "." }]
+      { a: "Ngày vốn ", b: ", tiếc rằng phạm đại kỵ nên không dùng được." }, { a: "Dẫu ", b: ", gặp đại kỵ rồi thì cũng phải kiêng." }],
+    nguoc_xau: [{ a: "Tuy ", b: ", song tốt chẳng bù được xấu." }, { a: "Dẫu ", b: ", cũng không gỡ được." }, { a: "Ngày tuy ", b: ", song cũng không đỡ nổi." }],
+    nguoc_tot: [{ a: "Tuy ", b: ", song điều lành vẫn nhiều hơn." }, { a: "Chỉ có điều ", b: "; chừng ấy chưa đủ làm ngày kém đi." },
+      { a: "Duy ", b: ", song không đáng ngại." }],   // sau ý quyết định tốt
+    cung_binh: [{ a: "Điều lành thì ", b: "." }, { a: "Xét ra thì ", b: "." }],
+    nguoc_binh: [{ a: "Song ", b: "." }, { a: "Có điều ", b: "." }, { a: "Nhưng lại ", b: "." }]
   };
   /* ═════════ TRÍCH DẪN — gắn với ngày kỵ, sao; có sách và trang ═════════ */
   const THO_THU_TU = ["Một chó nằm kế rắn quấn ngang", "Hai con rồng ấp chuột lông vàng", "Ba lợn lái ngăn dê đực chạy", "Bốn con rắn trắng phủ mèo lang",
@@ -259,6 +260,9 @@
     const noiCau = (kieu, noiDung) => { const k = layMau("noi_" + kieu, NOI[kieu], khacMo); return ghi(hoa(k.a + noiDung + k.b)); };
     const v = { viec: chung ? (bac === 0 ? "mọi việc" : "việc lớn") : TEN_VIEC[viec], am_ngay: SO[d.am.ngay] };
     const c0 = `Ngày ${d.ccNgay}, ${SO[d.am.ngay]} tháng ${THANG_AM[d.am.thang - 1]}${d.am.nhuan ? " nhuận" : ""}`;
+    const ngayAm = c0.slice(c0.indexOf(", ") + 2);
+    const c0m = dien(layMau("mo_ngay", MAU.mo_ngay), { cc: d.ccNgay, am: ngayAm, nham: (d.am.ngay === 15 ? "nhằm đúng " : "nhằm ") + ngayAm });
+    const sauMo = t => !(/xét/i.test(c0m) && /^Xét/.test(t));
     const chi = String(d.ccNgay).split(" ").pop();
     qd.ten.forEach(nhan);
     let daSatChu = false;
@@ -269,7 +273,7 @@
       const ky = qd.ten, vk = { ...v, ky: noi(ky), n: SO_DEM[ky.length] || String(ky.length) };
       const theoAm = ky.length === 1 && DAI_KY_AM.includes(ky[0]);
       const mo = ky.length > 1 ? lay("qd_dai_ky_nhieu", MAU.qd_dai_ky_nhieu, vk) : lay("qd_dai_ky", theoAm ? MAU.qd_dai_ky.concat(MAU.qd_dai_ky_am) : MAU.qd_dai_ky, vk);
-      let p1 = mo.startsWith(",") ? c0 + mo : c0 + ". " + hoa(mo);
+      let p1 = mo.startsWith(",") ? c0 + mo : c0m + ". " + hoa(mo);
       const coTrich = ky.filter(k => TRICH[k]), kyTrich = coTrich.find(k => DAI_KY_AM.includes(k)) || coTrich[0];
       const p2 = [];
       if (kyTrich) {
@@ -294,13 +298,13 @@
       const xau = qd.chieu < 0;
       if (qd.loai === "kieng_dai_hung" || qd.loai === "kieng" || qd.loai === "sao_xau_hon") {
         const o = "qd_" + qd.loai;
-        cau.push(ghi(c0 + ". " + hoa(lay(o, MAU[o], { ...v, ds: noi(qd.ten) }))));
+        cau.push(ghi(c0m + ". " + hoa(lay(o, MAU[o], { ...v, ds: noi(qd.ten) }, sauMo))));
         if (qd.loai !== "sao_xau_hon") cau.push(satChu(qd.ten));
       } else if (qd.loai === "nhieu_dieu_tot") {
-        cau.push(ghi(c0 + ". " + hoa(lay("qd_nhieu_dieu_tot", MAU.qd_nhieu_dieu_tot, { ds: cum(d.thuan, "thuan") }))));
+        cau.push(ghi(c0m + ". " + hoa(lay("qd_nhieu_dieu_tot", MAU.qd_nhieu_dieu_tot, { ds: cum(d.thuan, "thuan") }, sauMo))));
         cau.push(ghi(lay("khong_pham", MAU.khong_pham, v, khacMo)));
       } else {
-        cau.push(ghi(c0 + ". " + lay("qd_binh", MAU.qd_binh, v)));
+        cau.push(ghi(c0m + ". " + lay("qd_binh", MAU.qd_binh, v, sauMo)));
       }
       if (!xau && !d.go.length && !(d.viecTranh || []).length && !d.nghich.some(x => /^(sao_xau_viec|xau_nhe)/.test(x.loai))) cau.push(ghi(lay("khong_xau", MAU.khong_xau, v, khacMo)));
       /* Ý cùng chiều, rồi ý ngược chiều (nhượng bộ) */
@@ -369,7 +373,7 @@
 
   /* ═════════ KIỂM CÂU BẰNG MÁY — trả mảng lỗi (rỗng là đạt) ═════════ */
   const NOI_BO = /CSDL|tư liệu|căn cứ|tham khảo|không chép|đối sách|việc chung/i;
-  const CHU_NOI = new Set(["lại", "thêm", "song", "nhưng", "tuy", "dẫu", "huống", "may", "riêng", "duy", "còn", "ngặt", "vậy", "chỉ", "tiếc"]);
+  const CHU_NOI = new Set(["xét", "lại", "thêm", "song", "nhưng", "tuy", "dẫu", "huống", "may", "riêng", "duy", "còn", "ngặt", "vậy", "chỉ", "tiếc"]);
   const NHUONG = new Set(["tuy", "dẫu", "song", "nhưng", "tiếc", "chỉ"]);
   const PHU_DINH = new Set(["không", "chẳng", "chưa", "chớ"]);
   function kiemCau(bai) {
