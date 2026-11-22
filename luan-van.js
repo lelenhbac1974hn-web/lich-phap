@@ -101,7 +101,9 @@
   /* ═════════ KHO CÂU MẪU — xếp theo LOẠI Ý ═════════ */
   const MAU = {
     /* — Ý quyết định: sáu ngày đại kỵ — câu mở bắt đầu bằng "," thì nối liền sau dòng ngày tháng */
-    mo_ngay: ["Ngày {cc}, {am}", "Xét ngày {cc}, {nham}", "Nay xem đến ngày {cc}, {am}", "Nay xét ngày {cc}, tức {am}", "Ngày {cc}, {nham}"],
+    mo_ngay: ["Ngày {cc}, {am}", "Xét ngày {cc}, {nham}", "Nay xem đến ngày {cc}, {am}", "Nay xét ngày {cc}, tức {am}", "Ngày {cc}, {nham}",
+      "Luận ngày {cc}, {am}", "Bàn về ngày {cc}, {nham}", "Xem ngày {cc}, tức {am}", "Thử xét ngày {cc}, {nham}",
+      "Lấy ngày {cc}, {am} mà xét", "Đem ngày {cc}, {am} ra xét", "Nói về ngày {cc}, {nham}"],
     qd_dai_ky: [", phạm {ky}, một trong sáu ngày đại kỵ.", "Ngày này phạm {ky}, là một trong sáu ngày đại kỵ.",
       "Trước hết phải nói: ngày này phạm {ky}, một trong sáu ngày đại kỵ.", ", nhằm ngày {ky} — một trong sáu ngày đại kỵ."],
     qd_dai_ky_am: ["Ngày {am_ngay} này phạm {ky}, một trong sáu ngày đại kỵ."],          // chỉ khi kỵ tính theo ngày âm
@@ -127,7 +129,8 @@
     qd_sao_xau_hon: ["Hung tinh có {ds}, kỵ {viec}.", "Xét sao thì có {ds} là sao xấu, kỵ {viec}.",
       "Điều đáng ngại là có {ds}, chủ điều chẳng lợi cho {viec}."],
     /* — Ý quyết định: nhiều điều tốt / bình — */
-    qd_nhieu_dieu_tot: ["Xét về điều tốt: {ds}.", "Nói về điều lành thì {ds}.", "Điều lành trước hết: {ds}.", "Ngày này nhiều điều tốt: {ds}."],
+    qd_nhieu_dieu_tot: ["Xét về điều tốt: {ds}.", "Nói về điều lành thì {ds}.", "Điều lành trước hết: {ds}.", "Ngày này nhiều điều tốt: {ds}.",
+      "Nếu nói về điều tốt thì {ds}.", "Trước nói điều lành: {ds}.", "Kể điều tốt thì {ds}."],
     qd_binh: ["Sáu ngày đại kỵ đều không phạm.", "Xét sáu ngày đại kỵ thì không phạm ngày nào.", "Về đại kỵ thì ngày này không phạm."],
     khong_xau: ["Hung tinh đáng ngại cũng không gặp.", "Sao xấu đáng ngại thì không có."],
     khong_pham: ["Sáu ngày đại kỵ đều không phạm.", "Xét sáu ngày đại kỵ thì không phạm ngày nào.", "Về đại kỵ thì không phạm ngày nào.",
@@ -267,7 +270,8 @@
     const c0 = `Ngày ${d.ccNgay}, ${SO[d.am.ngay]} tháng ${THANG_AM[d.am.thang - 1]}${d.am.nhuan ? " nhuận" : ""}`;
     const ngayAm = c0.slice(c0.indexOf(", ") + 2);
     const c0m = dien(layMau("mo_ngay", MAU.mo_ngay), { cc: d.ccNgay, am: ngayAm, nham: (d.am.ngay === 15 ? "nhằm đúng " : "nhằm ") + ngayAm });
-    const sauMo = t => !(/xét/i.test(c0m) && /^Xét/.test(t));
+    /* Câu đi liền sau câu mở không lặp chữ của câu mở (xét… Xét…, Nói về ngày… Nói về điều lành…) */
+    const sauMo = t => !(/xét/i.test(c0m) && /^Xét/.test(t)) && !(/^(Nói|Luận|Bàn)/.test(c0m) && /^(Nói|Nếu nói)/.test(t));
     const chi = String(d.ccNgay).split(" ").pop();
     qd.ten.forEach(nhan);
     let daSatChu = false;
@@ -358,7 +362,9 @@
     /* Bài ngắn (dữ kiện ít) thì chọn cách kết đầy đủ hơn, không thêm ý */
     const daCo = doan.reduce((s, x) => s + demChu(x), 0) + k.reduce((s, x) => s + demChu(x), 0) + demChu(ngoaiLe);
     const du = t => khacMo(t) && demChu(t) + daCo >= 60;
-    if (bac === 0) k.push(lay("ket_0", MAU.ket_0, { viec: chung ? noi(SAU_VIEC.map(x => TEN_VIEC[x])) : TEN_VIEC[viec] }, du));
+    /* "đều", "trăm việc" chỉ hợp khi nói nhiều việc — điều kiện cứng; độ dài là điều kiện mềm */
+    const ok0 = t => chung || !/đều|trăm việc/.test(t), dai0 = t => ok0(t) && du(t);
+    if (bac === 0) k.push(lay("ket_0", MAU.ket_0, { viec: chung ? noi(SAU_VIEC.map(x => TEN_VIEC[x])) : TEN_VIEC[viec] }, MAU.ket_0.some(dai0) ? dai0 : ok0));
     else if (bac === 1) k.push(lay("ket_1", MAU.ket_1, { viec: chung ? "việc lớn" : TEN_VIEC[viec] }, du));
     else if (bac === 2) k.push(lay("ket_2", MAU.ket_2, v, t => du(t) && (d.thuan.length + d.nghich.length <= 2 || !/đều ít/.test(t)) && (d.nghich.length > 0 || !/chẳng tốt|chẳng phải ngày đẹp/.test(t))
       && (d.thuan.length >= 2 || !/Điều lành tuy có|điều dữ không nặng/.test(t)) && (d.thuan.length < 3 || /Điều lành tuy có|điều dữ không nặng/.test(t))));
@@ -366,7 +372,8 @@
     else {
       const vk = chung ? (hop.length >= 4 ? "các việc lớn" : hop.length ? noi(hop) : "việc lớn") : TEN_VIEC[viec];
       if (chung && !hop.length && tranh.length) { k.push(ngoaiLe); ngoaiLe = ""; k.push(bac === 4 ? "Ngoài việc ấy ra, ngày này rất tốt." : "Ngoài việc ấy ra, ngày này dùng được."); }
-      else k.push(lay("ket_" + bac, MAU["ket_" + bac], { viec: vk }, t => du(t) && (laDs(vk) || !/đều/.test(t))));
+      else { const okT = t => laDs(vk) || !/đều/.test(t), daiT = t => okT(t) && du(t);
+        k.push(lay("ket_" + bac, MAU["ket_" + bac], { viec: vk }, MAU["ket_" + bac].some(daiT) ? daiT : okT)); }
     }
     if (ngoaiLe) k.push(ngoaiLe);
     const ket = don(k.join(" "));
@@ -415,9 +422,10 @@
     const tu = ket.toLowerCase().split(/[\s,;:.—]+/).filter(Boolean);
     if (bai.bac <= 1) tu.forEach((w, i) => { if (/^(tốt|cát|lợi)$/.test(w) && !PHU_DINH.has(tu[i - 1]) && !PHU_DINH.has(tu[i - 2])) loi.push("mức xấu mà câu kết có chữ '" + w + "'"); });
     if (bai.bac >= 3 && /nên tránh ngày này/i.test(ket)) loi.push("mức tốt mà câu kết bảo tránh ngày này");
+    if (d.viec && d.viec !== "chung" && /đều (nên|hợp)|trăm việc/.test(ket)) loi.push("một việc mà câu kết nói 'đều'");
     /* Độ dài (không kể thơ) */
     const n = demChu(loiVan);
-    if (n < 45 || n > 190) loi.push("độ dài " + n + " chữ, ngoài khoảng 45–190");
+    if (n < 40 || n > 190) loi.push("độ dài " + n + " chữ, ngoài khoảng 40–190");
     /* Chữ nối giữa hai câu liền nhau */
     const cs = cauCua(loiVan);
     for (let i = 1; i < cs.length; i++) {
