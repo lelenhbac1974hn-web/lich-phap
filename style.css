@@ -1317,3 +1317,12 @@ html[data-ao="hien-dai"][data-toi]{
 .tl-ghi b{font:400 17.5px/1.2 var(--but-mem)}
 .tl-nhan .le{font-family:var(--but-mem);font-weight:400;font-size:17px;line-height:1.2}
 .ds-nd b{font:400 18.5px/1.4 var(--but-mem);padding-top:3px}
+/* 1.33.2: kết luận đầu tờ Luận ngày gọn lại — chữ mức viết thư pháp, bỏ năm vệt mức, thay một kẻ nhạt; câu ca trong thiệp lễ viết thư pháp */
+.pd-chinh{margin-top:2px}
+.pd-bac{font:400 38px/1.1 var(--but-long);letter-spacing:0}
+.pd-ket{margin-top:0;font-size:14px}
+.pd-diem b{font-size:32px}
+.pd-ke{border:0;border-top:1px solid var(--vien);margin:12px 0 0}
+.pd-loi{border-top:0;margin-top:8px;padding-top:0}
+.thiep-ca{font:400 21px/1.4 var(--but-long);color:var(--muc)}
+.thiep-ca small,.thiep-ca cite{font-family:var(--chu)}

@@ -41,7 +41,6 @@ function loiLuan(x) {
 function vePhanDinh(x) {
   const sach = st.kieu === "sach", cd = x.cd, ls = x.ls, soBac = sach ? ls.bac : cd.bac, bac = BAC_UI[soBac];
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0];
-  const thang = BAC_UI.map((b, i) => `<i class="${b.lop}${i === soBac ? " dang" : ""}" title="${b.t}"></i>`).join("");
   const li = (ds, lop) => ds.map(t => `<li class="${lop}">${esc(t)}</li>`).join("");
   /* Lý do luận theo sách hiện bằng lời thường; số trang sách chỉ giữ trong dữ liệu (luan-sach.js), không đưa lên màn hình */
   const liSach = (ds, lop) => ds.map(m => `<li class="${lop}">${esc(boTrang(m.t))}</li>`).join("");
@@ -54,7 +53,7 @@ function vePhanDinh(x) {
   $("phan-dinh").innerHTML = dau + ngayLuan + `<div class="tg-than">` + (sach ? `
     <div class="pd-chinh"><div class="pd-bac">${bac.t}</div></div>
     <div class="pd-ket">${esc(boTrang(ls.ket))}</div>
-    <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
+    <hr class="pd-ke">
     ${oTuoi()}
     ${dongKieuKhac(true, cd, ls)}
     ${loiLuan(x)}
@@ -73,7 +72,7 @@ function vePhanDinh(x) {
       <div class="pd-bac">${bac.t}</div>
       <div class="pd-diem"><b>${cd.diem > 0 ? "+" : ""}${cd.diem}</b><span>điểm</span></div>
     </div>
-    <div class="pd-thang" role="img" aria-label="Bậc ${soBac + 1} trên 5">${thang}</div>
+    <hr class="pd-ke">
     ${oTuoi()}
     ${dongKieuKhac(false, cd, ls)}
     ${cd.chan.length ? `<div class="pd-chan"><b>${cd.daiKy.length ? "Ngày đại kỵ — sao tốt không cứu được" : "Kỵ tuyệt đối cho việc này"}</b>${cd.chan.map(esc).join(" · ")}</div>` : ""}
