@@ -117,15 +117,14 @@
       "Phạm {n} đại kỵ một lượt; ấy là ngày phải tránh hẳn, sao tốt nào cũng không giải được."],
     dan_tho_ky: ["Sách có thơ rằng:", "Về {ky}, sách có thơ rằng:"],
     dan_tho_thang: ["Bài thơ Thụ tử – Sát chủ, câu nói về tháng này, rằng:", "Sách có bài thơ Thụ tử – Sát chủ; câu ứng với tháng này rằng:"],
-    chu_tho: ["{con} tức ngày {chi}, chính là ngày hôm nay.", "Trong câu thơ, {con} tức ngày {chi}, chính là hôm nay."],
+    chu_tho: ["{con} tức ngày {chi}, đúng vào ngày đang xét.", "Trong câu thơ, {con} tức ngày {chi}, chính là ngày này."],
     /* — Ý quyết định: ngày kiêng theo việc — */
     qd_kieng_dai_hung: ["Chẳng thuộc sáu ngày đại kỵ mà vẫn phạm {ds}; sách dạy kiêng {viec}.",
       "Sách chép phạm {ds}; ấy là điều kỵ nặng, kiêng {viec}.", "Trước hết phải nói: ngày này phạm {ds}; sách dạy kiêng {viec}.",
       "Phạm {ds}, tuy không phải đại kỵ song cũng là điều kỵ nặng; sách dạy kiêng {viec}."],
     qd_kieng: ["Sách chép ngày này phạm {ds}, kỵ {viec}.", "Xét ra thì phạm {ds}; sách dạy kiêng {viec}.",
       "Theo sách thì phạm {ds}, không lợi cho {viec}.", "Điều đáng ngại là phạm {ds}; sách dạy kiêng {viec}."],
-    satchu_khac: ["Sát chủ ấy thuộc lối riêng, nhẹ hơn Sát chủ trong sáu ngày đại kỵ.", "Sát chủ này không phải Sát chủ đại kỵ mà là lối nhẹ hơn, vẫn nên kiêng.",
-      "Ấy là Sát chủ lối riêng, khác Sát chủ đại kỵ; dẫu vậy cũng chẳng nên xem thường."],
+    satchu_khac: ["Sát chủ này không phải Sát chủ trong sáu ngày đại kỵ; sách vẫn dạy kiêng.", "Ấy là Sát chủ lối khác, chẳng phải Sát chủ đại kỵ; dẫu vậy cũng chẳng nên xem thường."],
     /* — Ý quyết định: sao xấu kỵ việc nhiều hơn sao tốt hợp việc — */
     qd_sao_xau_hon: ["Hung tinh có {ds}, kỵ {viec}.", "Xét sao thì có {ds} là sao xấu, kỵ {viec}.",
       "Điều đáng ngại là có {ds}, chủ điều chẳng lợi cho {viec}."],
@@ -192,7 +191,7 @@
   };
   /* ═════════ CHỮ NỐI theo chiều hai ý liền nhau: {a} + cụm ý + {b} ═════════ */
   const NOI = {
-    cung_xau: [{ a: "Lại ", b: "." }, { a: "Thêm nữa, còn ", b: "." }, { a: "Ngoài ra còn ", b: "." }],       // sau ý quyết định xấu
+    cung_xau: [{ a: "Lại ", b: "." }, { a: "Thêm nữa, ngày còn ", b: "." }, { a: "Ngoài ra còn ", b: "." }],       // sau ý quyết định xấu
     nguoc_dai_ky: [{ a: "Dẫu ", b: ", cũng đành bỏ, vì sách dạy gặp đại kỵ thì kiêng mọi việc." },
       { a: "Tuy ", b: ", song sách dạy đã phạm đại kỵ thì sao tốt cũng không cứu được." },
       { a: "Tiếc thay, ngày ", b: ", mà phạm đại kỵ thì cũng thành vô ích; sách dạy phải kiêng mọi việc." },
