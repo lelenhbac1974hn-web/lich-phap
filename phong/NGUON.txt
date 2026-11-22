@@ -1,3 +1,7 @@
 Phông cho bộ áo Trẻ trung (Nunito) và Hiện đại (Lexend, Space Grotesk) của Lịch Pháp.
 Nguồn: Fontsource 5.3.0 (https://fontsource.org), tệp woff2 tách bộ latin / vietnamese.
 Giấy phép: SIL Open Font License 1.1 — xem OFL-*.txt cùng thư mục. Phông được dùng nguyên bản, không sửa.
+
+Thư pháp (Water Brush, Robert Leuschke — tên mục Lời luận và câu thơ trích, từ 1.32.7):
+Nguồn: Google Fonts (fonts.gstatic.com, waterbrush v6), tệp woff2 tách bộ latin / vietnamese.
+Giấy phép: SIL Open Font License 1.1 — OFL-water-brush.txt. Dùng nguyên bản, không sửa.

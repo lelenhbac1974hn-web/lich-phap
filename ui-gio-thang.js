@@ -35,7 +35,7 @@ function loiLuan(x) {
   if (!window.LUAN_VAN2 || !["chung", "dongtho", "kyket", "khaitruong", "xuathanh"].includes(st.viec)) return "";
   let b; try { b = LUAN_VAN2.ghep(x.j, st.viec); } catch (e) { return ""; }
   const tho = k => b.tho.filter(t => t.sau === k + 1).map(t => `${t.dan ? `<p>${esc(t.dan)}</p>` : ""}
-    <blockquote class="pd-tho">${t.t.map(esc).join("<br>")}<small>${esc(t.nguon.replace(/\s*\(.*\)$/, ""))}</small></blockquote>`).join("");
+    <blockquote class="pd-tho">${t.t.map(x => "<span>" + esc(x) + "</span>").join("")}<small>${esc(t.nguon.replace(/\s*\(.*\)$/, ""))}</small></blockquote>`).join("");
   return `<div class="pd-loi"><h4>Lời luận</h4>${b.doan.map((d, k) => `<p>${esc(d)}</p>${tho(k)}`).join("")}<p class="pd-loi-ket">${esc(b.ket)}</p></div>`;
 }
 function vePhanDinh(x) {
