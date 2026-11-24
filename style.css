@@ -1506,3 +1506,13 @@ html[data-co] .nc{grid-template-columns:54px minmax(0,1fr)}html[data-co] .nc-so{
 .o.qua{background:color-mix(in srgb,var(--the) 88%,var(--muc-3) 12%)}
 .o.qua.chon{background:var(--chinh)}
 .chu-thich .ct-qua i{width:14px;height:12px;border-radius:3px;background:color-mix(in srgb,var(--the) 88%,var(--muc-3) 12%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--muc-3) 18%,transparent)}
+/* 1.41.0 — nút micro cạnh ô gõ câu (nói thay gõ) */
+.go-noi{display:flex;align-items:center;gap:8px}
+.go-noi .sx-go{flex:1 1 auto;min-width:0}
+.nut-noi{flex:none;position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--vien);background:none;color:var(--muc-2);display:grid;place-items:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nut-noi::before{content:"";position:absolute;inset:-4px}
+.nut-noi .ic{margin:0}.nut-noi .ic svg{width:19px;height:19px}
+.nut-noi.dang{border-color:var(--chinh);color:var(--tren-chinh);background:var(--chinh);animation:dang-nghe 1.4s ease-in-out infinite}
+@keyframes dang-nghe{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--chinh) 25%,transparent)}}
+/* Ô gõ trên trang sổ không có khung đỏ khi đang gõ (đỏ chỉ mang nghĩa xấu — luật 7); con trỏ đã đủ báo chỗ gõ */
+.sx-go:focus-visible,.sx-o:focus-visible,.sx-dong textarea:focus-visible{outline:0}

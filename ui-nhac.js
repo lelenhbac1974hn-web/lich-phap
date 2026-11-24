@@ -1048,3 +1048,36 @@ function ganViec() {
   soatGio();
 }
 
+
+/* ── Nói thay gõ (1.41.0, anh Bắc 24/11/2026): nút micro cạnh ô gõ câu, giọng nói đổi ra chữ rồi qua bộ hiểu câu như khi gõ.
+   Dùng bộ nhận giọng của trình duyệt / điện thoại; chương trình không ghi, không lưu âm thanh — chỉ giữ chữ.
+   Máy không có bộ nhận giọng thì không hiện nút (vẫn dùng được micro trên bàn phím). */
+function ganGiong(idO, idLoi) {
+  const NG = window.SpeechRecognition || window.webkitSpeechRecognition, o = $(idO);
+  if (!NG || !o) return;
+  const bao = $(idLoi), nut = document.createElement("button");
+  nut.type = "button"; nut.className = "nut-noi"; nut.setAttribute("aria-label", "Nói thay gõ"); nut.title = "Nói thay gõ";
+  nut.innerHTML = ic("micro");
+  const hang = document.createElement("div"); hang.className = "go-noi";
+  o.parentNode.insertBefore(hang, o); hang.append(o, nut);
+  let nhan = null, goc = "";
+  const xong = () => { nut.classList.remove("dang"); nut.setAttribute("aria-label", "Nói thay gõ"); nhan = null; };
+  const LOI = { "not-allowed": "Chưa cho phép dùng micro — bật trong phần Cài đặt của máy.", "service-not-allowed": "Máy chưa cho nhận giọng nói ở đây — dùng micro trên bàn phím.",
+    "no-speech": "Chưa nghe thấy tiếng nói, bấm micro rồi nói lại.", "audio-capture": "Không mở được micro.", "network": "Cần có mạng để đổi giọng nói ra chữ." };
+  nut.addEventListener("click", () => {
+    if (nhan) { nhan.stop(); return; }
+    try { nhan = new NG(); } catch (e) { if (bao) bao.textContent = LOI["service-not-allowed"]; return; }
+    nhan.lang = "vi-VN"; nhan.interimResults = true; nhan.continuous = false; nhan.maxAlternatives = 1;
+    goc = o.value.trim(); if (bao) bao.textContent = "";
+    nhan.onresult = e => {
+      let chu = ""; for (let i = 0; i < e.results.length; i++) chu += e.results[i][0].transcript;
+      o.value = (goc ? goc + " " : "") + chu.trim();
+      o.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    nhan.onerror = e => { if (bao && e.error !== "aborted") bao.textContent = LOI[e.error] || LOI["service-not-allowed"]; xong(); };
+    nhan.onend = xong;
+    try { nhan.start(); nut.classList.add("dang"); nut.setAttribute("aria-label", "Dừng nghe"); } catch (e) { xong(); }
+  });
+}
+ganGiong("v-go", "v-loi");
+ganGiong("n-cau", "n-loi");

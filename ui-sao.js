@@ -81,7 +81,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.40.4";
+const PHIEN_BAN = "1.41.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -190,7 +190,7 @@ function trangMenu(id) {
         <li><b>Quyết định là của bạn.</b> Tác giả không chịu trách nhiệm về quyết định bạn đưa ra, cũng như mọi thiệt hại, tổn thất trực tiếp hay gián tiếp phát sinh từ việc dùng hoặc tin theo nội dung của chương trình.</li>
         <li><b>Âm lịch tính bằng thuật toán.</b> Âm lịch, can chi, tiết khí tính theo thuật toán thiên văn, không bảo đảm tuyệt đối đúng ở mọi ngày. Với ngày lễ, ngày giỗ, ngày hệ trọng, nên đối chiếu thêm lịch do cơ quan có thẩm quyền ban hành.</li>
         <li><b>Thời tiết để tham khảo.</b> Nhiệt độ và tình trạng trời lấy từ Open-Meteo theo vị trí gần đúng của máy, có thể khác thực tế nơi bạn đứng. Khi cần quyết định theo thời tiết, hãy xem bản tin của cơ quan khí tượng.</li>
-        <li><b>Nhắc việc có giới hạn.</b> Chương trình chỉ báo đúng giờ khi đang mở; khi tắt, báo tuỳ vào trình duyệt và điện thoại. Đừng dùng thay báo thức hay lịch hẹn quan trọng. Dữ liệu nhắc việc chỉ lưu trong máy của bạn và có thể mất khi xoá dữ liệu trình duyệt, đổi máy hay cài lại; nên dùng “Xuất ra tệp” ở thẻ Nhắc để sao lưu. Tác giả không chịu trách nhiệm khi bị lỡ việc hay mất dữ liệu.</li>
+        <li><b>Nhắc việc có giới hạn.</b> Chương trình chỉ báo đúng giờ khi đang mở; khi tắt, báo tuỳ vào trình duyệt và điện thoại. Đừng dùng thay báo thức hay lịch hẹn quan trọng. Dữ liệu nhắc việc chỉ lưu trong máy của bạn và có thể mất khi xoá dữ liệu trình duyệt, đổi máy hay cài lại; nên dùng “Xuất ra tệp” ở thẻ Nhắc để sao lưu. Nút micro dùng bộ nhận giọng nói có sẵn của điện thoại hoặc trình duyệt (thường cần mạng) để đổi lời nói ra chữ; chương trình không ghi và không lưu giọng nói. Tác giả không chịu trách nhiệm khi bị lỡ việc hay mất dữ liệu.</li>
         <li><b>Cung cấp nguyên trạng.</b> Chương trình được tặng miễn phí, như hiện có, không kèm bảo hành nào. Tác giả có thể sửa, đổi hay ngừng chương trình mà không báo trước.</li></ol>
         <p>Dùng chương trình nghĩa là bạn đồng ý với các điều trên.</p></section>
       <p class="gt-cuoi">Phiên bản ${PHIEN_BAN} · © 2026 Lê Lệnh Bắc · Bảo lưu mọi quyền<br>Xem ngày là tham khảo văn hoá truyền thống, không thay cho quyết định của bạn.</p>`

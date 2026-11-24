@@ -95,6 +95,7 @@
     nhap: { ve: '<path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 13v6h14v-6"/>' },
     homNay: { ve: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="12" cy="15" r="1.6" class="dac"/>' },
     /* Dải chọn việc (1.38.0): Khai trương — cửa hàng có mái che; Động thổ — xẻng cắm đất */
+    micro: { ve: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6"/>' }, // nói thay gõ (1.41.0)
     luan: { ve: '<path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.5 6.9 19.3 8 13.5l-4.3-4 5.8-.7z"/>' }, // như thẻ Luận giải ở thanh đáy
     cuaHang: { ve: '<path d="M4.5 11.5V20h15v-8.5"/><path d="M3 9.5l1.8-5h14.4l1.8 5"/><path d="M3 9.5a3 2.6 0 0 0 6 0 3 2.6 0 0 0 6 0 3 2.6 0 0 0 6 0"/><path d="M10 20v-4.5h4V20"/>' },
     xeng: { ve: '<path d="M12.4 11.6L19 5"/><path d="M17.2 3.2l3.6 3.6"/><path d="M10.6 9.8l3.6 3.6-4.6 4.6c-1.6 1-3.6 1.4-5.6 1.4 0-2 .4-4 1.4-5.6z"/><path d="M3 21.5h6" class="dac-nhat"/>' }
