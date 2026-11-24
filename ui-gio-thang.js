@@ -366,6 +366,7 @@ function veLichThang(x) {
   /* Chú thích đủ mọi dấu trong ô */
   const chuThich = `<div>${BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("")}</div>
     <div><span class="ct-le"><i></i>Lễ tết</span><span class="ct-ta"><i></i>Việc, ngày nhắc của bạn</span><span class="ct-hn"><i></i>Hôm nay</span><span class="ct-chon"><i></i>Ngày đang xem</span><span class="ct-qua"><b>9</b>Ngày đã qua</span></div>`;
+  /* (1.40.1, anh Bắc 24/11/2026: bỏ dòng lý do — trùng đích với nút Luận giải; hai nút có biểu tượng, đứng cạnh nhau) */
   /* Tóm tắt ngày đang chọn ngay dưới lưới (anh Bắc duyệt mẫu 24/11/2026): chạm ô chỉ chọn ngày, ở lại lịch tháng;
      mở tờ lịch bằng nút hoặc chạm lần nữa vào ô đang chọn */
   const xb = BAC_UI[st.kieu === "sach" ? x.ls.bac : x.cd.bac], xd = jdToDate(x.j)[0];
@@ -378,11 +379,10 @@ function veLichThang(x) {
       <div class="nc-giua">
         <div class="nc-ngay">${esc(nhanNgay(x.j, true))} · <span>${esc(nhanAm(x.j))}</span></div>
         <div class="nc-muc"><b>${xb.t}</b><span>${esc(ccNgay(x.j))}</span></div>
-        <button type="button" class="nc-ly" data-tab="luan" title="Đọc lý do ở Luận giải"><span>${esc(lyDoNgan(x))}</span><i aria-hidden="true">›</i></button>
         ${xghi ? `<div class="nc-ghi">${xghi}</div>` : ""}
       </div>
     </div>
-    <div class="nc-lien"><button type="button" data-mo-to>${ic("lich")}Mở tờ lịch</button><button type="button" data-tab="luan">Luận giải ›</button></div>
+    <div class="nc-lien"><button type="button" data-mo-to>${ic("lich")}Mở tờ lịch</button><button type="button" data-tab="luan">${ic("luan")}Luận giải</button></div>
   </div>`;
   $("lich-thang").innerHTML = `
     <div class="the-tieu-de">
