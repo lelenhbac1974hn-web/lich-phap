@@ -1501,6 +1501,6 @@ html[data-co] .nc{grid-template-columns:54px minmax(0,1fr)}html[data-co] .nc-so{
 .o.qua .o-duong,.o.qua .o-am{opacity:.5}
 .o.qua.chon .o-duong,.o.qua.chon .o-am{opacity:1}
 /* 1.40.2: chú thích ngày đã qua ghi bằng chữ "Số nhạt" in nhạt — trước ghi số 9 dễ đọc thành "9 ngày đã qua" (anh Bắc 24/11/2026) */
-.chu-thich .ct-qua{gap:0}.chu-thich .ct-qua b{font-weight:600;opacity:.5}
+.chu-thich .ct-qua i{width:14px;height:12px;border-radius:3px;background:color-mix(in srgb,var(--muc) 30%,transparent)} /* 1.40.3: ô mẫu như "Ngày đang xem", không chữ (anh Bắc: tối giản) */
 /* 1.40.1: hai nút của tóm tắt ngày đứng cạnh nhau, mỗi nút có biểu tượng */
 .nc-lien{justify-content:flex-start;gap:26px}
