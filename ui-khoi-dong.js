@@ -136,7 +136,10 @@ document.addEventListener("click", e => {
       st.jd = j; st.gioChon = null; ve();
       /* Chữ to: tóm tắt có thể nằm dưới mép màn hình — cuộn vừa đủ cho thấy, đang thấy thì đứng yên */
       const p = document.querySelector("#lich-thang .ngay-chon");
-      if (p && window.matchMedia("(max-width:760px)").matches) p.scrollIntoView({ block: "nearest", behavior: giamDong.matches ? "auto" : "smooth" });
+      if (p && window.matchMedia("(max-width:760px)").matches) {
+        const k = $("khung"), du = p.getBoundingClientRect().bottom - k.getBoundingClientRect().bottom + 18;
+        if (du > 0) k.scrollTop += du; // đặt thẳng, không cuộn mềm (như 1.23.1); chỉ cuộn dọc khung, không đụng chiều ngang
+      }
     }
     return;
   }
@@ -200,3 +203,24 @@ requestAnimationFrame(khungHinh);
 
 /* Tải sẵn bài viết về sao khi máy rảnh, để lần đầu mở thẻ sao đã có bài đầy đủ */
 setTimeout(() => { if (typeof taiBaiSao === "function") taiBaiSao(); }, 4000);
+
+/* Dải chọn việc dài hơn màn điện thoại (5 việc có biểu tượng không vừa 390px — đã đo 24/11/2026):
+   ba lần mở đầu, dải tự gạt nhẹ sang phải rồi về để người dùng biết còn việc phía sau; người dùng tự gạt một lần là thôi. */
+(() => {
+  const KHOA = "lichphap:goi-y-gat", dai = $("dai-viec");
+  let n = 0; try { n = +localStorage.getItem(KHOA) || 0; } catch (e) { return; }
+  const xong = () => { try { localStorage.setItem(KHOA, "99"); } catch (e) { /* bỏ qua */ } };
+  dai.addEventListener("touchstart", xong, { once: true, passive: true });
+  dai.addEventListener("wheel", xong, { once: true, passive: true });
+  if (n >= 3 || giamDong.matches) return;
+  setTimeout(() => {
+    if (document.hidden || dai.scrollWidth <= dai.clientWidth + 8 || dai.scrollLeft > 0 || document.querySelector(".lop-hd")) return;
+    try { localStorage.setItem(KHOA, String(n + 1)); } catch (e) { /* bỏ qua */ }
+    /* tự chạy bằng khung hình (cuộn "smooth" có trình duyệt bỏ qua): sang 90px trong 0,6 s, dừng 0,35 s, về 0 trong 0,6 s */
+    const xa = Math.min(90, dai.scrollWidth - dai.clientWidth), em = t => t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+    const chay = (tu, den, xongChay) => { const t0 = performance.now();
+      const b = now => { const t = Math.min(1, (now - t0) / 600); dai.scrollLeft = tu + (den - tu) * em(t); if (t < 1) requestAnimationFrame(b); else if (xongChay) xongChay(); };
+      requestAnimationFrame(b); };
+    chay(0, xa, () => setTimeout(() => chay(xa, 0), 350));
+  }, 1600);
+})();

@@ -1497,3 +1497,16 @@ html[data-co] .nc{grid-template-columns:54px minmax(0,1fr)}html[data-co] .nc-so{
 .nc-ngay span{white-space:nowrap}
 /* Màn rộng: tờ lịch và luận giải đã hiện cạnh lịch tháng — không cần tóm tắt */
 @media (min-width:761px){.ngay-chon{display:none}}
+/* 1.40.0 — rà theo báo cáo trải nghiệm 24/11/2026 */
+/* Dòng lý do trong tóm tắt ngày chạm được: sang Luận giải */
+button.nc-ly{display:flex;align-items:baseline;gap:6px;width:100%;min-width:0;border:0;background:none;padding:6px 0;margin:-4px 0;text-align:left;font:inherit;font-size:12.5px;color:var(--muc-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.nc-ly span{min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:underline dotted color-mix(in srgb,var(--muc-3) 60%,transparent);text-underline-offset:3px}
+button.nc-ly i{font-style:normal;color:var(--chinh-dam);font-weight:700}
+button.nc-ly:active{opacity:.6}
+/* Ngày đã qua trong lịch tháng: số nhạt, vạch tốt xấu giữ nguyên */
+.o.qua .o-duong,.o.qua .o-am{opacity:.5}
+.o.qua.chon .o-duong,.o.qua.chon .o-am{opacity:1}
+.chu-thich .ct-qua b{font:700 15px/1 var(--so);opacity:.5;width:14px;text-align:center}
+/* lý do hiện tối đa hai dòng để thấy cả phần "có điều kiêng"; tóm tắt cuộn vào chừa mép dưới */
+button.nc-ly{align-items:flex-start}
+button.nc-ly span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.45;flex:1 1 0;width:0;overflow-wrap:anywhere}

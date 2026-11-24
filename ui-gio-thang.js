@@ -103,9 +103,16 @@ const kyNgay = cd => cd.daiKy;
 /* Lý do rút gọn cho hàng tốt xấu ở chân tờ lịch: điều nặng nhất trước (đại kỵ → kiêng → điều tốt), bỏ ghi chú trong ngoặc */
 function lyDoNgan(x) {
   if (st.kieu !== "sach") { const cd = x.cd, ky = kyNgay(cd); return (ky.length ? ky.join(" · ") + " · " : "") + `Trực ${cd.truc.t} · ${cd.than.t}`; }
-  const ls = x.ls, ds = ls.khongCuu.length ? ls.khongCuu : ls.kieng.length ? ls.kieng : ls.tot;
-  const t = ds.map(m => boTrang(m.t).replace(/\s*\([^)]*\)/g, "").replace(/^Sao tốt hợp việc:\s*/, "").replace(/^Sao xấu kỵ việc này:\s*/, "Kỵ: "));
-  return t.length ? t.map((s, i) => i ? chuThuong(s) : s).join(" · ") : boTrang(ls.ket);
+  const ls = x.ls, gon = (m, ky) => boTrang(m.t).replace(/\s*\([^)]*\)/g, "").replace(/^Sao tốt hợp việc:\s*/, "").replace(/^Sao xấu kỵ việc này:\s*/, ky);
+  const noi = t => t.map((s, i) => i ? chuThuong(s) : s).join(" · ");
+  /* Ngày Tốt, Rất tốt (anh Bắc giao 24/11/2026): nêu điều tốt trước, điều kiêng theo sau — không để ngày tốt chỉ hiện một điều kiêng */
+  if (!ls.khongCuu.length && ls.bac >= 3 && ls.tot.length) {
+    const t = noi(ls.tot.map(m => gon(m, "")));
+    return ls.kieng.length ? `${t} · có điều kiêng: ${ls.kieng.map(m => gon(m, "")).join(", ")}` : t;
+  }
+  const ds = ls.khongCuu.length ? ls.khongCuu : ls.kieng.length ? ls.kieng : ls.tot;
+  const t = ds.map(m => gon(m, "Kỵ: "));
+  return t.length ? noi(t) : boTrang(ls.ket);
 }
 
 /* ── Dải tóm tắt dưới tờ lịch (màn hình hẹp): chạm để sang mục Luận giải ── */
@@ -335,6 +342,7 @@ function veLichThang(x) {
     const lop = ["o", BAC_UI[bacNgay].lop];
     if (j === st.jd) lop.push("chon");
     if (j === hom) lop.push("hom-nay");
+    else if (j < hom) lop.push("qua"); // ngày đã qua: số nhạt đi, vạch tốt xấu giữ nguyên (người tìm ngày khỏi chọn nhầm)
     if (thu === 0 || le.some(l => l.nghi)) lop.push("do");
     const amTxt = am.day === 1 ? `${am.day}/${am.month}${am.leap ? "n" : ""}` : am.day;
     const nh = nhacCuaNgay(j);
@@ -357,7 +365,7 @@ function veLichThang(x) {
   const amDau = amCuaJd(dau), amCuoi = amCuaJd(dau + soNgay - 1);
   /* Chú thích đủ mọi dấu trong ô */
   const chuThich = `<div>${BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("")}</div>
-    <div><span class="ct-le"><i></i>Lễ tết</span><span class="ct-ta"><i></i>Việc, ngày nhắc của bạn</span><span class="ct-hn"><i></i>Hôm nay</span><span class="ct-chon"><i></i>Ngày đang xem</span></div>`;
+    <div><span class="ct-le"><i></i>Lễ tết</span><span class="ct-ta"><i></i>Việc, ngày nhắc của bạn</span><span class="ct-hn"><i></i>Hôm nay</span><span class="ct-chon"><i></i>Ngày đang xem</span><span class="ct-qua"><b>9</b>Ngày đã qua</span></div>`;
   /* Tóm tắt ngày đang chọn ngay dưới lưới (anh Bắc duyệt mẫu 24/11/2026): chạm ô chỉ chọn ngày, ở lại lịch tháng;
      mở tờ lịch bằng nút hoặc chạm lần nữa vào ô đang chọn */
   const xb = BAC_UI[st.kieu === "sach" ? x.ls.bac : x.cd.bac], xd = jdToDate(x.j)[0];
@@ -370,7 +378,7 @@ function veLichThang(x) {
       <div class="nc-giua">
         <div class="nc-ngay">${esc(nhanNgay(x.j, true))} · <span>${esc(nhanAm(x.j))}</span></div>
         <div class="nc-muc"><b>${xb.t}</b><span>${esc(ccNgay(x.j))}</span></div>
-        <div class="nc-ly">${esc(lyDoNgan(x))}</div>
+        <button type="button" class="nc-ly" data-tab="luan" title="Đọc lý do ở Luận giải"><span>${esc(lyDoNgan(x))}</span><i aria-hidden="true">›</i></button>
         ${xghi ? `<div class="nc-ghi">${xghi}</div>` : ""}
       </div>
     </div>
