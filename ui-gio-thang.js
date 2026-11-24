@@ -176,14 +176,34 @@ function gioChiTiet(j) {
 const gioHienTai = () => Math.floor(((new Date().getHours() + 1) % 24) / 2);
 
 /* ── Trang Giờ: dải 12 giờ, mức và lời luận theo việc đang chọn (1.42.0, anh Bắc duyệt mẫu 24/11/2026; thay mặt đồng hồ) ──
-   Mức giờ (bước 1, dữ liệu đã có): hoàng đạo +1, hắc đạo −1 (TT tr.45–47); Xuất hành thêm Lục nhâm tốt +1, kém −1 (TT tr.117–119).
-   Việc chung: giờ hắc đạo là Bình thường (sách chỉ dạy nên chọn giờ hoàng đạo). Bước 2 sẽ thêm giờ quý nhân, lộc, không vong,
-   sát chủ giờ… sau khi đối chiếu bản Hán, Hán Nôm. Đồng hồ nhỏ và vạch thời gian trôi chỉ hiện khi xem hôm nay. */
+   Mức giờ: hoàng đạo +1, hắc đạo −1 (TT tr.45–47; việc chung: hắc đạo 0 — sách chỉ dạy nên chọn giờ hoàng đạo);
+   Xuất hành thêm Lục nhâm tốt +1, kém −1 (TT tr.117–119). Bước 2 (1.43.0): các phép trong gio-phep.js (sinh từ CSDL, đối chiếu
+   sách ở doi-chieu-gio.md, quyết ở quyet-dinh-gio.md) — phép tốt cộng 1; phép xấu chặn mức: "tran_xau" tối đa Xấu,
+   "tran_rat_xau" là Rất xấu (kỵ lớn quyết định mức, như luận ngày). Đồng hồ nhỏ và vạch thời gian trôi chỉ hiện khi xem hôm nay. */
 const MUC_GIO = [["Rất xấu", "b0"], ["Xấu", "b1"], ["Bình thường", "b2"], ["Tốt", "b3"], ["Rất tốt", "b4"]];
-function mucGio(g, ln, viec) {
-  if (viec === "xuathanh") return 2 + (g.hd ? 1 : -1) + (ln.tot ? 1 : -1);
-  if (viec === "chung") return g.hd ? 3 : 2;
-  return g.hd ? 3 : 1;
+const TEN_PHEP_GIO = { quy_nhan: "Quý nhân", khong_vong: "Giờ không vong", sat_chu_gio: "Sát chủ giờ", thien_phien: "Thiên phiên địa phúc", dinh_cuc: "Giờ tốt định cục" };
+/* Các phép giờ của gio-phep.js trúng từng giờ trong ngày (theo can ngày, tháng âm, can chi ngày hoặc chi giờ) */
+function phepCuaGio(jG, aG, viec) {
+  const P = window.GIO_PHEP || {}, can = (jG + 9) % 10, chi = (jG + 1) % 12;
+  let k = 0; while (k % 10 !== can || k % 12 !== chi) k++;
+  const khoa = { can_ngay: can, thang_am: thangAnSao(aG) - 1, can_chi_ngay: k };
+  return CHI.map((_, i) => {
+    const r = { tot: [], xau: [], tran: null, huong: null };
+    for (const [id, p] of Object.entries(P)) {
+      if (!p.viec.includes("*") && !p.viec.includes(viec)) continue;
+      if (p.theo === "chi_gio") { r.huong = p.bang[i]; continue; }
+      if (!(p.bang[khoa[p.theo]] || []).includes(i)) continue;
+      const x = { id, ten: TEN_PHEP_GIO[id] || p.ten, han: p.han, loi: p.loi, nguon: p.nguon };
+      if (p.loai === "tot") r.tot.push(x);
+      else { r.xau.push(x); r.tran = Math.min(r.tran ?? 4, p.tacDong === "tran_rat_xau" ? 0 : 1); }
+    }
+    return r;
+  });
+}
+function mucGio(g, ln, viec, ph) {
+  const d = (g.hd ? 1 : viec === "chung" ? 0 : -1) + (viec === "xuathanh" ? (ln.tot ? 1 : -1) : 0) + (ph ? ph.tot.length : 0);
+  const m = Math.max(0, Math.min(4, 2 + d));
+  return ph && ph.tran != null ? Math.min(m, ph.tran) : m;
 }
 let dgCuon = null; // ngày đã tự cuộn tới giờ hiện tại (chỉ cuộn một lần mỗi ngày, các lần vẽ lại giữ chỗ cuộn của người dùng)
 function cuonToiGio() {
@@ -199,7 +219,8 @@ function veMatGio(x) {
   const viec = VIEC.find(v => v.id === st.viec) || VIEC[0], xh = viec.id === "xuathanh";
   const tenViec = (typeof DAI_VIEC !== "undefined" && DAI_VIEC[viec.id] || [viec.ten])[0];
   const canNgay = (jG + 9) % 10, chiNgay = (jG + 1) % 12;
-  const dong = gio.map(g => { const ln = lucNham(aG, g.i); return { g, ln, m: MUC_GIO[mucGio(g, ln, viec.id)] }; });
+  const PH = phepCuaGio(jG, aG, viec.id);
+  const dong = gio.map(g => { const ln = lucNham(aG, g.i), ph = PH[g.i]; return { g, ln, ph, m: MUC_GIO[mucGio(g, ln, viec.id, ph)] }; });
   const tot = dong.filter(r => r.m[1] === "b3" || r.m[1] === "b4").map(r => r.g.chi);
   /* Đồng hồ nhỏ: mặt kim + số giờ, cùng giờ can chi hiện tại và mức của nó */
   let dongHo = "", troi = 0;
@@ -213,16 +234,23 @@ function veMatGio(x) {
       <div><b>${hai(hh)}:${hai(mm)}</b><small>giờ ${gio[nay].chi} · ${dong[nay].m[0].toLowerCase()}</small></div></div>`;
     troi = (((hh + 1) % 2) * 60 + mm) / 120; // phần đã trôi của giờ can chi hiện tại (mỗi giờ can chi hai tiếng, bắt đầu giờ lẻ)
   }
-  const hang = dong.map(({ g, ln, m }) => {
+  const hang = dong.map(({ g, ln, ph, m }) => {
     const mo = g.i === st.gioChon, dang = g.i === nay;
-    const ly = `${g.hd ? "Hoàng đạo" : "Hắc đạo"} · ${g.than}${xh ? ` · Đón giờ đi: ${ln.t}` : ""}`;
+    const ly = [`${g.hd ? "Hoàng đạo" : "Hắc đạo"} · ${g.than}`].concat(ph.xau.map(p => `<span class="dg-xau">${p.ten}</span>`),
+      ph.tot.map(p => p.ten), xh ? [`Đón giờ đi: ${ln.t}`] : []).join(" · ");
+    const nguon = ["hoàng đạo: Thông Thư tr.45–47"].concat(xh ? ["đón giờ đi: Thông Thư tr.117–119"] : [],
+      ph.tot.concat(ph.xau).map(p => `${chuThuong(p.ten)}: ${p.nguon.replace(/\s*\(.*\)$/, "")}`), xh && ph.huong ? ["hướng đi theo giờ: Ngọc hạp ký chữ Hán, quyển 3, tr.55"] : []);
     const luan = mo ? `<div class="dg-luan">
         <p>Giờ <b>${g.can} ${g.chi}</b> (${g.khung} giờ) là giờ <b>${g.than}</b> ${g.hd ? "hoàng đạo" : "hắc đạo"}: ${chuThuong((Y_THAN[g.than] || "").replace(/\.$/, ""))}.
         ${xh ? `Theo phép đón giờ đi, giờ này vào cung <b>${ln.t}</b> — ${ln.tot ? "giờ tốt để lên đường" : "giờ kém, nên tránh khi lên đường"}.`
           : viec.id === "chung" ? (g.hd ? "Việc thường làm vào giờ này thuận." : "Việc thường vẫn làm được; việc lớn nên chọn giờ hoàng đạo.")
           : `Với việc ${tenViec.toLowerCase()}, ${g.hd ? "giờ này dùng được" : "nên chọn giờ hoàng đạo khác trong ngày"}.`}</p>
         ${xh ? `<p class="dg-tho">${ln.y[0]},<br>${ln.y[1]}.<br>${ln.y[2]},<br>${ln.y[3]}.</p>` : ""}
+        ${ph.tot.length ? `<p>Giờ này còn là ${ph.tot.map(p => `<b>${chuThuong(p.ten)}</b> — ${p.loi}`).join("; ")}.</p>` : ""}
+        ${ph.xau.length ? `<p class="dg-pham">Nhưng phạm ${ph.xau.map(p => `<b>${p.ten}</b>${p.han ? ` ${p.han}` : ""} — ${p.loi}`).join("; ")}${ph.tran === 0 ? ", nên tránh hẳn giờ này" : ", nên chọn giờ khác"}.</p>` : ""}
+        ${xh && ph.huong ? `<p>Đi lúc này: ${ph.huong}.</p>` : ""}
         <p class="dg-xung">Giờ xung tuổi <b>${g.xung}</b></p>
+        <p class="dg-nguon">Theo ${nguon.join(" · ")}.</p>
       </div>` : "";
     return `<li class="dg-dong${dang ? " dang" : ""}${mo ? " mo" : ""}"${dang ? ` style="--troi:${(troi * 100).toFixed(0)}%"` : ""}>
       <button type="button" class="dg-gio" data-gio="${g.i}" aria-expanded="${mo}" aria-label="Giờ ${g.can} ${g.chi}, ${g.khung} giờ, ${m[0]}">

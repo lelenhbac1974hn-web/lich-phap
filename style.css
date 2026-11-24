@@ -1517,3 +1517,7 @@ html[data-co] .dg-dh svg{width:44px;height:44px}
 /* chữ to: đồng hồ chỉ còn số, đầu tờ thấp lại để danh sách giờ còn chỗ */
 html[data-co] .dg-dh svg{display:none}
 html[data-co] .dg-td h3{white-space:nowrap}
+/* 1.43.0 — phép giờ theo sách: tên phép xấu trong dòng lý do và câu "Nhưng phạm …" màu xấu; dòng nguồn nhỏ */
+.dg-xau{color:var(--son)}
+.dg-pham{color:var(--muc)}.dg-pham b{color:var(--son)}
+.dg-nguon{font-size:12px;color:var(--muc-3)}
