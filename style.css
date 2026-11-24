@@ -1471,3 +1471,29 @@ html[data-co] .tl-bac-f .tl-thang5 i{width:6px}
 html[data-co] .dai-viec{gap:14px}
 /* Dải chọn việc dài hơn khung điện thoại: mép phải mờ dần báo còn gạt được */
 @media (max-width:760px){.dai-viec{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent)}}
+
+/* ═════════ 1.39.0 ═════════ */
+/* Lịch tháng: tóm tắt ngày đang chọn dưới lưới — một dải trên cùng mặt giấy, không thẻ bo tròn (anh Bắc duyệt mẫu 24/11/2026) */
+.ngay-chon{margin:10px 0 4px;border-top:1px dashed var(--vien);padding-top:12px}
+.nc{display:grid;grid-template-columns:64px minmax(0,1fr);gap:4px 12px;align-items:start}
+.nc.b0{--m:var(--b0)}.nc.b1{--m:var(--b1)}.nc.b2{--m:var(--b2)}.nc.b3{--m:var(--b3)}.nc.b4{--m:var(--b4)}
+.nc-so{font:900 54px/0.9 var(--so);text-align:center;color:var(--muc);padding-top:2px}
+.nc.do .nc-so{color:var(--do-nghi)}
+.nc-giua{min-width:0;display:grid;gap:3px}
+.nc-ngay{font-size:13px;color:var(--muc-2);font-weight:600}
+.nc-muc{display:flex;align-items:baseline;gap:8px;min-width:0}
+.nc-muc b{font-size:19px;font-weight:700;color:var(--m)}
+.nc-muc span{font-size:12.5px;color:var(--muc-3);white-space:nowrap}
+.nc-ly{font-size:12.5px;color:var(--muc-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-ghi{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:13px}
+.nc-le{color:var(--vang-dam,#9A6B12);font-family:var(--but-mem,inherit)}
+.nc-ta{color:var(--nhac,#2B5FA6)}
+.nc-lien{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-left:76px}
+.nc-lien button{border:0;background:none;padding:8px 0;font:600 13.5px var(--chu);color:var(--chinh-dam);display:inline-flex;align-items:center;gap:5px}
+.nc-lien .ic{margin:0}
+.nc-lien .ic svg{width:16px;height:16px}
+.nc-lien button{min-height:44px}
+html[data-co] .nc{grid-template-columns:54px minmax(0,1fr)}html[data-co] .nc-so{font-size:46px}html[data-co] .nc-lien{padding-left:66px}
+.nc-ngay span{white-space:nowrap}
+/* Màn rộng: tờ lịch và luận giải đã hiện cạnh lịch tháng — không cần tóm tắt */
+@media (min-width:761px){.ngay-chon{display:none}}

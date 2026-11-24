@@ -81,7 +81,7 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.38.0";
+const PHIEN_BAN = "1.39.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
@@ -254,9 +254,9 @@ document.addEventListener("click", e => { const b = e.target.closest("[data-gioi
 const KHOA_HD = "lichphap:da-xem-huong-dan";
 const HUONG_DAN = [
   ["lich", "Tờ lịch mỗi ngày", "Vuốt trái hoặc vuốt lên để sang ngày sau, vuốt phải hoặc vuốt xuống để về ngày trước. Chạm ô ngày trên cùng để chọn ngày bất kỳ, bấm “Hôm nay” để quay về."],
-  ["co", "Chọn việc định làm", "Hàng nút trên cùng: Việc chung, Động thổ, Ký kết, Khai trương, Xuất hành. Ngày tốt hay xấu được xét theo việc bạn chọn."],
+  ["co", "Chọn việc định làm", "Dải trên cùng: Việc chung, Khai trương, Ký hợp đồng, Động thổ, Xuất hành — gạt sang để thấy hết. Ngày tốt hay xấu được xét theo việc bạn chọn."],
   ["sao", "Ngày tốt hay xấu", "Dải màu dưới tờ lịch cho biết mức tốt xấu, chạm vào để đọc lý do. Mục Luận giải có hai kiểu: Cộng sao (chấm điểm) và Theo sách (theo Ngọc Hạp Thông Thư)."],
-  ["dongHo", "Giờ và tháng", "Thẻ Giờ: giờ hoàng đạo màu xanh, hắc đạo màu đỏ, chạm ô giờ để xem. Thẻ Tháng: vạch màu dưới mỗi ngày cho biết tốt xấu, tiện chọn ngày cho việc lớn."],
+  ["dongHo", "Tháng và giờ", "Thẻ Tháng: vạch màu dưới mỗi ngày cho biết tốt xấu. Chạm một ngày để xem tóm tắt ngay bên dưới; chạm lần nữa hoặc bấm “Mở tờ lịch” để mở tờ ngày đó. Giờ hoàng đạo (xanh), hắc đạo (đỏ) ở thẻ Luận giải."],
   ["nen", "Nhắc việc, ngày giỗ", "Thẻ Nhắc → “+ Thêm”, gõ một câu như “Giỗ bố 20/10 âm” hay “Họp giao ban 8h sáng mai”. Dữ liệu chỉ lưu trong máy của bạn."]
 ];
 function moHuongDan() {

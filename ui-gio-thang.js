@@ -358,6 +358,24 @@ function veLichThang(x) {
   /* Chú thích đủ mọi dấu trong ô */
   const chuThich = `<div>${BAC_UI.map(b => `<span class="${b.lop}"><i></i>${b.t}</span>`).join("")}</div>
     <div><span class="ct-le"><i></i>Lễ tết</span><span class="ct-ta"><i></i>Việc, ngày nhắc của bạn</span><span class="ct-hn"><i></i>Hôm nay</span><span class="ct-chon"><i></i>Ngày đang xem</span></div>`;
+  /* Tóm tắt ngày đang chọn ngay dưới lưới (anh Bắc duyệt mẫu 24/11/2026): chạm ô chỉ chọn ngày, ở lại lịch tháng;
+     mở tờ lịch bằng nút hoặc chạm lần nữa vào ô đang chọn */
+  const xb = BAC_UI[st.kieu === "sach" ? x.ls.bac : x.cd.bac], xd = jdToDate(x.j)[0];
+  const xle = leCuaNgay(x.j), xnh = nhacCuaNgay(x.j), xvh = viecCuaNgay(x.j);
+  const xghi = xle.map(l => `<span class="nc-le">${esc(l.ten)}</span>`)
+    .concat(xnh.map(n => `<span class="nc-ta">${esc(n.ten)}</span>`), xvh.map(v => `<span class="nc-ta">${esc(v.ten)}</span>`)).join("");
+  const ngayChon = `<div class="ngay-chon" aria-live="polite">
+    <div class="nc ${xb.lop}${thuCuaJd(x.j) === 0 || xle.some(l => l.nghi) ? " do" : ""}">
+      <div class="nc-so" aria-hidden="true">${xd}</div>
+      <div class="nc-giua">
+        <div class="nc-ngay">${esc(nhanNgay(x.j, true))} · <span>${esc(nhanAm(x.j))}</span></div>
+        <div class="nc-muc"><b>${xb.t}</b><span>${esc(ccNgay(x.j))}</span></div>
+        <div class="nc-ly">${esc(lyDoNgan(x))}</div>
+        ${xghi ? `<div class="nc-ghi">${xghi}</div>` : ""}
+      </div>
+    </div>
+    <div class="nc-lien"><button type="button" data-mo-to>${ic("lich")}Mở tờ lịch</button><button type="button" data-tab="luan">Luận giải ›</button></div>
+  </div>`;
   $("lich-thang").innerHTML = `
     <div class="the-tieu-de">
       <h3>Tháng ${x.mm} <small>${x.yy}</small></h3>
@@ -369,6 +387,7 @@ function veLichThang(x) {
     </div>
     <div class="luoi dau-thu">${["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((t, i) => `<div class="${i === 6 ? "do" : ""}">${t}</div>`).join("")}</div>
     <div class="luoi">${o}</div>
+    ${ngayChon}
     <div class="chu-thich">${chuThich}</div>`;
 }
 

@@ -57,18 +57,23 @@ function den(j, kieu) {
   st.jd = Math.min(JD_MAX, Math.max(JD_MIN, j));
   if (st.jd !== cu) st.gioChon = null;
   const huong = Math.sign(st.jd - cu);
-  if (!huong) kieu = null;
+  if (!huong || kieu === false) kieu = null; // false: đổi ngày không lật tờ (đổi tháng ở lịch tháng)
   else if (!kieu) kieu = huong > 0 ? "xe" : "gan";
   const toCu = chupToCu(kieu);
   ve();
   dienHieuUng(kieu, toCu);
+}
+/* Sang tờ lịch của ngày đang chọn — không xé tờ (đây là nhảy tới, không phải lật từng ngày); tờ hiện ra nhẹ như khi đổi thẻ */
+function moToLich() {
+  if (window.matchMedia("(max-width:760px)").matches) doiTab("ngay");
+  else $("to-lich").scrollIntoView({ behavior: giamDong.matches ? "auto" : "smooth", block: "start" });
 }
 function doiThang(buoc) {
   let [dd, mm, yy] = jdToDate(st.jd);
   mm += buoc;
   if (mm < 1) { mm = 12; yy--; } else if (mm > 12) { mm = 1; yy++; }
   const dai = jdFromDate(1, mm === 12 ? 1 : mm + 1, mm === 12 ? yy + 1 : yy) - jdFromDate(1, mm, yy);
-  den(jdFromDate(Math.min(dd, dai), mm, yy));
+  den(jdFromDate(Math.min(dd, dai), mm, yy), false);
   /* Lưới ngày trượt vào theo hướng đổi tháng (sang tháng sau: từ phải; về tháng trước: từ trái) */
   const luoi = document.querySelector("#lich-thang .luoi:not(.dau-thu)");
   if (luoi && !giamDong.matches) luoi.animate([{ transform: `translateX(${buoc > 0 ? 28 : -28}px)`, opacity: 0.2 }, { transform: "none", opacity: 1 }], { duration: 260, easing: "cubic-bezier(.22,1,.36,1)" });
@@ -120,8 +125,21 @@ document.addEventListener("click", e => {
     ve();
     return;
   }
-  const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec],[data-tab],[data-gio]");
+  const b = e.target.closest("[data-buoc],[data-jd],[data-thang],[data-viec],[data-tab],[data-gio],[data-mo-to]");
   if (!b) return;
+  /* Lịch tháng: chạm ô chỉ chọn ngày (tóm tắt hiện dưới lưới); chạm lần nữa vào ô đang chọn hoặc nút "Mở tờ lịch" mới sang tờ lịch */
+  if (b.dataset.moTo !== undefined) { moToLich(); return; }
+  if (b.dataset.jd && b.closest("#lich-thang")) {
+    const j = Math.min(JD_MAX, Math.max(JD_MIN, Number(b.dataset.jd)));
+    if (j === st.jd) moToLich();
+    else {
+      st.jd = j; st.gioChon = null; ve();
+      /* Chữ to: tóm tắt có thể nằm dưới mép màn hình — cuộn vừa đủ cho thấy, đang thấy thì đứng yên */
+      const p = document.querySelector("#lich-thang .ngay-chon");
+      if (p && window.matchMedia("(max-width:760px)").matches) p.scrollIntoView({ block: "nearest", behavior: giamDong.matches ? "auto" : "smooth" });
+    }
+    return;
+  }
   if (b.dataset.gio) { st.gioChon = Number(b.dataset.gio); veMatGio(thongTin(st.jd, st.viec)); }
   else if (b.dataset.tab) {
     doiTab(b.dataset.tab);
