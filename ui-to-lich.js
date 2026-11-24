@@ -166,9 +166,10 @@ function mepRach() {
 }
 /* Bốn kiểu lật tờ lịch theo hướng:
    xe    — vuốt sang trái / nút ›  : xé tờ hôm nay, tờ rơi xuống (sang ngày sau)
-   len   — vuốt lên                : lật tờ hôm nay vòng qua gáy lên trên (sang ngày sau)
-   gan   — vuốt sang phải / nút ‹  : tờ hôm trước trượt từ trái vào, dán đè lên (về ngày trước)
-   xuong — vuốt xuống              : tờ hôm trước lật từ trên gáy úp xuống (về ngày trước) */
+   len   — vuốt lên                : xé tờ hôm nay, tờ bay lên rồi mờ dần (sang ngày sau)
+   gan   — vuốt sang phải / nút ‹  : tờ hôm trước bay từ bên trái về, hiện dần, đáp khít gáy (về ngày trước)
+   xuong — vuốt xuống              : tờ hôm trước hạ từ trên xuống, hiện dần, đáp khít gáy (về ngày trước)
+   Ba kiểu sau làm lại 1.38.0 theo kiểu xé (anh Bắc 24/11/2026): mép rách, chao nhẹ, mờ dần, chậm và mềm hơn. */
 const LOP_HIEU_UNG = ["vao-gan", "vao-xuong", "ha"];
 function donHieuUng() {
   document.querySelectorAll("#to-lich > .to-lich.roi").forEach(e => e.remove());
@@ -182,7 +183,7 @@ function chupToCu(kieu) {
   const c = a.cloneNode(true);
   c.classList.remove(...LOP_HIEU_UNG); // tránh tờ chụp lại mang hiệu ứng cũ (gây khựng)
   c.classList.add("roi", `roi-${kieu}`);
-  if (kieu === "xe") {
+  if (kieu === "xe" || kieu === "len") {
     c.style.clipPath = mepRach();
     c.style.setProperty("--lech", `${(Math.random() * 16 - 8).toFixed(1)}deg`);
     c.style.setProperty("--troi", `${(Math.random() * 60 - 30).toFixed(0)}px`);
@@ -206,6 +207,10 @@ function dienHieuUng(kieu, toCu) {
     const vao = moi.cloneNode(true);
     vao.classList.remove(...LOP_HIEU_UNG);
     vao.classList.add("roi", `vao-${kieu}`);
+    /* Tờ bay về cũng là tờ đã xé: mép rách dưới gáy, chao nhẹ theo một góc ngẫu nhiên */
+    vao.style.clipPath = mepRach();
+    vao.style.setProperty("--lech", `${(Math.random() * 10 - 5).toFixed(1)}deg`);
+    vao.style.setProperty("--troi", `${(Math.random() * 40 - 20).toFixed(0)}px`);
     khung.appendChild(vao);
     const xong = () => { vao.remove(); if (toCu) toCu.remove(); };
     vao.addEventListener("animationend", ev => { if (ev.target === vao) xong(); });

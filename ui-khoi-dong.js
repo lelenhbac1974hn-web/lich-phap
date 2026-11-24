@@ -11,10 +11,25 @@ function capNhatDemTab() {
   el.hidden = !n; el.textContent = n;
 }
 
+/* Dải chọn việc (anh Bắc 24/11/2026): chữ có biểu tượng ở đầu, việc đang chọn sáng lên + gạch dưới, không viên tròn.
+   Thứ tự và tên gọn chỉ cho dải này; tên đầy đủ (VIEC.ten) vẫn dùng ở Luận giải, Tìm ngày. */
+const DAI_VIEC = { chung: ["Việc chung", "lich"], khaitruong: ["Khai trương", "cuaHang"], kyket: ["Ký hợp đồng", "hopDong"],
+  dongtho: ["Động thổ", "xeng"], xuathanh: ["Xuất hành", "vali"], cuoihoi: ["Cưới hỏi", "nhan"], nhaptrach: ["Nhập trạch", "nha"] };
+const THU_TU_VIEC = Object.keys(DAI_VIEC);
 function veDaiViec() {
   giuViecHopLe();
-  $("dai-viec").innerHTML = viecHien().map(v =>
-    `<button type="button" class="viec${v.id === st.viec ? " chon" : ""}" data-viec="${v.id}">${esc(v.ten)}</button>`).join("");
+  const dai = $("dai-viec");
+  dai.innerHTML = viecHien().slice().sort((a, b) => THU_TU_VIEC.indexOf(a.id) - THU_TU_VIEC.indexOf(b.id)).map(v => {
+    const [ten, bt] = DAI_VIEC[v.id] || [v.ten, "lich"], chon = v.id === st.viec;
+    return `<button type="button" class="viec${chon ? " chon" : ""}" data-viec="${v.id}" aria-pressed="${chon}" title="${esc(v.ten)}">${ic(bt)}<span data-t="${esc(ten)}">${esc(ten)}</span></button>`;
+  }).join("");
+  /* Việc đang chọn nằm ngoài khung nhìn thì gạt dải cho thấy; đang thấy thì để yên (không nhảy) */
+  const c = dai.querySelector(".viec.chon");
+  if (c && dai.scrollWidth > dai.clientWidth) {
+    const t = c.offsetLeft - dai.offsetLeft, p = t + c.offsetWidth;
+    if (t < dai.scrollLeft) dai.scrollLeft = Math.max(0, t - 16);
+    else if (p > dai.scrollLeft + dai.clientWidth) dai.scrollLeft = p - dai.clientWidth + 16;
+  }
 }
 
 function ve() {

@@ -148,41 +148,41 @@ html[data-buoi="toi"] .tl-anh{opacity:1;background:linear-gradient(180deg,var(--
   100%{transform:rotateX(-58deg) translate(var(--troi),118%) rotateZ(var(--lech));opacity:0}
 }
 
-/* 2. Lật lên (sang ngày sau, vuốt lên): tờ cũ vòng qua gáy, mặt giấy tối dần khi nghiêng */
-.cot-to-lich>.to-lich.roi-len{z-index:6;transform-origin:50% var(--gay-cao);-webkit-backface-visibility:hidden;backface-visibility:hidden;
-  animation:lat-len .66s cubic-bezier(.5,.05,.4,1) forwards}
+/* 2–4 làm lại 1.38.0 theo kiểu xé (anh Bắc 24/11/2026): tờ giấy rời gáy có mép rách, chao nhẹ như giấy mỏng,
+   hiện / mờ dần, nhịp chậm và mềm (1–1,05 giây, chuyển động trải đều, không giật đầu). */
+/* 2. Xé bay lên (sang ngày sau, vuốt lên): tờ cũ đứt khỏi gáy, nghiêng ra sau, bay lên rồi mờ dần */
+.cot-to-lich>.to-lich.roi-len{z-index:6;transform-origin:50% var(--gay-cao);animation:xe-bay 1s cubic-bezier(.42,.03,.55,.75) forwards}
 .to-lich.roi-len .gay{visibility:hidden}
-.to-lich.roi-len::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(0deg,rgba(60,30,5,.38),rgba(60,30,5,0) 70%);opacity:0;animation:bong-lat .66s ease-in forwards}
-@keyframes lat-len{
-  0%{transform:rotateX(0)}
-  70%{transform:rotateX(118deg) translateY(-2%)}
-  100%{transform:rotateX(178deg) translateY(-4%);opacity:.6}
+@keyframes xe-bay{
+  0%{transform:rotateX(0) translate(0,0) rotateZ(0);opacity:1}
+  20%{transform:rotateX(14deg) translate(0,-3px) rotateZ(calc(var(--lech)*.18));opacity:1}
+  100%{transform:rotateX(32deg) translate(var(--troi),-90%) rotateZ(var(--lech));opacity:0}
 }
-@keyframes bong-lat{to{opacity:1}}
 
 /* Lùi ngày (kiểu 3 và 4): tờ thật đã là ngày mới, nằm yên dưới cùng.
-   Bản chụp tờ cũ phủ lên trên và tối dần; bản chụp tờ mới chuyển động phủ lên trên cùng. */
-.cot-to-lich>.to-lich.roi-gan,.cot-to-lich>.to-lich.roi-xuong{z-index:4;animation:nen-lui .62s ease forwards}
-@keyframes nen-lui{to{opacity:.92;transform:scale(.985)}}
+   Bản chụp tờ cũ nằm giữa, lùi nhẹ; bản chụp tờ mới (đã xé, mép rách) bay về phủ lên trên cùng. */
+.cot-to-lich>.to-lich.roi-gan,.cot-to-lich>.to-lich.roi-xuong{z-index:4;animation:nen-lui 1.05s ease forwards}
+@keyframes nen-lui{to{opacity:.9;transform:scale(.988)}}
 .cot-to-lich>.to-lich.roi.vao-gan,.cot-to-lich>.to-lich.roi.vao-xuong{z-index:5}
+.to-lich.vao-gan .gay,.to-lich.vao-xuong .gay{visibility:hidden}
 .to-lich.roi .tl-so{filter:none}
 
-/* 3. Dán lại (về ngày trước, vuốt phải): tờ trước trượt từ trái vào, hơi xoay rồi nằm khít gáy */
-.cot-to-lich>.to-lich.vao-gan{transform-origin:0 0;animation:dan-vao .6s cubic-bezier(.2,.95,.3,1.08)}
+/* 3. Bay về từ bên trái (về ngày trước, vuốt phải / nút ‹): hiện dần, chao rồi đáp khít gáy */
+.cot-to-lich>.to-lich.vao-gan{transform-origin:50% var(--gay-cao);animation:dan-vao 1.05s cubic-bezier(.35,.15,.25,1) both}
 @keyframes dan-vao{
-  0%{transform:translateX(-108%) rotate(-7deg);box-shadow:30px 30px 50px -20px rgba(60,35,5,.5)}
-  70%{transform:translateX(1.5%) rotate(.6deg)}
-  100%{transform:none}
+  0%{transform:rotateX(16deg) translate(-44%,-6%) rotateZ(-7deg);opacity:0}
+  42%{opacity:1}
+  74%{transform:rotateX(-2deg) translate(1%,.3%) rotateZ(.6deg);opacity:1}
+  100%{transform:none;opacity:1}
 }
 
-/* 4. Úp xuống (về ngày trước, vuốt xuống): tờ trước lật từ phía trên gáy úp xuống */
-.cot-to-lich>.to-lich.vao-xuong{transform-origin:50% var(--gay-cao);-webkit-backface-visibility:hidden;backface-visibility:hidden;
-  animation:up-xuong .62s cubic-bezier(.25,.8,.35,1.12)}
-@keyframes up-xuong{
-  0%{transform:rotateX(178deg)}
-  55%{transform:rotateX(70deg)}
-  100%{transform:rotateX(0)}
+/* 4. Hạ xuống từ trên (về ngày trước, vuốt xuống): ngược lại của xé bay lên — hiện dần, hạ, đáp khít gáy */
+.cot-to-lich>.to-lich.vao-xuong{transform-origin:50% var(--gay-cao);animation:ha-xuong 1.05s cubic-bezier(.35,.15,.25,1) both}
+@keyframes ha-xuong{
+  0%{transform:rotateX(38deg) translate(var(--troi),-62%) rotateZ(var(--lech));opacity:0}
+  42%{opacity:1}
+  74%{transform:rotateX(-3deg) translate(0,.8%) rotateZ(calc(var(--lech)*-.12));opacity:1}
+  100%{transform:none;opacity:1}
 }
 .tl-thu{font-size:19px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;margin-top:4px;padding-left:.3em}
 .nghi .tl-thu{color:var(--do-nghi)}
@@ -1453,3 +1453,21 @@ html[data-co] #nut-hom-nay .ic{display:none}
 html[data-co] .tl-bac-f .tl-thang5 i{width:6px}
 /* 1.37.3: thông báo tạm rộng gần hết bề ngang, chữ không gãy ba dòng (review L2) */
 .bao-tam{width:min(520px,calc(100vw - 28px))}
+
+/* ═════════ 1.38.0 ═════════ */
+/* Dải chọn việc: chữ có biểu tượng ở đầu, việc đang chọn sáng lên + gạch dưới; không viên tròn (anh Bắc 24/11/2026) */
+.dai-viec{gap:20px;padding-top:2px;padding-bottom:0;overscroll-behavior-x:contain}
+.viec{flex:none;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:0;background:none;box-shadow:none;
+  padding:9px 1px 7px;min-height:40px;border-bottom:2px solid transparent;font:500 13.5px var(--chu);color:var(--muc-3);-webkit-tap-highlight-color:transparent;transition:color .2s,border-color .2s}
+.viec .ic{margin:0;opacity:.75;transition:opacity .2s}
+.viec .ic svg{width:17px;height:17px}
+/* chữ đậm khi chọn không làm xô các mục bên cạnh: giữ sẵn bề rộng chữ đậm */
+.viec span{display:inline-flex;flex-direction:column}
+.viec span::after{content:attr(data-t);height:0;overflow:hidden;visibility:hidden;font-weight:700}
+.viec.chon{background:none;box-shadow:none;border-bottom-color:var(--chinh);color:var(--chinh-dam);font-weight:700}
+.viec.chon .ic{opacity:1}
+@media (hover:hover){.viec:hover{border-color:transparent;color:var(--muc)}.viec.chon:hover{border-bottom-color:var(--chinh);color:var(--chinh-dam)}}
+@media (max-width:760px){.dai-viec{padding:0 16px 2px;gap:18px}}
+html[data-co] .dai-viec{gap:14px}
+/* Dải chọn việc dài hơn khung điện thoại: mép phải mờ dần báo còn gạt được */
+@media (max-width:760px){.dai-viec{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent)}}
