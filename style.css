@@ -1500,6 +1500,7 @@ html[data-co] .nc{grid-template-columns:54px minmax(0,1fr)}html[data-co] .nc-so{
 /* Ngày đã qua trong lịch tháng: số nhạt, vạch tốt xấu giữ nguyên */
 .o.qua .o-duong,.o.qua .o-am{opacity:.5}
 .o.qua.chon .o-duong,.o.qua.chon .o-am{opacity:1}
-.chu-thich .ct-qua b{font:700 15px/1 var(--so);opacity:.5;width:14px;text-align:center}
+/* 1.40.2: chú thích ngày đã qua ghi bằng chữ "Số nhạt" in nhạt — trước ghi số 9 dễ đọc thành "9 ngày đã qua" (anh Bắc 24/11/2026) */
+.chu-thich .ct-qua{gap:0}.chu-thich .ct-qua b{font-weight:600;opacity:.5}
 /* 1.40.1: hai nút của tóm tắt ngày đứng cạnh nhau, mỗi nút có biểu tượng */
 .nc-lien{justify-content:flex-start;gap:26px}
