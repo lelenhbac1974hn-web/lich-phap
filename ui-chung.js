@@ -161,6 +161,7 @@ function doiTab(t) {
   document.querySelectorAll("#thanh-tab .tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
   $("khung").scrollTop = 0;
   if (t === "ngay") requestAnimationFrame(xepNhan);
+  if (t === "luan" && typeof cuonToiGio === "function") requestAnimationFrame(cuonToiGio);
   if (t === "tim") veTimNgay();
 }
 /* Chiều cao vùng nhìn thấy thật (iPhone cài ra màn hình chính có lúc báo sai qua CSS) */

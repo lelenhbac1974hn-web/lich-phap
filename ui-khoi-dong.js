@@ -104,6 +104,7 @@ function doiLuan(t) {
   document.body.dataset.trangLuan = t === "gio" ? "gio" : "ngay";
   document.querySelectorAll("#luan-tab [data-luan]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.luan === document.body.dataset.trangLuan)));
   $("khung").scrollTop = 0;
+  if (t === "gio") requestAnimationFrame(cuonToiGio);
 }
 doiLuan("ngay");
 document.addEventListener("click", e => {
@@ -143,7 +144,10 @@ document.addEventListener("click", e => {
     }
     return;
   }
-  if (b.dataset.gio) { st.gioChon = Number(b.dataset.gio); veMatGio(thongTin(st.jd, st.viec)); }
+  if (b.dataset.gio) { const g = Number(b.dataset.gio); st.gioChon = st.gioChon === g ? null : g; dgCuon = st.jd; veMatGio(thongTin(st.jd, st.viec));
+    /* giờ vừa mở mà lời luận bị khuất thì đưa đầu dòng lên trên cùng danh sách */
+    const ds = document.querySelector("#mat-gio .dg-ds"), r = ds && ds.querySelector(".dg-dong.mo");
+    if (r) { const t = r.offsetTop - ds.offsetTop; if (t < ds.scrollTop || t + r.offsetHeight > ds.scrollTop + ds.clientHeight) ds.scrollTop = Math.max(0, t - 8); } } // chạm giờ đầu dòng: mở / đóng lời luận
   else if (b.dataset.tab) {
     doiTab(b.dataset.tab);
     if (b.dataset.nhacTrang) {
