@@ -171,7 +171,9 @@ function doiTab(t) {
    – Khi mở trong trình duyệt: lấy chiều cao khung bố cục. */
 const chayRieng = () => window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
 function chieuCaoChuan() {
-  if (chayRieng() && window.screen && screen.width && screen.height) {
+  /* Chỉ iPhone (navigator.standalone) mới lấy theo màn hình. Android cài ra màn hình chính thì screen.height
+     tính cả thanh trạng thái và thanh nút điều hướng, làm thân trang dài hơn màn và menu đáy tụt mất (1.43.1). */
+  if (window.navigator.standalone === true && window.screen && screen.width && screen.height) {
     const doc = window.matchMedia("(orientation: portrait)").matches;
     return doc ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
   }
