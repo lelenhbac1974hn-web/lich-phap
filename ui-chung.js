@@ -5,6 +5,8 @@
 "use strict";
 
 const THANG_AM = ["Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Mười Một", "Chạp"];
+/* Hình con giáp của chi trong một can chi (1.44.0): "Ất Tỵ" → hình rắn; đặt cạnh nhãn Ngày, Tháng, Năm ở chân tờ lịch */
+const hinhChi = cc => { const i = CHI.indexOf(String(cc).trim().split(" ").pop()); return i < 0 || !window.BieuTuong ? "" : window.BieuTuong.conGiap(i); };
 const CON_GIAP = ["Chuột", "Trâu", "Hổ", "Mèo", "Rồng", "Rắn", "Ngựa", "Dê", "Khỉ", "Gà", "Chó", "Lợn"];
 const BAC_UI = [
   { t: "Rất xấu", lop: "b0" },

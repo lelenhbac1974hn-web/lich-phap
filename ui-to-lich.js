@@ -63,9 +63,9 @@ function veToLich(x) {
         </div>
         ${totXau.e}
         <dl class="am-phai">
-          ${jdCanChi(x.j) !== x.j ? `<div title="Từ 23 giờ đã sang giờ Tý của ngày mới"><dt>Từ 23 giờ</dt><dd>${ccNgay(x.j + 1)}</dd></div>` : `<div><dt>Ngày</dt><dd>${x.ccNgay}</dd></div>`}
-          <div><dt>Tháng</dt><dd>${x.ccThang}</dd></div>
-          <div><dt>Năm</dt><dd>${x.ccNam}</dd></div>
+          ${jdCanChi(x.j) !== x.j ? `<div title="Từ 23 giờ đã sang giờ Tý của ngày mới"><dt>Từ 23 giờ${hinhChi(ccNgay(x.j + 1))}</dt><dd>${ccNgay(x.j + 1)}</dd></div>` : `<div><dt>Ngày${hinhChi(x.ccNgay)}</dt><dd>${x.ccNgay}</dd></div>`}
+          <div><dt>Tháng${hinhChi(x.ccThang)}</dt><dd>${x.ccThang}</dd></div>
+          <div><dt>Năm${hinhChi(x.ccNam)}</dt><dd>${x.ccNam}</dd></div>
           <div><dt>Tiết</dt><dd>${x.tiet}</dd></div>
         </dl>
         ${totXau.g}

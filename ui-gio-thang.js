@@ -111,7 +111,9 @@ function lyDoNgan(x) {
     return ls.kieng.length ? `${t} · có điều kiêng: ${ls.kieng.map(m => gon(m, "")).join(", ")}` : t;
   }
   const ds = ls.khongCuu.length ? ls.khongCuu : ls.kieng.length ? ls.kieng : ls.tot;
-  const t = ds.map(m => gon(m, "Kỵ: "));
+  /* Sao đã nêu tên ở mục ngày kỵ (Tiểu hồng sa…) thì không nhắc lại ở "Kỵ: …" (1.44.0) */
+  const laSao = m => /^Sao xấu kỵ việc này:/.test(boTrang(m.t)), da = new Set(ds.filter(m => !laSao(m)).map(m => gon(m, "")));
+  const t = ds.map(m => { if (!laSao(m)) return gon(m, "Kỵ: "); const con = gon(m, "").split(/,\s*/).filter(n => !da.has(n)); return con.length ? "Kỵ: " + con.join(", ") : ""; }).filter(Boolean);
   return t.length ? noi(t) : boTrang(ls.ket);
 }
 
@@ -254,7 +256,7 @@ function veMatGio(x) {
       </div>` : "";
     return `<li class="dg-dong${dang ? " dang" : ""}${mo ? " mo" : ""}"${dang ? ` style="--troi:${(troi * 100).toFixed(0)}%"` : ""}>
       <button type="button" class="dg-gio" data-gio="${g.i}" aria-expanded="${mo}" aria-label="Giờ ${g.can} ${g.chi}, ${g.khung} giờ, ${m[0]}">
-        <b>${g.chi}</b><small>${g.khung}</small></button>
+        <b>${g.can} ${g.chi}</b><small>${window.BieuTuong.conGiap(g.i)}${g.khung}</small></button>
       <div class="dg-giua">
         <div class="dg-muc ${m[1]}"><strong>${m[0]}</strong>${dang ? "<em>đang diễn ra</em>" : ""}</div>
         <div class="dg-ly">${ly}</div>${luan}
@@ -265,7 +267,7 @@ function veMatGio(x) {
   $("mat-gio").innerHTML = `
     <div class="tg-dau dg-dau"><div class="dg-td"><h3>Giờ trong ngày</h3><span class="dg-phu">${nhanNgay(x.j, true)} · ${nhanAm(x.j)} · ${jG !== x.j ? "từ 23 giờ sang ngày" : "ngày"} ${ccNgay(jG)}</span></div>${dongHo}</div>
     <p class="dg-tom">${esc(tenViec)}: <b>${tot.length} giờ tốt</b>${tot.length ? " — " + tot.join(" · ") : ""}</p>
-    <div class="dg-huong"><span>Hỷ thần <b>${HY_THAN[canNgay]}</b></span><span>Tài thần <b>${TAI_THAN[canNgay]}</b></span><span>Ngày xung <b>${CHI[(chiNgay + 6) % 12]}</b></span><span>Khởi giờ <b>${CAN[(canNgay * 2) % 10]} Tý</b></span></div>
+    <div class="dg-huong"><span>Hỷ thần <b>${HY_THAN[canNgay]}</b></span><span>Tài thần <b>${TAI_THAN[canNgay]}</b></span><span>Ngày xung <b>${CHI[(chiNgay + 6) % 12]}</b>${window.BieuTuong.conGiap(chiNgay + 6)}</span><span>Khởi giờ <b>${CAN[(canNgay * 2) % 10]} Tý</b></span></div>
     <ol class="dg-ds">${hang}</ol>`;
   const moi = document.querySelector("#mat-gio .dg-ds");
   if (dgCuon === st.jd) moi.scrollTop = giu; else cuonToiGio();
