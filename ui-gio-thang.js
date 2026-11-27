@@ -360,12 +360,13 @@ function veLichThang(x) {
     const amTxt = am.day === 1 ? `${am.day}/${am.month}${am.leap ? "n" : ""}` : am.day;
     const nh = nhacCuaNgay(j);
     const vh = viecCuaNgay(j);
-    const ten = nh.map(n => n.ten).concat(vh.map(v => v.ten), le.length ? [le[0].ten] : []).join(" · ");
+    const td = nhacTuDong(j);
+    const ten = nh.map(n => n.ten).concat(vh.map(v => v.ten), td.map(o => o.ten), le.length ? [le[0].ten] : []).join(" · ");
     /* Đọc màn hình: đọc đủ ngày, ngày âm, mức tốt xấu (review L7) */
     const nhanO = `${nhanNgay(j, true)} · ${nhanAm(j)} · ${BAC_UI[bacNgay].t}${ten ? " · " + ten : ""}`;
     /* Luật giao diện 9: tối đa 3 dấu, không dấu nào đè số — vạch tốt xấu ở đáy; góc phải trên tối đa hai chấm:
        vàng = lễ tết, xanh dương = việc hoặc ngày nhắc người dùng ghi. Biểu tượng lễ lớn chỉ hiện trên tờ lịch ngày đó. */
-    const cham = (le.length ? '<i class="c-le"></i>' : "") + (nh.length || vh.length ? '<i class="c-ta"></i>' : "");
+    const cham = (le.length ? '<i class="c-le"></i>' : "") + (nh.length || vh.length || td.length ? '<i class="c-ta"></i>' : "");
     o += `<button type="button" class="${lop.join(" ")}" data-jd="${j}" aria-label="${esc(nhanO)}" title="${esc(`${BAC_UI[bacNgay].t} · ${ccNgay(j)}${ten ? " · " + ten : ""}`)}">
       ${cham ? `<span class="o-goc" aria-hidden="true">${cham}</span>` : ""}
       <span class="o-duong">${n + 1}</span>
@@ -385,7 +386,7 @@ function veLichThang(x) {
   const xb = BAC_UI[st.kieu === "sach" ? x.ls.bac : x.cd.bac], xd = jdToDate(x.j)[0];
   const xle = leCuaNgay(x.j), xnh = nhacCuaNgay(x.j), xvh = viecCuaNgay(x.j);
   const xghi = xle.map(l => `<span class="nc-le">${esc(l.ten)}</span>`)
-    .concat(xnh.map(n => `<span class="nc-ta">${esc(n.ten)}</span>`), xvh.map(v => `<span class="nc-ta">${esc(v.ten)}</span>`)).join("");
+    .concat(xnh.map(n => `<span class="nc-ta">${esc(n.ten)}</span>`), xvh.map(v => `<span class="nc-ta">${esc(v.ten)}</span>`), nhacTuDong(x.j).map(o => `<span class="nc-ta">${esc(o.ten)}</span>`)).join("");
   const ngayChon = `<div class="ngay-chon" aria-live="polite">
     <div class="nc ${xb.lop}${thuCuaJd(x.j) === 0 || xle.some(l => l.nghi) ? " do" : ""}">
       <div class="nc-so" aria-hidden="true">${xd}</div>

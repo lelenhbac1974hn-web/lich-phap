@@ -29,6 +29,8 @@ function veToLich(x) {
     .concat(viecCuaNgay(x.j).map(v => nhanViec(v, v.gio || "")))
     .concat(nhacCuaNgay(x.j).map(n => nhanNhac(n, chuThuong(soNam(n, x.j) || ""))))
     .concat(laHom ? sapToi().filter(o => o.j != null && o.con > 0 && o.con <= o.n.truoc).map(o => nhanNhac(o.n, chuThuong(chuDem(o.con)))) : [])
+    /* nhắc tự động (rằm, mồng Một, tuổi xung): chạm thì mở chỗ bật tắt trong Menu */
+    .concat(nhacTuDong(x.j).map(o => `<button type="button" class="tl-ghi" data-gioi-thieu="nhac-tu-dong"><i class="ic">${o.bieu}</i><b>${esc(o.ten)}</b>${o.phu ? `<em>· ${o.phu}</em>` : ""}</button>`))
     .join("");
   const lo = Array.from({ length: 9 }, () => "<i></i>").join("");
   const totXau = totXauChanTo(x);

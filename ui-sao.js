@@ -81,11 +81,12 @@ function dongTam(nguoiDung) {
 document.addEventListener("keydown", e => { if (e.key === "Escape") dongTam(true); });
 
 /* ── Giới thiệu chương trình · căn cứ xem sao · tài liệu ── */
-const PHIEN_BAN = "1.44.0";
+const PHIEN_BAN = "1.45.0";
 /* Menu hệ thống (bấm logo 曆): danh sách mục, mỗi mục mở một trang con có nút quay lại.
    Thêm tùy chọn sau này: thêm một dòng vào MENU và nội dung trang trong trangMenu. */
 const MENU = [
   { id: "giao-dien", bieu: "trang", ten: "Giao diện", phu: () => `${({ "co-dien": "Cổ điển", tre: "Trẻ trung", "trung-nien": "Trung niên", "hien-dai": "Hiện đại" })[layAo()]} · ${AO_TOI.includes(layAo()) ? "Tối" : ({ "tu-dong": "Theo máy", sang: "Sáng", toi: "Tối" })[layGiaoDien()]} ${layCo() === "vua" ? "" : ` · chữ ${layCo() === "lon" ? "lớn" : "rất lớn"}`} · thông tin ngày: ${({ g: "dòng", e: "triện", f: "thang", goc: "gốc" })[layToLich()]}${window.ThoiTiet && ThoiTiet.dangBat() ? " · thời tiết" : ""}` },
+  { id: "nhac-tu-dong", bieu: "trang", ten: "Nhắc tự động", phu: () => [layNhacRam() ? "Rằm, mồng Một" : "", layNamSinh() ? `Tuổi xung · ${ccCuaNam(layNamSinh())}` : ""].filter(Boolean).join(" · ") || "Rằm, mồng Một · ngày xung tuổi" },
   { id: "huong-dan", bieu: "sach", ten: "Hướng dẫn sử dụng", phu: () => "Dùng nhanh, hướng dẫn từng bước" },
   { id: "ve", bieu: "lich", ten: "Về chương trình", phu: () => "Tính năng, hai kiểu luận ngày" },
   { id: "nguyen-tac", bieu: "sao", ten: "Nguyên tắc xem ngày", phu: () => "Dòng sách, thứ tự xem, điều cần biết" },
@@ -115,6 +116,18 @@ function trangMenu(id) {
       + muc("Thời tiết", chip("data-thoi-tiet", "0", "Tắt", !coTroi) + chip("data-thoi-tiet", "1", "Theo vị trí của máy", coTroi),
         `${coTroi ? ThoiTiet.moTa() + ". " : ""}Bật là cho phép dùng vị trí; vị trí làm tròn khoảng 10 km rồi gửi tới Open-Meteo. Dữ liệu: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).`)
       + muc("Hiệu ứng", HU.map(([k, t]) => chip("data-hieu-ung", k, t, hu[k])).join(""), moTaHU),
+    "nhac-tu-dong": (() => {
+      const ram = layNhacRam(), nam = layNamSinh(), tuoi = nam == null ? -1 : (nam + 8) % 12;
+      return muc("Rằm và mồng Một", chip("data-nhac-ram", "0", "Tắt", !ram) + chip("data-nhac-ram", "1", "Nhắc trước 1 ngày", ram),
+          ram ? "Ngày 14 và ngày cuối tháng âm, tờ lịch ghi một dòng nhắc; lịch tháng có chấm xanh." : "Bật để tờ lịch nhắc trước ngày rằm và mồng Một một ngày.")
+        + `<section class="mn-nhom"><h4>Tuổi xung</h4>
+          <div class="mn-nam"><label for="mn-nam-sinh">Năm sinh</label>
+            <input id="mn-nam-sinh" type="number" inputmode="numeric" min="1900" max="2100" placeholder="Ví dụ 1974" value="${nam || ""}" autocomplete="off">
+            <button type="button" class="nut nho" data-luu-nam>${ic("luu")}<span>Lưu</span></button>
+            ${nam ? `<button type="button" class="mn-xoa-nam" data-xoa-nam>${ic("xoa")}<span>Xoá</span></button>` : ""}</div>
+          <p class="mn-bao" id="mn-nam-bao" role="status">${nam ? `${window.BieuTuong.conGiap(tuoi)} Tuổi <b>${ccCuaNam(nam)}</b> · ngày <b>${CHI[(tuoi + 6) % 12]}</b> là ngày xung tuổi, mười hai ngày gặp một lần.` : ""}</p>
+          <p class="mn-mota">Không bắt buộc. Nhập năm sinh thì ngày nào xung tuổi, tờ lịch ghi một dòng nhắc và lịch tháng có chấm xanh. Tuổi tính theo năm âm lịch: sinh trước Tết thì nhập năm liền trước. Năm sinh chỉ lưu trong máy của bạn.</p></section>`;
+    })(),
     "huong-dan": `<section><h4>Dùng nhanh</h4><ol>
         <li><b>Xem ngày:</b> thẻ Ngày, vuốt để đổi ngày; bấm “Hôm nay” để quay về; ô ngày trên cùng để nhảy tới ngày bất kỳ.</li>
         <li><b>Chọn ngày cho việc:</b> chọn việc ở dải trên cùng rồi mở thẻ Tìm ngày; hoặc mở thẻ Tháng xem màu từng ngày, chạm ngày để đọc lý do.</li>
@@ -226,6 +239,21 @@ function moGioiThieu(muc) {
     const m = e.target.closest("[data-mn]"), lui = e.target.closest("[data-mn-lui]");
     if (m) { veTrang(m.dataset.mn, 40); canChip(); return; }
     if (lui) return veMenu(-40);
+    /* Trang Nhắc tự động (1.45.0): bật tắt nhắc rằm, lưu hoặc xoá năm sinh; xong vẽ lại trang và tờ lịch */
+    const td = e.target.closest("[data-nhac-ram],[data-luu-nam],[data-xoa-nam]");
+    if (td) {
+      if (td.dataset.nhacRam) datNhacRam(td.dataset.nhacRam === "1");
+      else if ("xoaNam" in td.dataset) datNamSinh(null);
+      else {
+        const n = Number(el.querySelector("#mn-nam-sinh").value);
+        if (!namSinhHopLe(n)) { const b = el.querySelector("#mn-nam-bao"); b.textContent = "Năm sinh cần là số từ 1900 đến 2100."; b.classList.add("loi"); return; }
+        datNamSinh(n);
+      }
+      const y = el.querySelector(".tam-cuon").scrollTop;
+      veTrang("nhac-tu-dong"); el.querySelector(".tam-cuon").scrollTop = y;
+      ve();
+      return;
+    }
     /* Lựa chọn ở trang Giao diện: đổi xong vẽ lại trang, giữ nguyên chỗ đang cuộn */
     const c = e.target.closest("[data-giao-dien],[data-bo-ao],[data-to-lich],[data-thoi-tiet],[data-hieu-ung],[data-co-chu]");
     if (!c) return;

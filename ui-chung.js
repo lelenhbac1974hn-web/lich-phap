@@ -5,6 +5,32 @@
 "use strict";
 
 const THANG_AM = ["Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Mười Một", "Chạp"];
+/* ── Nhắc tự động (1.45.0, Menu → Nhắc tự động) ──
+   – Rằm, mồng Một: bật thì tờ lịch của ngày liền trước ghi một dòng nhắc.
+   – Tuổi xung: người dùng tự nhập năm sinh (năm âm lịch); ngày nào chi ngày xung chi tuổi (cách nhau sáu chi, như dòng
+     "Ngày xung" ở trang Giờ) thì tờ lịch ghi một dòng nhắc. Chỉ lưu trong máy. */
+const docChon = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const ghiChon = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* máy chặn lưu: bỏ qua */ } };
+const layNhacRam = () => docChon("lichphap:nhac-ram") === "1";
+const datNhacRam = b => ghiChon("lichphap:nhac-ram", b ? "1" : "0");
+const namSinhHopLe = n => Number.isInteger(n) && n >= 1900 && n <= 2100;
+const layNamSinh = () => { const n = +docChon("lichphap:nam-sinh"); return namSinhHopLe(n) ? n : null; };
+const datNamSinh = n => ghiChon("lichphap:nam-sinh", namSinhHopLe(n) ? String(n) : null);
+const ccCuaNam = n => `${CAN[(n + 6) % 10]} ${CHI[(n + 8) % 12]}`;
+function nhacTuDong(j) {
+  const r = [], bt = window.BieuTuong;
+  if (layNhacRam()) {
+    const mai = amCuaJd(j + 1);
+    if (mai.day === 15 || mai.day === 1)
+      r.push({ bieu: bt ? bt.svg(mai.day === 15 ? "trang" : "sen") : "", ten: `Mai là ${mai.day === 15 ? "rằm" : "mồng Một"} tháng ${THANG_AM[mai.month - 1]}${mai.leap ? " nhuận" : ""}` });
+  }
+  const nam = layNamSinh();
+  if (nam != null) {
+    const tuoi = (nam + 8) % 12;
+    if ((j + 1 + 6) % 12 === tuoi) r.push({ bieu: bt ? bt.conGiap(tuoi) : "", ten: `Ngày xung tuổi ${CHI[tuoi]}`, phu: "tuổi của bạn" });
+  }
+  return r;
+}
 /* Hình con giáp của chi trong một can chi (1.44.0): "Ất Tỵ" → hình rắn; đặt cạnh nhãn Ngày, Tháng, Năm ở chân tờ lịch */
 const hinhChi = cc => { const i = CHI.indexOf(String(cc).trim().split(" ").pop()); return i < 0 || !window.BieuTuong ? "" : window.BieuTuong.conGiap(i); };
 const CON_GIAP = ["Chuột", "Trâu", "Hổ", "Mèo", "Rồng", "Rắn", "Ngựa", "Dê", "Khỉ", "Gà", "Chó", "Lợn"];

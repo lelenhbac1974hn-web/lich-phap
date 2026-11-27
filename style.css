@@ -1546,3 +1546,15 @@ html[data-co] .dg-td h3{white-space:nowrap}
 html[data-co] .dg-dong{grid-template-columns:86px minmax(0,1fr);background:linear-gradient(to right,transparent 86px,var(--le-so) 86px 87px,transparent 87px)}
 html[data-co] .dg-dong.dang{background:linear-gradient(to right,transparent 86px,var(--le-so) 86px 87px,transparent 87px),var(--chinh-nhat)}
 html[data-co] .dg-gio b{font-size:13px}
+/* ── 1.45.0: Menu → Nhắc tự động — ô năm sinh ── */
+.mn-nam{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mn-nam label{font-size:14px;color:var(--muc-2)}
+.mn-nam input{width:112px;font:600 16px var(--chu);color:var(--muc);background:var(--the);border:1px solid var(--vien);border-radius:4px;padding:8px 10px}
+.mn-nam input:focus{outline:none;border-color:var(--chinh)}
+.mn-nam .nut{display:inline-flex;align-items:center;gap:5px}
+.mn-xoa-nam{border:0;background:none;font:600 13px var(--chu);color:var(--son);display:inline-flex;align-items:center;gap:4px;margin-left:auto;padding:8px 2px;cursor:pointer}
+.mn-bao{margin:9px 2px 0;font-size:13.5px;line-height:1.5;color:var(--muc-2)}
+.mn-bao:empty{display:none}
+.mn-bao .cg{width:18px;height:18px;vertical-align:-4px;color:var(--chinh-dam)}
+.mn-bao.loi{color:var(--son)}
+.tl-ghi .ic .cg{width:1em;height:1em}
